@@ -8,6 +8,7 @@
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
+    "start": "node backend/src/server.js",
     "server": "node backend/src/server.js",
     "server:dev": "nodemon backend/src/server.js",
     "seed": "node backend/src/scripts/seed.js",

@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 import connectDB, { isDbConnected } from './config/db.js';
@@ -70,6 +71,23 @@ app.use('/api/ai', aiRoutes);
 app.use('/products', productRoutes);
 app.use('/categories', categoryRoutes);
 app.use('/orders', orderRoutes);
+
+// ============================================================
+// PRODUCTION: frontend build (frontend/dist) serverlash
+// Render/Heroku kabi platformalarda bitta service ham API ham
+// SPA'ni beradi. dist/+index.html mavjud bo'lsa ishga tushadi.
+// MUHIM: notFound middleware'idan OLDIN turishi kerak, aks holda
+// har bir SPA yo'nalishi 404 bo'lib qaytadi.
+// ============================================================
+const distDir = path.join(process.cwd(), 'dist');
+if (fs.existsSync(distDir)) {
+  app.use(express.static(distDir));
+  // SPA fallback — /product/1, /katalog kabi URL'lar ham index.html'ga yo'nalsin
+  app.get(/^\/(?!api|uploads).*/, (req, res) => {
+    res.sendFile(path.join(distDir, 'index.html'));
+  });
+  console.log('\x1b[32m✔ Frontend dist/ serverlanmoqda (SPA mode)\x1b[0m');
+}
 
 // Xatoliklarni ushlash
 app.use(notFound);
