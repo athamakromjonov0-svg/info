@@ -31,7 +31,7 @@ export default function BlogPage() {
 
       <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         <PageHero
-          badge="/// Blog"
+          badge="Dizayner Blogi"
           title="Yangiliklar va"
           highlight="maqolalar"
           description="Interyer dizayni bo'yicha foydali maslahatlar, do'kon yangiliklari va ekspert tavsiyalari."

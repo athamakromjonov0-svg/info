@@ -11,13 +11,13 @@ export default function PageHero({ badge, title, highlight, description, icon: I
       {/* Orqa fon dekorlari */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#1c1914_1px,transparent_1px),linear-gradient(to_bottom,#1c1914_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_70%_80%_at_20%_0%,#000_60%,transparent_100%)] pointer-events-none opacity-40" />
       <div className="absolute -top-20 -right-16 w-80 h-80 bg-amber-500/10 rounded-full blur-[110px] pointer-events-none" />
-      <div className="absolute -bottom-24 -left-10 w-72 h-72 bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute -bottom-24 -left-10 w-72 h-72 bg-amber-500/5 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-400/30 to-transparent" />
 
       <div className="relative z-10 px-6 sm:px-10 py-10 sm:py-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
         <div className="max-w-2xl">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-1.5 text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-4">
+          <nav className="flex items-center gap-1.5 text-[10px] text-slate-500 uppercase tracking-widest mb-4">
             <Link to="/" className="flex items-center gap-1 hover:text-amber-400 transition-colors">
               <Home className="h-3 w-3" /> Bosh sahifa
             </Link>
@@ -26,7 +26,7 @@ export default function PageHero({ badge, title, highlight, description, icon: I
           </nav>
 
           {/* Badge */}
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-white/5 border border-white/10 px-3 py-1 text-[10px] font-mono font-bold text-amber-300 uppercase tracking-[0.2em] mb-3">
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-400/30 bg-amber-400/10 px-3.5 py-1 text-[10px] font-bold text-amber-300 uppercase tracking-[0.2em] mb-3 backdrop-blur-md">
             <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
             {badge}
           </div>

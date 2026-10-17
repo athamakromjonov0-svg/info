@@ -74,7 +74,7 @@ const useAuth = (showToast) => {
     const adminUser = {
       email: userObj.email,
       role: 'admin',
-      name: 'Admin Terminal',
+      name: 'Admin',
       uid: userObj.uid,
       photoURL: userObj.photoURL || null,
     };
@@ -112,7 +112,7 @@ const useAuth = (showToast) => {
       setLoginAttempts(0);
       localStorage.setItem('isAdminAuthenticated', 'true');
       localStorage.setItem('vortex_user', JSON.stringify(mockUser));
-      showToast("Kiber-shlyuz muvaffaqiyatli ochildi!", "success");
+      showToast("Tizimga muvaffaqiyatli kirdingiz!", "success");
       return true;
     } catch (error) {
       console.error('Admin login xatosi:', error);
@@ -131,7 +131,7 @@ const useAuth = (showToast) => {
         const mockUser = {
           email: adminEmail,
           role: 'admin',
-          name: 'Admin Terminal',
+          name: 'Admin',
           uid: 'local-admin',
         };
         setIsAuthenticated(true);
@@ -139,7 +139,7 @@ const useAuth = (showToast) => {
         setLoginAttempts(0);
         localStorage.setItem('isAdminAuthenticated', 'true');
         localStorage.setItem('vortex_user', JSON.stringify(mockUser));
-        showToast("Kiber-shlyuz muvaffaqiyatli ochildi!", "success");
+        showToast("Tizimga muvaffaqiyatli kirdingiz!", "success");
         return true;
       }
 

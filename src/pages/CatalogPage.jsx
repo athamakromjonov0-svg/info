@@ -95,7 +95,7 @@ export default function CatalogPage() {
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         <PageHero
-          badge="/// Katalog"
+          badge="Katalog"
           title="Barcha"
           highlight="mahsulotlar"
           description="Do'konimizdagi barcha mahsulotlarni bir joyda ko'ring. Qidiruv, filtr va sortlash orqali o'zingizga keraklisini tez toping."
@@ -122,7 +122,7 @@ export default function CatalogPage() {
               {hasFilters && (
                 <button
                   onClick={clearAll}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-rose-500/20 bg-rose-500/5 px-3 py-2 text-[11px] font-bold text-rose-400 hover:bg-rose-500/10 transition-all"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-amber-400/30 bg-amber-400/5 px-3 py-2 text-[11px] font-bold text-amber-300 hover:bg-amber-400/10 transition-all"
                 >
                   <FilterX className="h-3.5 w-3.5" /> Tozalash
                 </button>
@@ -142,7 +142,7 @@ export default function CatalogPage() {
                     onClick={() => { setCategory(cat); setPage(1); }}
                     className={`rounded-lg px-2.5 py-1 text-[10px] font-bold font-mono uppercase tracking-wider transition-all ${
                       category === cat
-                        ? 'bg-emerald-500 text-slate-950'
+                        ? 'bg-amber-400 text-slate-950 shadow-glow-sm'
                         : 'bg-slate-900/60 text-slate-500 hover:text-white hover:bg-slate-900 border border-slate-800'
                     }`}
                   >

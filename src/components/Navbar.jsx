@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   ShoppingBag, Menu, Search, Heart, User, Bell, Scale, CheckCircle2,
-  AlertTriangle, Info
+  AlertTriangle, Info, Sparkles
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
@@ -81,10 +81,10 @@ export default function Navbar({ onToggleSidebar }) {
   ) : null;
 
   const notifIcon = {
-    success: <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />,
+    success: <CheckCircle2 className="h-3.5 w-3.5 text-amber-300" />,
     error: <AlertTriangle className="h-3.5 w-3.5 text-rose-400" />,
     warning: <AlertTriangle className="h-3.5 w-3.5 text-amber-400" />,
-    info: <Info className="h-3.5 w-3.5 text-blue-400" />,
+    info: <Info className="h-3.5 w-3.5 text-slate-300" />,
   };
 
   return (
@@ -99,13 +99,18 @@ export default function Navbar({ onToggleSidebar }) {
         <div className="flex h-full items-center justify-between gap-3">
 
           {/* LOGO */}
-          <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-blue-500 text-slate-950 shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform duration-200">
-              <ShoppingBag className="h-4 w-4" />
+          <Link to="/" className="flex items-center gap-3 shrink-0 group">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-300 via-amber-400 to-yellow-500 text-slate-950 shadow-lg shadow-amber-500/25 group-hover:scale-105 transition-transform duration-300">
+              <span className="font-serif text-xl font-black">G</span>
             </div>
-            <span className="hidden sm:block font-black text-lg tracking-widest text-white uppercase">
-              GRAND<span className="text-amber-400 font-normal">DECOR</span>
-            </span>
+            <div className="hidden sm:flex flex-col">
+              <span className="font-serif font-black text-base lg:text-lg tracking-widest text-white uppercase leading-none">
+                GRAND<span className="text-amber-400 font-normal">DÉCOR</span>
+              </span>
+              <span className="text-[9px] uppercase tracking-wider text-amber-200/70 font-sans mt-0.5">
+                Parda Aksessuarlari
+              </span>
+            </div>
           </Link>
 
           {/* QIDIRUV (desktop) */}
@@ -117,10 +122,10 @@ export default function Navbar({ onToggleSidebar }) {
                 onChange={(e) => { setSearchQuery(e.target.value); setShowSuggestions(true); }}
                 onFocus={() => searchQuery.trim() && setShowSuggestions(true)}
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                placeholder="Mahsulot qidirish..."
-                className="w-full bg-slate-900/40 border border-slate-900 rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-emerald-500/30 focus:bg-slate-900/90 focus:ring-1 focus:ring-emerald-500/10 transition-all duration-200"
+                placeholder="Tassel, magnit tutqich, kristall karniz qidirish..."
+                className="w-full bg-slate-900/60 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400/50 focus:bg-slate-900/90 focus:ring-1 focus:ring-amber-400/20 transition-all duration-200"
               />
-              <Search className="absolute left-3.5 top-2.5 h-3.5 w-3.5 text-slate-600" />
+              <Search className="absolute left-3.5 top-3 h-4 w-4 text-amber-400/60" />
             </form>
 
             {showSuggestions && suggestions.length > 0 && (
@@ -138,12 +143,12 @@ export default function Navbar({ onToggleSidebar }) {
                         <img src={s.image} alt={s.name || s.title} className="h-full w-full object-cover" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-bold text-white truncate group-hover:text-emerald-400 transition-colors">{s.name || s.title}</p>
+                        <p className="text-xs font-bold text-white truncate group-hover:text-amber-300 transition-colors">{s.name || s.title}</p>
                         <p className="text-[10px] text-slate-500 font-mono mt-0.5 truncate">
                           {typeof s.category === 'object' ? (s.category.name || '') : (s.category || '')}
                         </p>
                       </div>
-                      <span className="text-xs font-mono font-bold text-emerald-400 whitespace-nowrap">{formatPrice(price)}</span>
+                      <span className="text-xs font-mono font-bold text-amber-300 whitespace-nowrap">{formatPrice(price)}</span>
                     </button>
                   );
                 })}
@@ -157,6 +162,20 @@ export default function Navbar({ onToggleSidebar }) {
             <button onClick={() => { setMobileSearchOpen(!mobileSearchOpen); setBellOpen(false); }} className={`${iconBtn} md:hidden`} aria-label="Qidiruv">
               <Search className="h-4 w-4" />
             </button>
+
+            {/* GRAND AI TUGMASI */}
+            <Link
+              to="/ai"
+              className="relative flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-amber-400/15 via-amber-500/10 to-yellow-500/15 border border-amber-400/40 text-amber-300 hover:text-white hover:border-amber-400 hover:bg-amber-400/25 transition-all text-xs font-bold group shadow-sm shadow-amber-500/10"
+              title="Grand AI — Loyiha Tahlilchisi va Yordamchi"
+            >
+              <Sparkles className="h-4 w-4 text-amber-400 group-hover:rotate-12 transition-transform" />
+              <span className="font-serif font-black tracking-wider">AI</span>
+              <span className="absolute -top-1 -right-1 flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+              </span>
+            </Link>
 
             {/* Bildirishnomalar */}
             <div className="relative">
@@ -207,28 +226,28 @@ export default function Navbar({ onToggleSidebar }) {
             {/* Sevimlilar */}
             <Link to="/sevimlilar" className={iconBtn} aria-label="Sevimlilar">
               <Heart className="h-4 w-4" />
-              {countBadge(wishlistCount, 'bg-rose-500 text-white shadow-lg shadow-rose-500/20 animate-pulse')}
+              {countBadge(wishlistCount, 'bg-amber-400 text-slate-950 shadow-glow-sm animate-pulse')}
             </Link>
 
             {/* Solishtirish */}
             {compareCount > 0 && (
               <Link to="/solishtirish" className={`${iconBtn} hidden sm:flex`} aria-label="Solishtirish">
                 <Scale className="h-4 w-4" />
-                {countBadge(compareCount, 'bg-blue-500 text-white shadow-lg shadow-blue-500/20')}
+                {countBadge(compareCount, 'bg-amber-400 text-slate-950 shadow-glow-sm')}
               </Link>
             )}
 
             {/* Savat */}
             <Link to="/savat" className={iconBtn} aria-label="Savat">
               <ShoppingBag className="h-4 w-4" />
-              {countBadge(cartCount, 'bg-emerald-400 text-slate-950 shadow-lg shadow-emerald-400/20')}
+              {countBadge(cartCount, 'bg-amber-400 text-slate-950 shadow-glow-sm')}
             </Link>
 
             {/* Foydalanuvchi */}
             {isSiteAuthenticated ? (
               <Link
                 to="/sayt/profil"
-                className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/30 px-3 py-2 text-xs font-bold text-emerald-400 hover:border-emerald-500/50 transition-all duration-200"
+                className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500/10 to-yellow-500/10 border border-amber-500/30 px-3 py-2 text-xs font-bold text-amber-300 hover:border-amber-500/50 transition-all duration-200"
                 title="Shaxsiy kabinet"
               >
                 {siteUser?.photoURL ? (
@@ -241,7 +260,7 @@ export default function Navbar({ onToggleSidebar }) {
             ) : (
               <Link
                 to="/sayt/kirish"
-                className="flex items-center gap-1 sm:gap-1.5 rounded-xl bg-emerald-400 px-2.5 sm:px-4 py-2 text-xs font-black text-slate-950 shadow-md shadow-emerald-400/20 hover:bg-emerald-300 transition-all active:scale-95"
+                className="flex items-center gap-1 sm:gap-1.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 px-2.5 sm:px-4 py-2 text-xs font-black text-slate-950 shadow-glow-sm hover:from-amber-300 hover:to-yellow-400 transition-all active:scale-95"
               >
                 <User className="h-3.5 w-3.5" /> <span className="hidden sm:inline">Kirish</span>
               </Link>
@@ -250,7 +269,7 @@ export default function Navbar({ onToggleSidebar }) {
             {/* SIDEBAR TUGMASI */}
             <button
               onClick={onToggleSidebar}
-              className="p-2 sm:p-2.5 rounded-xl border border-slate-900 bg-slate-900/40 text-slate-400 hover:text-emerald-400 hover:border-emerald-500/30 transition-all"
+              className="p-2 sm:p-2.5 rounded-xl border border-slate-900 bg-slate-900/40 text-slate-400 hover:text-amber-300 hover:border-amber-400/30 transition-all"
               aria-label="Menyu"
               title="Barcha sahifalar"
             >
@@ -267,7 +286,7 @@ export default function Navbar({ onToggleSidebar }) {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Mahsulot qidirish..."
-              className="w-full bg-slate-900 border border-slate-900 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-emerald-500/30"
+              className="w-full bg-slate-900 border border-slate-900 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-amber-400/50"
             />
             <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-600" />
           </form>

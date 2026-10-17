@@ -98,8 +98,11 @@ export default function UserProfilePage() {
     setSearchParams({ tab });
   };
 
-  const formatPrice = (price) =>
-    new Intl.NumberFormat('uz-UZ').format(Math.round(price)) + " so'm";
+  const formatPrice = (price) => {
+    const n = Number(price);
+    if (!Number.isFinite(n) || n <= 0) return '';
+    return new Intl.NumberFormat('uz-UZ').format(Math.round(n)) + " so'm";
+  };
 
   const formatCardNumber = (value) => {
     const digits = value.replace(/\D/g, '').slice(0, 16);
@@ -147,11 +150,11 @@ export default function UserProfilePage() {
   };
 
   const menuItems = [
-    { icon: Package, label: 'Buyurtmalarim', desc: 'Barcha buyurtmalar tarixi', color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20', tab: 'orders' },
-    { icon: Heart, label: 'Sevimlilarim', desc: 'Saqlangan mahsulotlar', color: 'text-rose-400', bg: 'bg-rose-500/10 border-rose-500/20', tab: 'wishlist' },
-    { icon: CreditCard, label: 'To\'lov usullari', desc: 'Karta va boshqa usullar', color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20', tab: 'payments' },
-    { icon: MapPin, label: 'Yetkazib berish manzili', desc: 'Manzilni boshqarish', color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20', tab: 'addresses' },
-    { icon: Bell, label: 'Bildirishnomalar', desc: 'Ogohlantirish sozlamalari', color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/20', tab: 'notifications' },
+    { icon: Package, label: 'Buyurtmalarim', desc: 'Barcha buyurtmalar tarixi', color: 'text-amber-400', bg: 'bg-amber-400/10 border-amber-400/20', tab: 'orders' },
+    { icon: Heart, label: 'Sevimlilarim', desc: 'Saqlangan mahsulotlar', color: 'text-amber-400', bg: 'bg-amber-400/10 border-amber-400/20', tab: 'wishlist' },
+    { icon: CreditCard, label: 'To\'lov usullari', desc: 'Karta va boshqa usullar', color: 'text-amber-400', bg: 'bg-amber-400/10 border-amber-400/20', tab: 'payments' },
+    { icon: MapPin, label: 'Yetkazib berish manzili', desc: 'Manzilni boshqarish', color: 'text-amber-400', bg: 'bg-amber-400/10 border-amber-400/20', tab: 'addresses' },
+    { icon: Bell, label: 'Bildirishnomalar', desc: 'Ogohlantirish sozlamalari', color: 'text-amber-400', bg: 'bg-amber-400/10 border-amber-400/20', tab: 'notifications' },
     { icon: Settings, label: 'Sozlamalar', desc: 'Hisob parametrlari', color: 'text-slate-400', bg: 'bg-slate-500/10 border-slate-500/20', tab: 'settings' },
   ];
 
@@ -171,22 +174,22 @@ export default function UserProfilePage() {
     <div className="min-h-[calc(100vh-4rem)] bg-slate-950 font-sans select-none relative overflow-hidden">
       {/* ORQA FON */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#1c1914_1px,transparent_1px),linear-gradient(to_bottom,#1c1914_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none opacity-30" />
-      <div className="absolute -top-24 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-[130px] pointer-events-none animate-pulse" />
+      <div className="absolute -top-24 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-[130px] pointer-events-none animate-pulse" />
 
       <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10">
         {/* SARIQ */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl sm:text-3xl font-black text-white tracking-wider uppercase">
-              Shaxsiy <span className="bg-gradient-to-r from-indigo-400 to-emerald-400 bg-clip-text text-transparent">kabinet</span>
+              Shaxsiy <span className="bg-gradient-to-r from-amber-300 to-amber-500 bg-clip-text text-transparent">kabinet</span>
             </h1>
             <p className="mt-1 text-xs text-slate-500 font-mono uppercase tracking-widest">
-              /// shaxsiy boshqaruv paneli
+Shaxsiy boshqaruv paneli
             </p>
           </div>
           <button
             onClick={handleLogout}
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-2.5 text-xs font-bold text-rose-400 hover:bg-rose-500/10 hover:border-rose-500/30 transition-all duration-200"
+            className="inline-flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-2.5 text-xs font-bold text-slate-300 hover:text-amber-300 hover:bg-amber-400/5 hover:border-amber-400/30 transition-all duration-200"
           >
             <LogOut className="h-4 w-4" /> Chiqish
           </button>
@@ -196,12 +199,12 @@ export default function UserProfilePage() {
           {/* CHAP - PROFIL KARTASI */}
           <div className="lg:col-span-1 space-y-6">
             <div className="relative overflow-hidden rounded-3xl border border-slate-900 bg-slate-950/50 backdrop-blur-xl p-6 text-center shadow-2xl">
-              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent" />
-              <div className="absolute -top-10 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-[60px] pointer-events-none" />
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-400/40 to-transparent" />
+              <div className="absolute -top-10 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-[60px] pointer-events-none" />
 
               <div className="relative">
                 <div className="relative mx-auto w-24 h-24">
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-500 to-emerald-400 animate-pulse" />
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-300 to-amber-500 animate-pulse" />
                   {siteUser?.photoURL ? (
                     <img 
                       src={siteUser.photoURL} 
@@ -211,11 +214,11 @@ export default function UserProfilePage() {
                     />
                   ) : (
                     <div className="relative mx-auto w-full h-full rounded-full border-4 border-slate-950 bg-slate-900 flex items-center justify-center">
-                      <User className="h-10 w-10 text-emerald-400" />
+                      <User className="h-10 w-10 text-amber-400" />
                     </div>
                   )}
-                  <div className="absolute bottom-1 right-1 h-4 w-4 rounded-full bg-emerald-400 border-2 border-slate-950 flex items-center justify-center">
-                    <span className="block h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
+                  <div className="absolute bottom-1 right-1 h-4 w-4 rounded-full bg-amber-400 border-2 border-slate-950 flex items-center justify-center">
+                    <span className="block h-2 w-2 rounded-full bg-amber-400 animate-ping" />
                   </div>
                 </div>
 
@@ -226,7 +229,7 @@ export default function UserProfilePage() {
                   <Mail className="h-3.5 w-3.5" /> {siteUser?.email}
                 </p>
 
-                <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-[9px] font-mono font-bold text-emerald-400 uppercase tracking-widest">
+                <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-amber-400/10 border border-amber-400/20 px-3 py-1 text-[9px] font-mono font-bold text-amber-300 uppercase tracking-widest">
                   <ShieldCheck className="h-3 w-3" /> Premium Foydalanuvchi
                 </div>
               </div>
@@ -242,11 +245,11 @@ export default function UserProfilePage() {
 
               <div className="grid grid-cols-3 gap-3">
                 <div className="text-center rounded-2xl border border-slate-900 bg-slate-900/40 p-3">
-                  <div className="text-2xl font-black text-emerald-400">{orders.length}</div>
+                  <div className="text-2xl font-black text-amber-300">{orders.length}</div>
                   <div className="mt-1 text-[9px] text-slate-500 font-mono uppercase tracking-wider">Buyurtmalar</div>
                 </div>
                 <div className="text-center rounded-2xl border border-slate-900 bg-slate-900/40 p-3">
-                  <div className="text-2xl font-black text-indigo-400">{wishlist.length}</div>
+                  <div className="text-2xl font-black text-amber-300">{wishlist.length}</div>
                   <div className="mt-1 text-[9px] text-slate-500 font-mono uppercase tracking-wider">Sevimlilar</div>
                 </div>
                 <div className="text-center rounded-2xl border border-slate-900 bg-slate-900/40 p-3">
@@ -331,7 +334,7 @@ export default function UserProfilePage() {
                             <div className="text-xs uppercase tracking-widest text-slate-500">#{order.id}</div>
                             <div className="text-sm font-semibold text-white">{new Date(order.createdAt).toLocaleString('uz-UZ')}</div>
                           </div>
-                          <div className="text-xs font-bold text-emerald-400 uppercase tracking-wider">{order.status}</div>
+                          <div className="text-xs font-bold text-amber-300 uppercase tracking-wider">{order.status}</div>
                         </div>
                         <div className="grid gap-2">
                           {order.items?.slice(0, 3).map((item) => (
@@ -369,7 +372,7 @@ export default function UserProfilePage() {
                           <div className="text-sm font-semibold text-white line-clamp-1">{product.name || product.title}</div>
                           <div className="text-[10px] text-slate-500">{product.category || "Noma'lum kategoriya"}</div>
                         </div>
-                        <div className="text-sm font-bold text-emerald-400">{formatPrice(product.price)}</div>
+                        <div className="text-sm font-bold text-amber-300">{formatPrice(product.price)}</div>
                       </div>
                     ))
                   )}
@@ -498,14 +501,14 @@ export default function UserProfilePage() {
                   ) : (
                     addresses.map((addr) => (
                       <div key={addr.id} className={`rounded-3xl border p-4 ${
-                        addr.isDefault ? 'border-emerald-500/40 bg-emerald-500/5' : 'border-slate-900 bg-slate-900/50'
+                        addr.isDefault ? 'border-amber-400/40 bg-amber-400/5' : 'border-slate-900 bg-slate-900/50'
                       }`}>
                         <div className="flex items-start justify-between gap-3">
                           <div>
                             <div className="flex items-center gap-2">
                               <span className="text-sm font-bold text-white">{addr.name}</span>
                               {addr.isDefault && (
-                                <span className="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">ASOSIY</span>
+                                <span className="text-[9px] font-mono text-amber-300 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/20">ASOSIY</span>
                               )}
                             </div>
                             <p className="text-xs text-slate-400 mt-1">
@@ -520,7 +523,7 @@ export default function UserProfilePage() {
                             {!addr.isDefault && (
                               <button
                                 onClick={() => setDefaultAddress(addr.id)}
-                                className="text-[10px] font-bold text-slate-400 hover:text-emerald-400 transition-colors"
+                                className="text-[10px] font-bold text-slate-400 hover:text-amber-300 transition-colors"
                               >
                                 Asosiy qilish
                               </button>
@@ -545,14 +548,14 @@ export default function UserProfilePage() {
                     </p>
                     <button
                       onClick={() => setShowCardForm(!showCardForm)}
-                      className="inline-flex items-center gap-1.5 rounded-xl bg-blue-400 px-3 py-2 text-[10px] font-black text-slate-950 uppercase tracking-widest hover:bg-blue-300 transition-colors"
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 px-3 py-2 text-[10px] font-black text-slate-950 uppercase tracking-widest shadow-glow-sm hover:from-amber-300 hover:to-yellow-400 transition-colors"
                     >
                       <Plus className="h-3.5 w-3.5" /> Yangi karta
                     </button>
                   </div>
 
                   {showCardForm && (
-                    <form onSubmit={handleAddCard} className="rounded-3xl border border-blue-500/20 bg-blue-500/5 p-5 space-y-3">
+                    <form onSubmit={handleAddCard} className="rounded-3xl border border-amber-400/20 bg-amber-400/5 p-5 space-y-3">
                       <div>
                         <label className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Karta raqami *</label>
                         <input
@@ -560,7 +563,7 @@ export default function UserProfilePage() {
                           value={cardForm.cardNumber}
                           onChange={(e) => setCardForm({ ...cardForm, cardNumber: formatCardNumber(e.target.value) })}
                           placeholder="8600 0000 0000 0000"
-                          className="mt-1 w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500/30 font-mono"
+                          className="mt-1 w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-amber-400/40 font-mono"
                         />
                       </div>
                       <div>
@@ -570,7 +573,7 @@ export default function UserProfilePage() {
                           value={cardForm.cardHolder}
                           onChange={(e) => setCardForm({ ...cardForm, cardHolder: e.target.value.toUpperCase() })}
                           placeholder="ISKANDAROV AZIZ"
-                          className="mt-1 w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500/30 font-mono"
+                          className="mt-1 w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-amber-400/40 font-mono"
                         />
                       </div>
                       <div className="grid grid-cols-2 gap-3">
@@ -581,7 +584,7 @@ export default function UserProfilePage() {
                             value={cardForm.expiry}
                             onChange={(e) => setCardForm({ ...cardForm, expiry: formatExpiry(e.target.value) })}
                             placeholder="MM/YY"
-                            className="mt-1 w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500/30 font-mono"
+                            className="mt-1 w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-amber-400/40 font-mono"
                           />
                         </div>
                         <div>
@@ -592,7 +595,7 @@ export default function UserProfilePage() {
                               value={cardForm.cvv}
                               onChange={(e) => setCardForm({ ...cardForm, cvv: e.target.value.replace(/\D/g, '').slice(0, 3) })}
                               placeholder="***"
-                              className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500/30 font-mono pr-10"
+                              className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-amber-400/40 font-mono pr-10"
                             />
                             <button
                               type="button"
@@ -610,7 +613,7 @@ export default function UserProfilePage() {
                             type="checkbox"
                             checked={cardForm.isDefault}
                             onChange={(e) => setCardForm({ ...cardForm, isDefault: e.target.checked })}
-                            className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-blue-400 focus:ring-blue-500/20"
+                            className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-400 focus:ring-amber-400/20"
                           />
                           <span className="text-[10px] text-slate-400 font-bold">Asosiy karta qilish</span>
                         </label>
@@ -624,7 +627,7 @@ export default function UserProfilePage() {
                           </button>
                           <button
                             type="submit"
-                            className="px-4 py-2 rounded-xl bg-blue-400 text-[10px] font-black text-slate-950 uppercase tracking-widest hover:bg-blue-300 transition-colors"
+                            className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 text-[10px] font-black text-slate-950 uppercase tracking-widest shadow-glow-sm hover:from-amber-300 hover:to-yellow-400 transition-colors"
                           >
                             Saqlash
                           </button>
@@ -640,12 +643,12 @@ export default function UserProfilePage() {
                   ) : (
                     savedCards.map((card) => (
                       <div key={card.id} className={`rounded-3xl border p-4 ${
-                        card.isDefault ? 'border-blue-500/40 bg-blue-500/5' : 'border-slate-900 bg-slate-900/50'
+                        card.isDefault ? 'border-amber-400/40 bg-amber-400/5' : 'border-slate-900 bg-slate-900/50'
                       }`}>
                         <div className="flex items-center justify-between gap-3">
                           <div className="flex items-center gap-4">
-                            <div className="flex h-12 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 border border-blue-500/20">
-                              <CreditCard className="h-6 w-6 text-blue-400" />
+                            <div className="flex h-12 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400/20 to-yellow-500/20 border border-amber-400/30">
+                              <CreditCard className="h-6 w-6 text-amber-400" />
                             </div>
                             <div>
                               <div className="flex items-center gap-2">
@@ -653,7 +656,7 @@ export default function UserProfilePage() {
                                   •••• •••• •••• {card.last4}
                                 </span>
                                 {card.isDefault && (
-                                  <span className="text-[9px] font-mono text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-full border border-blue-500/20">ASOSIY</span>
+                                  <span className="text-[9px] font-mono text-amber-300 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/20">ASOSIY</span>
                                 )}
                               </div>
                               <div className="text-xs text-slate-500 mt-0.5">{card.cardHolder}</div>
@@ -664,7 +667,7 @@ export default function UserProfilePage() {
                             {!card.isDefault && (
                               <button
                                 onClick={() => setDefaultCard(card.id)}
-                                className="text-[10px] font-bold text-slate-400 hover:text-blue-400 transition-colors"
+                                className="text-[10px] font-bold text-slate-400 hover:text-amber-300 transition-colors"
                               >
                                 Asosiy qilish
                               </button>
@@ -685,7 +688,7 @@ export default function UserProfilePage() {
                 <div className="space-y-4">
                   <div className="rounded-2xl border border-slate-900 bg-slate-900/40 p-4">
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400">
                         <BellRing className="h-5 w-5" />
                       </div>
                       <div>
@@ -697,7 +700,7 @@ export default function UserProfilePage() {
                       {notificationOptions.map(({ key, label, desc, icon: Icon }) => (
                         <div key={key} className="flex items-center justify-between rounded-xl border border-slate-900 bg-slate-950/50 p-3">
                           <div className="flex items-center gap-3">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 border border-slate-800 text-purple-400">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 border border-slate-800 text-amber-400">
                               <Icon className="h-4 w-4" />
                             </div>
                             <div>
@@ -708,7 +711,7 @@ export default function UserProfilePage() {
                           <button
                             onClick={() => updateNotificationSettings({ [key]: !notificationSettings[key] })}
                             className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${
-                              notificationSettings[key] ? 'bg-purple-500' : 'bg-slate-800'
+                              notificationSettings[key] ? 'bg-amber-400' : 'bg-slate-800'
                             }`}
                           >
                             <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all duration-200 ${
@@ -741,10 +744,10 @@ export default function UserProfilePage() {
                             notif.read ? 'opacity-50' : ''
                           }`}>
                             <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${
-                              notif.type === 'success' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' :
+                              notif.type === 'success' ? 'bg-amber-400/10 border-amber-400/20 text-amber-300' :
                               notif.type === 'error' ? 'bg-rose-500/10 border-rose-500/20 text-rose-400' :
-                              notif.type === 'warning' ? 'bg-amber-500/10 border-amber-500/20 text-amber-400' :
-                              'bg-blue-500/10 border-blue-500/20 text-blue-400'
+                              notif.type === 'warning' ? 'bg-amber-400/10 border-amber-400/20 text-amber-300' :
+                              'bg-amber-400/10 border-amber-400/20 text-amber-300'
                             }`}>
                               <Bell className="h-4 w-4" />
                             </div>
@@ -787,7 +790,7 @@ export default function UserProfilePage() {
                           <button
                             onClick={() => updateSettings({ [key]: !settings[key] })}
                             className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${
-                              settings[key] ? 'bg-emerald-500' : 'bg-slate-800'
+                              settings[key] ? 'bg-amber-400' : 'bg-slate-800'
                             }`}
                           >
                             <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all duration-200 ${
@@ -801,7 +804,7 @@ export default function UserProfilePage() {
 
                   <div className="rounded-2xl border border-slate-900 bg-slate-900/40 p-4">
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400">
                         <Globe className="h-5 w-5" />
                       </div>
                       <div>
@@ -815,7 +818,7 @@ export default function UserProfilePage() {
                         <select
                           value={settings.language || 'uz'}
                           onChange={(e) => updateSettings({ language: e.target.value })}
-                          className="mt-1 w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500/30"
+                          className="mt-1 w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400/40"
                         >
                           <option value="uz">O'zbekcha</option>
                           <option value="ru">Русский</option>
@@ -827,7 +830,7 @@ export default function UserProfilePage() {
                         <select
                           value={settings.currency || 'UZS'}
                           onChange={(e) => updateSettings({ currency: e.target.value })}
-                          className="mt-1 w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500/30"
+                          className="mt-1 w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400/40"
                         >
                           <option value="UZS">UZS — so'm</option>
                           <option value="USD">USD — dollar</option>
@@ -839,7 +842,7 @@ export default function UserProfilePage() {
 
                   <div className="rounded-2xl border border-slate-900 bg-slate-900/40 p-4">
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400">
                         <ShieldCheck className="h-5 w-5" />
                       </div>
                       <div>
@@ -849,7 +852,7 @@ export default function UserProfilePage() {
                     </div>
                     <div className="flex items-center justify-between rounded-xl border border-slate-900 bg-slate-950/50 p-3">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 border border-slate-800 text-emerald-400">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 border border-slate-800 text-amber-400">
                           <Check className="h-4 w-4" />
                         </div>
                         <div>
@@ -857,7 +860,7 @@ export default function UserProfilePage() {
                           <div className="text-[10px] text-slate-500">{siteUser?.email}</div>
                         </div>
                       </div>
-                      <span className="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">FAOL</span>
+                      <span className="text-[9px] font-mono text-amber-300 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/20">FAOL</span>
                     </div>
                   </div>
                 </div>
@@ -868,9 +871,9 @@ export default function UserProfilePage() {
               )}
             </div>
 
-            <div className="rounded-3xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-transparent backdrop-blur-xl p-6">
+            <div className="rounded-3xl border border-amber-400/20 bg-gradient-to-br from-amber-400/5 to-transparent backdrop-blur-xl p-6">
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400">
                   <ShoppingBag className="h-6 w-6" />
                 </div>
                 <div>
@@ -883,7 +886,7 @@ export default function UserProfilePage() {
                   </p>
                   <Link
                     to="/bonus-dasturi"
-                    className="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-emerald-400 px-4 py-2 text-[10px] font-black text-slate-950 uppercase tracking-widest hover:bg-emerald-300 transition-colors"
+                    className="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 px-4 py-2 text-[10px] font-black text-slate-950 uppercase tracking-widest shadow-glow-sm hover:from-amber-300 hover:to-yellow-400 transition-colors"
                   >
                     Batafsil ma'lumot
                   </Link>

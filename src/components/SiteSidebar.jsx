@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
-  Home, Layers, Percent, Heart, Scale, ShoppingBag, User, Wallet,
+  Home, Layers, Percent, Heart, Scale, User, Wallet,
   ShieldCheck, ChevronDown, X, Compass, Sparkles, LogOut,
   ShoppingCart, Sparkle, Coins, Truck, Newspaper, LifeBuoy, RotateCcw,
   CreditCard, HelpCircle, Headset, Package, ReceiptText
@@ -25,6 +25,16 @@ export default function SiteSidebar({ open, onClose }) {
   const location = useLocation();
   const [catsOpen, setCatsOpen] = useState(false);
 
+  // Mobil drawer ochilganda orqa sahifa skroll qilinmasin (lg+ da doimiy,
+  // oynasiz holatda skroll bo'lib qolmasligi uchun lock berilmaydi)
+  useEffect(() => {
+    if (open && window.innerWidth < 1280) {
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = ''; };
+    }
+    return undefined;
+  }, [open]);
+
   const cartCount = (cart || []).reduce((s, i) => s + (i.quantity || 1), 0);
   const wishlistCount = (wishlist || []).length;
   const compareCount = (compareList || []).length;
@@ -46,12 +56,12 @@ export default function SiteSidebar({ open, onClose }) {
 
   const linkCls = (path) => `flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-bold transition-all border ${
     isActive(path)
-      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+      ? 'bg-amber-400/10 text-amber-300 border-amber-400/30'
       : 'text-slate-400 hover:text-white hover:bg-slate-900/60 border-transparent'
   }`;
 
   const sectionTitle = (text) => (
-    <p className="px-3 mb-2 mt-6 text-[9px] font-mono font-bold text-slate-600 uppercase tracking-[0.2em] first:mt-0">{text}</p>
+    <p className="px-3 mb-2 mt-6 text-[9px] font-bold text-slate-600 uppercase tracking-[0.2em] first:mt-0">{text}</p>
   );
 
   const badge = (count, cls) => count > 0 ? (
@@ -71,12 +81,12 @@ export default function SiteSidebar({ open, onClose }) {
         {/* LOGO */}
         <div className="flex items-center justify-between px-5 py-5 border-b border-slate-900">
           <Link to="/" onClick={onClose} className="flex items-center gap-2.5 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-blue-500 text-slate-950 shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
-              <ShoppingBag className="h-4 w-4" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-300 via-amber-400 to-yellow-500 text-slate-950 shadow-lg shadow-amber-500/25 group-hover:scale-105 transition-transform">
+              <span className="font-serif text-lg font-black">G</span>
             </div>
             <div>
-              <p className="text-sm font-black uppercase tracking-widest text-white">GRAND<span className="text-amber-400">DECOR</span></p>
-              <p className="text-[8px] font-mono text-slate-500 tracking-widest uppercase">Premium Store</p>
+              <p className="font-serif text-sm font-black tracking-widest text-white uppercase">GRAND<span className="text-amber-400">DÉCOR</span></p>
+              <p className="text-[8px] text-amber-300/70 tracking-widest uppercase">Parda Aksessuarlari</p>
             </div>
           </Link>
           <button onClick={onClose} className="xl:hidden p-2 rounded-lg hover:bg-slate-900 text-slate-400 hover:text-white transition">
@@ -91,12 +101,19 @@ export default function SiteSidebar({ open, onClose }) {
             <Home className="h-4 w-4 shrink-0" /> Bosh sahifa
           </Link>
 
+          {/* GRAND AI */}
+          <Link to="/ai" onClick={onClose} className={`${linkCls('/ai')} bg-gradient-to-r from-amber-400/10 to-yellow-500/10 border-amber-400/20 text-amber-300`}>
+            <Sparkles className="h-4 w-4 shrink-0 text-amber-400" />
+            <span className="flex-1">Grand AI Tahlilchi</span>
+            <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-amber-400 text-slate-950">AI</span>
+          </Link>
+
           {/* Kategoriyalar (ochiluvchi) */}
           <div>
             <button
               onClick={() => setCatsOpen(!catsOpen)}
               className={`w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-bold transition-all border ${
-                isActive('/kategoriya') ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'text-slate-400 hover:text-white hover:bg-slate-900/60 border-transparent'
+                isActive('/kategoriya') ? 'bg-amber-400/10 text-amber-300 border-amber-400/30' : 'text-slate-400 hover:text-white hover:bg-slate-900/60 border-transparent'
               }`}
             >
               <Layers className="h-4 w-4 shrink-0" />
@@ -111,7 +128,7 @@ export default function SiteSidebar({ open, onClose }) {
                     key={cat}
                     to={`/kategoriya/${encodeURIComponent(String(cat).toLowerCase())}`}
                     onClick={onClose}
-                    className="flex items-center justify-between py-1.5 px-2 rounded-lg text-[11px] text-slate-500 hover:text-emerald-400 hover:bg-slate-900/60 transition-all"
+                    className="flex items-center justify-between py-1.5 px-2 rounded-lg text-[11px] text-slate-500 hover:text-amber-300 hover:bg-slate-900/60 transition-all"
                   >
                     <span className="truncate">{cat}</span>
                   </Link>
@@ -130,15 +147,15 @@ export default function SiteSidebar({ open, onClose }) {
             <Percent className="h-4 w-4 shrink-0" /> Chegirmalar
           </Link>
           <Link to="/solishtirish" onClick={onClose} className={linkCls('/solishtirish')}>
-            <Scale className="h-4 w-4 shrink-0" /> Solishtirish {badge(compareCount, 'bg-blue-500/20 text-blue-400 border border-blue-500/30')}
+            <Scale className="h-4 w-4 shrink-0" /> Solishtirish {badge(compareCount, 'bg-amber-400/20 text-amber-300 border border-amber-400/30')}
           </Link>
 
           {sectionTitle('/// Do\'kon')}
           <Link to="/sevimlilar" onClick={onClose} className={linkCls('/sevimlilar')}>
-            <Heart className="h-4 w-4 shrink-0" /> Sevimlilar {badge(wishlistCount, 'bg-rose-500/20 text-rose-400 border border-rose-500/30')}
+            <Heart className="h-4 w-4 shrink-0" /> Sevimlilar {badge(wishlistCount, 'bg-amber-400/20 text-amber-300 border border-amber-400/30')}
           </Link>
           <Link to="/savat" onClick={onClose} className={linkCls('/savat')}>
-            <ShoppingCart className="h-4 w-4 shrink-0" /> Savat {badge(cartCount, 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30')}
+            <ShoppingCart className="h-4 w-4 shrink-0" /> Savat {badge(cartCount, 'bg-amber-400/20 text-amber-300 border border-amber-400/30')}
           </Link>
           <Link to="/buyurtmalarim" onClick={onClose} className={linkCls('/buyurtmalarim')}>
             <ReceiptText className="h-4 w-4 shrink-0" /> Buyurtmalarim
@@ -179,7 +196,7 @@ export default function SiteSidebar({ open, onClose }) {
               </Link>
               <button
                 onClick={() => { siteLogout(); onClose(); }}
-                className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-400 hover:text-rose-400 hover:bg-rose-500/5 transition-all border border-transparent w-full text-left"
+                className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-900/60 transition-all border border-transparent w-full text-left"
               >
                 <LogOut className="h-4 w-4 shrink-0" /> Saytdan chiqish
               </button>
@@ -200,18 +217,18 @@ export default function SiteSidebar({ open, onClose }) {
           </Link>
           {!isAuthenticated && (
             <Link to="/login" onClick={onClose} className={linkCls('/login')}>
-              <Compass className="h-4 w-4 shrink-0" /> Root kirish
+              <Compass className="h-4 w-4 shrink-0" /> Admin kirish
             </Link>
           )}
 
           {/* Aksiya kartasi */}
-          <div className="mt-6 rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-slate-950/40 p-4">
+          <div className="mt-6 rounded-2xl border border-amber-400/20 bg-gradient-to-br from-amber-400/10 to-slate-950/40 p-4">
             <div className="flex items-center gap-2 mb-1.5">
-              <Sparkles className="h-4 w-4 text-emerald-400" />
+              <Sparkles className="h-4 w-4 text-amber-400" />
               <p className="text-[10px] font-black text-white uppercase tracking-wider">Maxsus taklif</p>
             </div>
             <p className="text-[10px] text-slate-400 leading-relaxed">
-              Kupon: <span className="text-emerald-400 font-mono font-bold">WELCOME10</span> — 500 000 so'mdan yuqori xaridlarda 10% chegirma!
+              Kupon: <span className="text-amber-300 font-bold">WELCOME10</span> — 500 000 so'mdan yuqori xaridlarda 10% chegirma!
             </p>
           </div>
         </nav>
@@ -221,8 +238,8 @@ export default function SiteSidebar({ open, onClose }) {
           <div className="flex items-center justify-between rounded-xl border border-slate-900 bg-slate-950/60 px-3 py-2.5">
             <div className="flex items-center gap-2">
               <span className="relative flex h-2 w-2">
-                <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping ${networkStatus === 'online' ? 'bg-emerald-400' : 'bg-rose-500'}`} />
-                <span className={`relative inline-flex rounded-full h-2 w-2 ${networkStatus === 'online' ? 'bg-emerald-400' : 'bg-rose-500'}`} />
+                <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping ${networkStatus === 'online' ? 'bg-amber-400' : 'bg-rose-500'}`} />
+                <span className={`relative inline-flex rounded-full h-2 w-2 ${networkStatus === 'online' ? 'bg-amber-400' : 'bg-rose-500'}`} />
               </span>
               <span className="text-[9px] font-mono font-bold text-slate-400 uppercase">{networkStatus === 'online' ? 'Tarmoq: Ulangan' : 'Tarmoq: Uzilgan'}</span>
             </div>

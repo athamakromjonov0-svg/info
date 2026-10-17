@@ -85,8 +85,11 @@ export default function CheckoutPage() {
   const [orderNotes, setOrderNotes] = useState('');
   const [activeStep, setActiveStep] = useState(1);
 
-  const formatPrice = (price) =>
-    new Intl.NumberFormat('uz-UZ').format(Math.round(price)) + " so'm";
+  const formatPrice = (price) => {
+    const n = Number(price);
+    if (!Number.isFinite(n) || n <= 0) return '';
+    return new Intl.NumberFormat('uz-UZ').format(Math.round(n)) + " so'm";
+  };
 
   const getItemPrice = (item) => {
     const originalPrice = Number(item.price) || 0;
@@ -192,20 +195,20 @@ export default function CheckoutPage() {
   if (cart.length === 0) {
     return (
       <div className="min-h-screen bg-slate-950 text-white font-sans relative overflow-hidden flex items-center justify-center">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-amber-500/5 rounded-full blur-[120px] pointer-events-none" />
         <div className="relative z-10 text-center px-4 max-w-lg">
           <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-3xl border border-slate-900 bg-slate-900/40 backdrop-blur-xl">
             <CreditCard className="h-10 w-10 text-slate-600" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-widest mb-3">
-            Savat <span className="text-emerald-400">Bo'sh</span>
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold mb-3">
+            Savat <span className="text-amber-400">Bo'sh</span>
           </h1>
           <p className="text-sm text-slate-400 font-light leading-relaxed mb-8">
             Buyurtma rasmiylashtirish uchun avval savatga mahsulot qo'shing.
           </p>
           <Link
             to="/katalog"
-            className="inline-flex items-center gap-2 rounded-xl bg-emerald-400 px-6 py-3.5 text-xs font-black uppercase tracking-wider text-slate-950 hover:bg-emerald-300 transition-all"
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 px-7 py-3.5 text-sm font-bold text-slate-950 hover:shadow-lg hover:shadow-amber-500/30 transition-all"
           >
             <ArrowLeft className="h-4 w-4" /> Katalogga qaytish
           </Link>
@@ -222,21 +225,21 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans pb-20 relative overflow-hidden">
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-amber-500/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-amber-500/5 rounded-full blur-[150px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 relative z-10">
         {/* Yuqori panel */}
         <div className="flex items-center justify-between mb-8">
           <button
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-emerald-400 transition-colors bg-slate-900/50 border border-slate-900 px-4 py-2 rounded-xl backdrop-blur-md"
+            className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-amber-300 transition-colors bg-slate-900/50 border border-slate-900 px-4 py-2 rounded-xl backdrop-blur-md"
           >
             <ArrowLeft className="h-4 w-4" /> Orqaga
           </button>
-          <h1 className="text-xl sm:text-2xl font-black uppercase tracking-widest flex items-center gap-3">
-            <CreditCard className="h-6 w-6 text-emerald-400" />
-            Buyurtma <span className="text-emerald-400">Rasmiylashtirish</span>
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold flex items-center gap-3">
+            <CreditCard className="h-6 w-6 text-amber-400" />
+            Buyurtma <span className="text-amber-400">Rasmiylashtirish</span>
           </h1>
         </div>
 
@@ -248,18 +251,18 @@ export default function CheckoutPage() {
                 onClick={() => setActiveStep(step.num)}
                 className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl border text-xs font-black uppercase tracking-wider transition-all ${
                   activeStep === step.num
-                    ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-400'
+                    ? 'bg-amber-400/10 border-amber-400/40 text-amber-300'
                     : activeStep > step.num
-                    ? 'bg-emerald-500/5 border-emerald-500/20 text-emerald-400 opacity-60'
+                    ? 'bg-amber-400/5 border-amber-400/20 text-amber-300 opacity-60'
                     : 'bg-slate-900/40 border-slate-900 text-slate-500'
                 }`}
               >
                 <step.icon className="h-3.5 w-3.5" />
                 <span className="hidden sm:block">{step.label}</span>
-                <span className="text-[9px] font-mono">{step.num}/3</span>
+                <span className="text-[9px]">{step.num}/3</span>
               </button>
               {idx < steps.length - 1 && (
-                <div className={`h-px w-4 sm:w-8 ${activeStep > step.num ? 'bg-emerald-500/40' : 'bg-slate-900'}`} />
+                <div className={`h-px w-4 sm:w-8 ${activeStep > step.num ? 'bg-amber-400/40' : 'bg-slate-900'}`} />
               )}
             </div>
           ))}
@@ -271,12 +274,12 @@ export default function CheckoutPage() {
             {/* Manzil bo'limi */}
             <div className="p-6 rounded-2xl border border-slate-900 bg-slate-900/30 backdrop-blur-md">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-black uppercase tracking-widest text-white flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-emerald-400" /> Yetkazib berish manzili
+                <h2 className="font-serif text-lg font-bold text-white flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-amber-400" /> Yetkazib berish manzili
                 </h2>
                 <button
                   onClick={() => setShowAddressForm(!showAddressForm)}
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 px-3 py-2 rounded-xl transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-300 hover:text-amber-200 bg-amber-400/10 border border-amber-400/30 px-3 py-2 rounded-xl transition-colors"
                 >
                   <Plus className="h-3.5 w-3.5" /> Yangi manzil
                 </button>
@@ -290,34 +293,34 @@ export default function CheckoutPage() {
                       key={addr.id}
                       className={`p-4 rounded-xl border transition-all ${
                         addr.isDefault
-                          ? 'border-emerald-500/40 bg-emerald-500/5'
+                          ? 'border-amber-400/40 bg-amber-400/5'
                           : 'border-slate-800 bg-slate-950/40'
                       }`}
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex items-start gap-3">
                           {addr.type === 'office' ? (
-                            <Building2 className="h-5 w-5 text-blue-400 shrink-0 mt-0.5" />
+                            <Building2 className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
                           ) : (
-                            <Home className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
+                            <Home className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
                           )}
                           <div>
                             <p className="text-sm font-bold text-white">
                               {addr.name} {addr.isDefault && (
-                                <span className="ml-2 text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">ASOSIY</span>
+                                <span className="ml-2 text-[9px] font-bold text-amber-300 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/30">ASOSIY</span>
                               )}
                             </p>
                             <p className="text-xs text-slate-400 mt-1">
                               {addr.region}, {addr.city}, {addr.street} {addr.house}
                             </p>
-                            <p className="text-xs text-slate-500 mt-0.5 font-mono">{addr.phone}</p>
+                            <p className="text-xs text-slate-500 mt-0.5">{addr.phone}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
                           {!addr.isDefault && (
                             <button
                               onClick={() => setDefaultAddress(addr.id)}
-                              className="text-[10px] font-bold text-slate-400 hover:text-emerald-400 transition-colors"
+                              className="text-[10px] font-bold text-slate-400 hover:text-amber-300 transition-colors"
                             >
                               Asosiy qilish
                             </button>
@@ -344,42 +347,42 @@ export default function CheckoutPage() {
                       placeholder="Qabul qiluvchi ismi *"
                       value={newAddress.name}
                       onChange={(e) => setNewAddress({ ...newAddress, name: e.target.value })}
-                      className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-emerald-500/30 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-amber-400/40 focus:outline-none"
                     />
                     <input
                       type="tel"
                       placeholder="Telefon raqami *"
                       value={newAddress.phone}
                       onChange={(e) => setNewAddress({ ...newAddress, phone: e.target.value })}
-                      className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-emerald-500/30 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-amber-400/40 focus:outline-none"
                     />
                     <input
                       type="text"
                       placeholder="Viloyat *"
                       value={newAddress.region}
                       onChange={(e) => setNewAddress({ ...newAddress, region: e.target.value })}
-                      className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-emerald-500/30 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-amber-400/40 focus:outline-none"
                     />
                     <input
                       type="text"
                       placeholder="Shahar *"
                       value={newAddress.city}
                       onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })}
-                      className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-emerald-500/30 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-amber-400/40 focus:outline-none"
                     />
                     <input
                       type="text"
                       placeholder="Ko'cha *"
                       value={newAddress.street}
                       onChange={(e) => setNewAddress({ ...newAddress, street: e.target.value })}
-                      className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-emerald-500/30 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-amber-400/40 focus:outline-none"
                     />
                     <input
                       type="text"
                       placeholder="Uy / Xonadon"
                       value={newAddress.house}
                       onChange={(e) => setNewAddress({ ...newAddress, house: e.target.value })}
-                      className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-emerald-500/30 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-amber-400/40 focus:outline-none"
                     />
                   </div>
                   <div className="grid sm:grid-cols-2 gap-3">
@@ -387,7 +390,7 @@ export default function CheckoutPage() {
                       <button
                         onClick={() => setNewAddress({ ...newAddress, type: 'home' })}
                         className={`flex-1 flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition-all ${
-                          newAddress.type === 'home' ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-400' : 'border-slate-800 text-slate-500'
+                          newAddress.type === 'home' ? 'border-amber-400/40 bg-amber-400/10 text-amber-300' : 'border-slate-800 text-slate-500'
                         }`}
                       >
                         <Home className="h-3.5 w-3.5" /> Uy
@@ -395,7 +398,7 @@ export default function CheckoutPage() {
                       <button
                         onClick={() => setNewAddress({ ...newAddress, type: 'office' })}
                         className={`flex-1 flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition-all ${
-                          newAddress.type === 'office' ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-400' : 'border-slate-800 text-slate-500'
+                          newAddress.type === 'office' ? 'border-amber-400/40 bg-amber-400/10 text-amber-300' : 'border-slate-800 text-slate-500'
                         }`}
                       >
                         <Building2 className="h-3.5 w-3.5" /> Ish
@@ -406,20 +409,20 @@ export default function CheckoutPage() {
                       placeholder="Mo'ljal (ixtiyoriy)"
                       value={newAddress.landmark}
                       onChange={(e) => setNewAddress({ ...newAddress, landmark: e.target.value })}
-                      className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-emerald-500/30 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-amber-400/40 focus:outline-none"
                     />
                   </div>
                   <textarea
                     placeholder="Qo'shimcha izoh (ixtiyoriy)"
                     value={newAddress.comment}
                     onChange={(e) => setNewAddress({ ...newAddress, comment: e.target.value })}
-                    className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-emerald-500/30 focus:outline-none resize-none"
+                    className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-amber-400/40 focus:outline-none resize-none"
                     rows={2}
                   />
                   <div className="flex gap-2">
                     <button
                       onClick={handleAddAddress}
-                      className="flex-1 rounded-xl bg-emerald-400 py-2.5 text-xs font-black uppercase tracking-wider text-slate-950 hover:bg-emerald-300 transition-all"
+                      className="flex-1 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 py-3 text-sm font-bold uppercase tracking-wider text-slate-950 hover:shadow-lg hover:shadow-amber-500/25 transition-all"
                     >
                       Manzilni saqlash
                     </button>
@@ -441,8 +444,8 @@ export default function CheckoutPage() {
 
               {/* Yetkazib berish zonasi */}
               <div className="mt-4 pt-4 border-t border-slate-900">
-                <h3 className="text-xs font-black text-white uppercase tracking-widest mb-3 flex items-center gap-2">
-                  <Truck className="h-4 w-4 text-blue-400" /> Yetkazib berish hududi
+                <h3 className="font-serif text-base font-bold text-white mb-3 flex items-center gap-2">
+                  <Truck className="h-4 w-4 text-amber-400" /> Yetkazib berish hududi
                 </h3>
                 <div className="grid sm:grid-cols-2 gap-2">
                   {deliveryZones.map((zone) => (
@@ -451,19 +454,19 @@ export default function CheckoutPage() {
                       onClick={() => setSelectedDeliveryZone(zone.id)}
                       className={`p-3 rounded-xl border text-left transition-all ${
                         selectedDeliveryZone === zone.id
-                          ? 'border-blue-500/40 bg-blue-500/5'
+                          ? 'border-amber-400/40 bg-amber-400/5'
                           : 'border-slate-800 bg-slate-950/40 hover:border-slate-700'
                       }`}
                     >
                       <div className="flex items-center gap-2">
-                        <MapPin className={`h-4 w-4 ${selectedDeliveryZone === zone.id ? 'text-blue-400' : 'text-slate-600'}`} />
+                        <MapPin className={`h-4 w-4 ${selectedDeliveryZone === zone.id ? 'text-amber-400' : 'text-slate-600'}`} />
                         <span className="text-xs font-bold text-white">{zone.name}</span>
                       </div>
                       <div className="mt-1 flex items-center justify-between text-[10px]">
-                        <span className="text-slate-500 font-mono flex items-center gap-1">
+                        <span className="text-slate-500 flex items-center gap-1">
                           <Clock className="h-3 w-3" /> {zone.days}
                         </span>
-                        <span className={`font-mono font-bold ${subtotal >= zone.freeFrom ? 'text-emerald-400' : 'text-slate-300'}`}>
+                        <span className={`font-mono font-bold ${subtotal >= zone.freeFrom ? 'text-amber-300' : 'text-slate-300'}`}>
                           {subtotal >= zone.freeFrom ? 'BEPUL' : formatPrice(zone.price)}
                         </span>
                       </div>
@@ -474,21 +477,20 @@ export default function CheckoutPage() {
             </div>
 
             {/* To'lov usuli */}
-            <div className="p-6 rounded-2xl border border-slate-900 bg-slate-900/30 backdrop-blur-md">
-              <h2 className="text-sm font-black uppercase tracking-widest text-white flex items-center gap-2 mb-4">
-                <CreditCard className="h-4 w-4 text-emerald-400" /> To'lov usuli
+            <div className="p-6 rounded-2xl border border-slate-900 bg-slate-900/30 backdrop-blur-md">                <h2 className="font-serif text-lg font-bold text-white flex items-center gap-2 mb-4">
+                <CreditCard className="h-4 w-4 text-amber-400" /> To'lov usuli
               </h2>
               <div className="grid sm:grid-cols-3 gap-3">
                 <button
                   onClick={() => setPaymentMethod('cash')}
                   className={`p-4 rounded-xl border text-left transition-all ${
                     paymentMethod === 'cash'
-                      ? 'border-emerald-500/40 bg-emerald-500/5'
+                      ? 'border-amber-400/40 bg-amber-400/5'
                       : 'border-slate-800 bg-slate-950/40 hover:border-slate-700'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Banknote className="h-5 w-5 text-emerald-400" />
+                    <Banknote className="h-5 w-5 text-amber-400" />
                     <div>
                       <p className="text-sm font-bold text-white">Naqd pul</p>
                       <p className="text-[10px] text-slate-500 mt-0.5">Yetkazib berishda</p>
@@ -499,12 +501,12 @@ export default function CheckoutPage() {
                   onClick={() => setPaymentMethod('card')}
                   className={`p-4 rounded-xl border text-left transition-all ${
                     paymentMethod === 'card'
-                      ? 'border-emerald-500/40 bg-emerald-500/5'
+                      ? 'border-amber-400/40 bg-amber-400/5'
                       : 'border-slate-800 bg-slate-950/40 hover:border-slate-700'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <CreditCard className="h-5 w-5 text-blue-400" />
+                    <CreditCard className="h-5 w-5 text-amber-400" />
                     <div>
                       <p className="text-sm font-bold text-white">Karta orqali</p>
                       <p className="text-[10px] text-slate-500 mt-0.5">Onlayn to'lov</p>
@@ -515,12 +517,12 @@ export default function CheckoutPage() {
                   onClick={() => setPaymentMethod('click')}
                   className={`p-4 rounded-xl border text-left transition-all ${
                     paymentMethod === 'click'
-                      ? 'border-emerald-500/40 bg-emerald-500/5'
+                      ? 'border-amber-400/40 bg-amber-400/5'
                       : 'border-slate-800 bg-slate-950/40 hover:border-slate-700'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Smartphone className="h-5 w-5 text-purple-400" />
+                    <Smartphone className="h-5 w-5 text-amber-400" />
                     <div>
                       <p className="text-sm font-bold text-white">Click</p>
                       <p className="text-[10px] text-slate-500 mt-0.5">Mobil ilova</p>
@@ -536,7 +538,7 @@ export default function CheckoutPage() {
                     <h3 className="text-xs font-black text-white uppercase tracking-widest">Saqlangan kartalar</h3>
                     <button
                       onClick={() => setShowCardForm(!showCardForm)}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-400 hover:text-blue-300 bg-blue-500/10 border border-blue-500/20 px-3 py-1.5 rounded-xl transition-colors"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-300 hover:text-amber-200 bg-amber-400/10 border border-amber-400/20 px-3 py-1.5 rounded-xl transition-colors"
                     >
                       <Plus className="h-3.5 w-3.5" /> Karta qo'shish
                     </button>
@@ -548,16 +550,16 @@ export default function CheckoutPage() {
                         <div
                           key={card.id}
                           className={`p-3 rounded-xl border transition-all ${
-                            card.isDefault ? 'border-blue-500/40 bg-blue-500/5' : 'border-slate-800 bg-slate-950/40'
+                            card.isDefault ? 'border-amber-400/40 bg-amber-400/5' : 'border-slate-800 bg-slate-950/40'
                           }`}
                         >
                           <div className="flex items-center gap-3">
-                            <div className="flex h-8 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
+                            <div className="flex h-8 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-amber-400 to-yellow-500 text-slate-950">
                               <CardIcon className="h-4 w-4" />
                             </div>
                             <div className="flex-1">
                               <p className="text-xs font-bold text-white">{card.brand}</p>
-                              <p className="text-[10px] text-slate-500 font-mono">•••• •••• •••• {card.last4}</p>
+                              <p className="text-[10px] text-slate-500">•••• •••• •••• {card.last4}</p>
                             </div>
                             <button
                               onClick={() => deleteCard(card.id)}
@@ -569,7 +571,7 @@ export default function CheckoutPage() {
                           {!card.isDefault && (
                             <button
                               onClick={() => setDefaultCard(card.id)}
-                              className="mt-2 text-[10px] font-bold text-slate-400 hover:text-blue-400 transition-colors"
+                              className="mt-2 text-[10px] font-bold text-slate-400 hover:text-amber-300 transition-colors"
                             >
                               Asosiy qilish
                             </button>
@@ -589,7 +591,7 @@ export default function CheckoutPage() {
                             placeholder="Karta raqami"
                             value={newCard.cardNumber}
                             onChange={(e) => setNewCard({ ...newCard, cardNumber: e.target.value.replace(/[^\d\s]/g, '').slice(0, 19) })}
-                            className="w-full rounded-xl border border-slate-800 bg-slate-950 pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-blue-500/30 focus:outline-none"
+                            className="w-full rounded-xl border border-slate-800 bg-slate-950 pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-amber-400/40 focus:outline-none"
                           />
                         </div>
                         <input
@@ -597,7 +599,7 @@ export default function CheckoutPage() {
                           placeholder="Karta egasi ismi"
                           value={newCard.cardHolder}
                           onChange={(e) => setNewCard({ ...newCard, cardHolder: e.target.value.toUpperCase() })}
-                          className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-blue-500/30 focus:outline-none"
+                          className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-amber-400/40 focus:outline-none"
                         />
                         <div className="grid grid-cols-2 gap-3">
                           <input
@@ -605,20 +607,20 @@ export default function CheckoutPage() {
                             placeholder="MM/YY"
                             value={newCard.expiry}
                             onChange={(e) => setNewCard({ ...newCard, expiry: e.target.value })}
-                            className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-blue-500/30 focus:outline-none"
+                            className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-amber-400/40 focus:outline-none"
                           />
                           <input
                             type="password"
                             placeholder="CVV"
                             value={newCard.cvv}
                             onChange={(e) => setNewCard({ ...newCard, cvv: e.target.value })}
-                            className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-blue-500/30 focus:outline-none"
+                            className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-amber-400/40 focus:outline-none"
                           />
                         </div>
                       </div>
                       <button
                         onClick={handleAddCard}
-                        className="w-full rounded-xl bg-blue-500 py-2.5 text-xs font-black uppercase tracking-wider text-white hover:bg-blue-400 transition-all"
+                        className="w-full rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 py-2.5 text-xs font-black uppercase tracking-wider text-slate-950 shadow-glow-sm hover:from-amber-300 hover:to-yellow-400 transition-all"
                       >
                         Kartani saqlash
                       </button>
@@ -635,27 +637,26 @@ export default function CheckoutPage() {
             </div>
 
             {/* Kupon va bonus */}
-            <div className="p-6 rounded-2xl border border-slate-900 bg-slate-900/30 backdrop-blur-md">
-              <h2 className="text-sm font-black uppercase tracking-widest text-white flex items-center gap-2 mb-4">
-                <Ticket className="h-4 w-4 text-emerald-400" /> Kupon va Bonuslar
+            <div className="p-6 rounded-2xl border border-slate-900 bg-slate-900/30 backdrop-blur-md">                <h2 className="font-serif text-lg font-bold text-white flex items-center gap-2 mb-4">
+                <Ticket className="h-4 w-4 text-amber-400" /> Kupon va Bonuslar
               </h2>
 
               <div className="grid sm:grid-cols-2 gap-3 mb-4">
                 {/* Kupon */}
                 <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/40">
                   <div className="flex items-center gap-2 mb-2">
-                    <BadgePercent className="h-4 w-4 text-emerald-400" />
+                    <BadgePercent className="h-4 w-4 text-amber-400" />
                     <span className="text-xs font-bold text-white">Chegirma kuponi</span>
                   </div>
                   {appliedCoupon ? (
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="text-lg font-black text-emerald-400 font-mono">{appliedCoupon.code}</span>
-                        <span className="text-[10px] text-slate-500 font-mono">-{appliedCoupon.discount}%</span>
+                        <span className="text-lg font-black text-amber-300">{appliedCoupon.code}</span>
+                        <span className="text-[10px] text-slate-500">-{appliedCoupon.discount}%</span>
                       </div>
                       <button
                         onClick={removeCoupon}
-                        className="text-[10px] font-bold text-rose-400 hover:text-rose-300 transition-colors"
+                        className="text-[10px] font-bold text-amber-300 hover:text-amber-200 transition-colors"
                       >
                         O'chirish
                       </button>
@@ -667,17 +668,17 @@ export default function CheckoutPage() {
                         placeholder="Kupon kodini kiriting"
                         value={couponCode}
                         onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                        className="flex-1 rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-xs text-white placeholder-slate-600 focus:border-emerald-500/30 focus:outline-none uppercase font-mono"
+                        className="flex-1 rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-xs text-white placeholder-slate-600 focus:border-amber-400/40 focus:outline-none uppercase"
                       />
                       <button
                         onClick={handleApplyCoupon}
-                        className="rounded-xl bg-emerald-500 px-4 py-2 text-xs font-black text-slate-950 hover:bg-emerald-400 transition-all"
+                        className="rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 px-4 py-2 text-sm font-bold text-slate-950 hover:shadow-lg hover:shadow-amber-500/25 transition-all"
                       >
                         Qo'llash
                       </button>
                     </div>
                   )}
-                  <p className="mt-2 text-[9px] text-slate-600 font-mono">
+                  <p className="mt-2 text-[9px] text-slate-600">
                     Mavjud: WELCOME10, SUMMER20, NEWYEAR30
                   </p>
                 </div>
@@ -691,7 +692,7 @@ export default function CheckoutPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <span className="text-lg font-black text-amber-400">{bonusPoints}</span>
-                      <span className="text-[10px] text-slate-500 ml-1 font-mono">ball</span>
+                      <span className="text-[10px] text-slate-500 ml-1">ball</span>
                     </div>
                     <button
                       onClick={handleToggleBonus}
@@ -706,7 +707,7 @@ export default function CheckoutPage() {
                     </button>
                   </div>
                   {useBonus && bonusDiscount > 0 && (
-                    <p className="mt-2 text-[10px] text-emerald-400 font-mono">
+                    <p className="mt-2 text-[10px] text-amber-300">
                       -{formatPrice(bonusDiscount)} chegirma qo'llandi
                     </p>
                   )}
@@ -718,9 +719,8 @@ export default function CheckoutPage() {
             </div>
 
             {/* Mahsulotlar ro'yxati */}
-            <div className="p-6 rounded-2xl border border-slate-900 bg-slate-900/30 backdrop-blur-md">
-              <h2 className="text-sm font-black uppercase tracking-widest text-white flex items-center gap-2 mb-4">
-                <Truck className="h-4 w-4 text-emerald-400" /> Buyurtma tarkibi ({cart.length} ta)
+            <div className="p-6 rounded-2xl border border-slate-900 bg-slate-900/30 backdrop-blur-md">                <h2 className="font-serif text-lg font-bold text-white flex items-center gap-2 mb-4">
+                <Truck className="h-4 w-4 text-amber-400" /> Buyurtma tarkibi ({cart.length} ta)
               </h2>
               <div className="space-y-3">
                 {cart.map((item) => {
@@ -736,20 +736,20 @@ export default function CheckoutPage() {
                         className="w-14 h-14 rounded-lg object-contain bg-slate-900 p-1"
                       />
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-bold text-white truncate">{itemName}</p>
+                        <p className="font-serif text-sm font-bold text-white truncate">{itemName}</p>
                         <div className="flex items-center gap-2 mt-0.5">
-                          <p className="text-[10px] text-slate-500 font-mono">Miqdor: {item.quantity}</p>
+                          <p className="text-[10px] text-slate-500">Miqdor: {item.quantity}</p>
                           {hasDiscount && (
-                            <span className="text-[9px] font-mono text-rose-400 bg-rose-500/10 px-1.5 py-0.5 rounded">-{item.discount}%</span>
+                            <span className="text-[9px] text-amber-300 bg-amber-400/10 px-1.5 py-0.5 rounded">-{item.discount}%</span>
                           )}
                         </div>
                       </div>
                       <div className="text-right shrink-0">
-                        <span className="font-mono font-bold text-emerald-400 text-xs">
+                        <span className="font-mono font-bold text-amber-300 text-xs">
                           {formatPrice(itemPrice * item.quantity)}
                         </span>
                         {hasDiscount && (
-                          <p className="text-[9px] text-slate-600 line-through font-mono">
+                          <p className="text-[9px] text-slate-600 line-through">
                             {formatPrice(Number(item.price) * item.quantity)}
                           </p>
                         )}
@@ -765,7 +765,7 @@ export default function CheckoutPage() {
                   placeholder="Buyurtma izohi (ixtiyoriy) — masalan, qo'ng'iroq qilish vaqti, eslatmalar..."
                   value={orderNotes}
                   onChange={(e) => setOrderNotes(e.target.value)}
-                  className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-3 text-xs text-white placeholder-slate-600 focus:border-emerald-500/30 focus:outline-none resize-none"
+                  className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-3 text-xs text-white placeholder-slate-600 focus:border-amber-400/40 focus:outline-none resize-none"
                   rows={2}
                 />
               </div>
@@ -774,9 +774,8 @@ export default function CheckoutPage() {
 
           {/* O'ng qism: Xulosa */}
           <div className="lg:col-span-4 space-y-4 lg:sticky lg:top-24">
-            <div className="p-6 rounded-2xl border border-slate-900 bg-slate-900/30 backdrop-blur-md space-y-4">
-              <h2 className="text-sm font-black uppercase tracking-widest text-white flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-emerald-400" /> Buyurtma Xulosasi
+            <div className="p-6 rounded-2xl border border-slate-900 bg-slate-900/30 backdrop-blur-md space-y-4">                <h2 className="font-serif text-lg font-bold text-white flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-amber-400" /> Buyurtma Xulosasi
               </h2>
 
               <div className="space-y-2.5 text-sm">
@@ -785,7 +784,7 @@ export default function CheckoutPage() {
                   <span className="font-mono font-bold text-white">{formatPrice(subtotal)}</span>
                 </div>
                 {appliedCoupon && couponDiscount > 0 && (
-                  <div className="flex justify-between text-emerald-400">
+                  <div className="flex justify-between text-amber-300">
                     <span className="flex items-center gap-1">
                       <BadgePercent className="h-3.5 w-3.5" /> Kupon ({appliedCoupon.code})
                     </span>
@@ -806,7 +805,7 @@ export default function CheckoutPage() {
                   </span>
                   <span className="font-mono font-bold text-white">
                     {deliveryFee === 0 ? (
-                      <span className="text-emerald-400">BEPUL</span>
+                      <span className="text-amber-300">BEPUL</span>
                     ) : (
                       formatPrice(deliveryFee)
                     )}
@@ -814,7 +813,7 @@ export default function CheckoutPage() {
                 </div>
                 <div className="border-t border-slate-900 pt-3 flex justify-between items-center">
                   <span className="font-bold text-white uppercase tracking-wider text-xs">Jami</span>
-                  <span className="font-mono font-black text-emerald-400 text-xl">
+                  <span className="font-black text-amber-300 text-2xl">
                     {formatPrice(total)}
                   </span>
                 </div>
@@ -822,7 +821,7 @@ export default function CheckoutPage() {
 
               <button
                 onClick={handlePlaceOrder}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-400 py-3.5 text-xs font-black uppercase tracking-wider text-slate-950 hover:bg-emerald-300 hover:shadow-lg hover:shadow-emerald-500/20 active:scale-[0.99] transition-all"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 py-4 text-sm font-black uppercase tracking-wider text-slate-950 hover:shadow-lg hover:shadow-amber-500/30 active:scale-[0.99] transition-all"
               >
                 <CreditCard className="h-4 w-4" /> Buyurtmani Tasdiqlash
               </button>
@@ -852,15 +851,15 @@ export default function CheckoutPage() {
             {/* Kafolat kartalari */}
             <div className="grid grid-cols-3 gap-3">
               <div className="p-3 rounded-xl border border-slate-900/60 bg-slate-900/20 flex flex-col items-center gap-2 text-center">
-                <ShieldCheck className="h-5 w-5 text-emerald-400" />
-                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">1 yil kafolat</p>
+                <ShieldCheck className="h-5 w-5 text-amber-400" />
+                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">2 yil kafolat</p>
               </div>
               <div className="p-3 rounded-xl border border-slate-900/60 bg-slate-900/20 flex flex-col items-center gap-2 text-center">
-                <Truck className="h-5 w-5 text-blue-400" />
+                <Truck className="h-5 w-5 text-amber-400" />
                 <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Tezkor yetkazish</p>
               </div>
               <div className="p-3 rounded-xl border border-slate-900/60 bg-slate-900/20 flex flex-col items-center gap-2 text-center">
-                <ShieldCheck className="h-5 w-5 text-purple-400" />
+                <ShieldCheck className="h-5 w-5 text-amber-400" />
                 <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Xavfsiz to'lov</p>
               </div>
             </div>

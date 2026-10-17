@@ -70,11 +70,11 @@ export default function FaqPage() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-slate-950 font-sans select-none relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(139,92,246,0.05),transparent_40%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(255,193,7,0.05),transparent_40%)] pointer-events-none" />
 
       <div className="relative z-10 mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         <PageHero
-          badge="/// FAQ"
+          badge="Ko'p so'raladigan savollar"
           title="Ko'p so'raladigan"
           highlight="savollar"
           description="Buyurtma, yetkazib berish, to'lov va qaytarish bo'yicha eng ko'p so'raladigan savollarga javoblar."
@@ -89,7 +89,7 @@ export default function FaqPage() {
             value={query}
             onChange={(e) => { setQuery(e.target.value); setOpen(null); }}
             placeholder="Savolingizni qidiring..."
-            className="w-full bg-slate-900/50 border border-slate-800 rounded-2xl pl-11 pr-4 py-3 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-purple-500/30 focus:ring-1 focus:ring-purple-500/10 transition-all"
+            className="w-full bg-slate-900/50 border border-slate-800 rounded-2xl pl-11 pr-4 py-3 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-amber-400/40 focus:ring-1 focus:ring-amber-400/10 transition-all"
           />
         </div>
 
@@ -98,7 +98,7 @@ export default function FaqPage() {
           <div className="rounded-3xl border border-slate-900 bg-slate-950/60 p-12 text-center">
             <Search className="h-10 w-10 text-slate-700 mx-auto mb-3" />
             <p className="text-sm text-slate-400">Hech narsa topilmadi. Savolingiz bo'lsa, bizga yozing.</p>
-            <Link to="/aloqa" className="mt-4 inline-flex items-center gap-2 rounded-xl bg-purple-500 px-5 py-2.5 text-xs font-black text-white uppercase tracking-widest hover:bg-purple-400 transition-colors">
+            <Link to="/aloqa" className="mt-4 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 px-5 py-2.5 text-xs font-black text-slate-950 uppercase tracking-widest shadow-glow-sm hover:from-amber-300 hover:to-yellow-400 transition-colors">
               <MessageCircle className="h-3.5 w-3.5" /> Aloqa bo'limi
             </Link>
           </div>
@@ -107,7 +107,7 @@ export default function FaqPage() {
             {filtered.map(group => (
               <div key={group.category}>
                 <h3 className="text-xs font-black text-white uppercase tracking-widest mb-3 flex items-center gap-2">
-                  <group.icon className="h-4 w-4 text-purple-400" /> {group.category}
+                  <group.icon className="h-4 w-4 text-amber-400" /> {group.category}
                 </h3>
                 <div className="space-y-2.5">
                   {group.questions.map((item, idx) => {
@@ -115,14 +115,14 @@ export default function FaqPage() {
                     const isOpen = open === key;
                     return (
                       <div key={key} className={`rounded-2xl border transition-all duration-200 ${
-                        isOpen ? 'border-purple-500/30 bg-purple-500/5' : 'border-slate-900 bg-slate-950/60 hover:border-slate-700'
+                        isOpen ? 'border-amber-400/30 bg-amber-400/5' : 'border-slate-900 bg-slate-950/60 hover:border-slate-700'
                       }`}>
                         <button
                           onClick={() => setOpen(isOpen ? null : key)}
                           className="w-full flex items-center justify-between gap-3 px-5 py-4 text-left"
                         >
                           <span className="text-sm font-bold text-white">{item.q}</span>
-                          <ChevronDown className={`h-4 w-4 shrink-0 text-slate-500 transition-transform duration-300 ${isOpen ? 'rotate-180 text-purple-400' : ''}`} />
+                          <ChevronDown className={`h-4 w-4 shrink-0 text-slate-500 transition-transform duration-300 ${isOpen ? 'rotate-180 text-amber-400' : ''}`} />
                         </button>
                         {isOpen && (
                           <div className="px-5 pb-5">
@@ -139,9 +139,9 @@ export default function FaqPage() {
         )}
 
         {/* YORDAM CTA */}
-        <div className="rounded-3xl border border-slate-900 bg-gradient-to-br from-purple-500/10 to-transparent backdrop-blur-xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="rounded-3xl border border-slate-900 bg-gradient-to-br from-amber-400/10 to-transparent backdrop-blur-xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400">
               <ShieldCheck className="h-5 w-5" />
             </div>
             <div>
@@ -149,7 +149,7 @@ export default function FaqPage() {
               <p className="text-[11px] text-slate-500">Operatorlarimiz 24/7 yordam berishga tayyor.</p>
             </div>
           </div>
-          <Link to="/aloqa" className="inline-flex items-center gap-2 rounded-xl bg-purple-500 px-5 py-2.5 text-xs font-black text-white uppercase tracking-widest hover:bg-purple-400 transition-all">
+          <Link to="/aloqa" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 px-5 py-2.5 text-xs font-black text-slate-950 uppercase tracking-widest shadow-glow-sm hover:from-amber-300 hover:to-yellow-400 transition-all">
             <MessageCircle className="h-3.5 w-3.5" /> Aloqa
           </Link>
         </div>

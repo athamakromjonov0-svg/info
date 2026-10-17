@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
+import axios from 'axios';
 
+const BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 const CART_KEYS = {
   cart: 'vortex_cart',
   wishlist: 'vortex_wishlist',
@@ -98,7 +100,7 @@ const useCart = (showToast) => {
 
   const clearCart = useCallback(() => {
     setCart([]);
-    showToast("Savat moduli tozalandi", "info");
+    showToast("Savat tozalandi", "info");
   }, [showToast]);
 
   const updateCartItemQuantity = useCallback((id, quantity) => {
@@ -188,6 +190,15 @@ const useCart = (showToast) => {
       [productId]: [...(prev[productId] || []), review],
     }));
     showToast("Sharhingiz qo'shildi, rahmat!", "success");
+
+    // Backend API'ga saqlash
+    axios.post(`${BASE}/api/reviews`, {
+      productId,
+      rating: review.rating,
+      comment: review.comment,
+      userName: review.userName,
+    }).catch(() => {});
+
     return review;
   }, [showToast]);
 
@@ -197,6 +208,7 @@ const useCart = (showToast) => {
       [productId]: (prev[productId] || []).filter(r => r.id !== reviewId),
     }));
     showToast("Sharh o'chirildi", "warning");
+    axios.delete(`${BASE}/api/reviews/${reviewId}`).catch(() => {});
   }, [showToast]);
 
   return {

@@ -1,4 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import axios from 'axios';
+
+const BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 const ORDERS_KEYS = {
   orders: 'vortex_orders',
@@ -118,6 +121,51 @@ const useOrders = (showToast) => {
   useEffect(() => { localStorage.setItem(ORDERS_KEYS.users, JSON.stringify(users)); }, [users]);
   useEffect(() => { localStorage.setItem(ORDERS_KEYS.activityLog, JSON.stringify(activityLog)); }, [activityLog]);
 
+  // Backend bilan sinxronizatsiya
+  const syncWithBackend = useCallback(async () => {
+    try {
+      const [ordersRes, zonesRes, couponsRes, usersRes] = await Promise.allSettled([
+        axios.get(`${BASE}/api/orders`, { timeout: 3000 }),
+        axios.get(`${BASE}/api/delivery-zones`, { timeout: 3000 }),
+        axios.get(`${BASE}/api/coupons`, { timeout: 3000 }),
+        axios.get(`${BASE}/api/auth/users`, { timeout: 3000 }),
+      ]);
+
+      if (ordersRes.status === 'fulfilled') {
+        const data = ordersRes.value.data;
+        const arr = Array.isArray(data) ? data : (Array.isArray(data?.data) ? data.data : []);
+        if (arr.length > 0) setOrders(arr);
+      }
+      if (zonesRes.status === 'fulfilled') {
+        const data = zonesRes.value.data;
+        const arr = Array.isArray(data) ? data : (Array.isArray(data?.data) ? data.data : []);
+        if (arr.length > 0) setDeliveryZones(arr);
+      }
+      if (couponsRes.status === 'fulfilled') {
+        const data = couponsRes.value.data;
+        const arr = Array.isArray(data) ? data : (Array.isArray(data?.data) ? data.data : []);
+        if (arr.length > 0) setCoupons(arr);
+      }
+      if (usersRes.status === 'fulfilled') {
+        const data = usersRes.value.data;
+        const arr = Array.isArray(data) ? data : (Array.isArray(data?.data) ? data.data : []);
+        if (arr.length > 0) setUsers(arr);
+      }
+    } catch {
+      // lokal zaxira davom etadi
+    }
+  }, []);
+
+  // REAL VAQT: backend bilan davriy sinxronizatsiya (buyurtmalar, zonalar, kuponlar, foydalanuvchilar)
+  // PERFORMANCE: sahifa ko'rinmas bo'lsa polling to'xtatiladi
+  useEffect(() => {
+    const t = setTimeout(syncWithBackend, 0);
+    const interval = setInterval(() => {
+      if (navigator.onLine && document.visibilityState === 'visible') syncWithBackend();
+    }, 15000);
+    return () => { clearTimeout(t); clearInterval(interval); };
+  }, [syncWithBackend]);
+
   // REAL VAQT: boshqa oynalardagi barcha o'zgarishlarni darhol qabul qilish
   useEffect(() => {
     const syncFromStorage = (e) => {
@@ -233,6 +281,10 @@ const useOrders = (showToast) => {
       setBonusPoints(prev => prev + pointsEarned);
     }
     showToast("Buyurtma saqlandi va tarixi yangilandi!", "success");
+
+    // Real Backend API'ga saqlash
+    axios.post(`${BASE}/api/orders`, newOrder).catch(() => {});
+
     return newOrder;
   }, [appliedCoupon, paymentMethod, showToast]);
 
@@ -241,6 +293,7 @@ const useOrders = (showToast) => {
       order.id === orderId ? { ...order, status: newStatus } : order
     ));
     showToast(`Buyurtma statusi o'zgartirildi: ${newStatus}`, "success");
+    axios.patch(`${BASE}/api/orders/${orderId}/status`, { status: newStatus }).catch(() => {});
   }, [showToast]);
 
   const cancelOrder = useCallback((orderId) => {
@@ -248,6 +301,7 @@ const useOrders = (showToast) => {
       order.id === orderId ? { ...order, status: 'Bekor qilindi' } : order
     ));
     showToast("Buyurtma bekor qilindi", "warning");
+    axios.patch(`${BASE}/api/orders/${orderId}/status`, { status: 'Bekor qilindi' }).catch(() => {});
   }, [showToast]);
 
   const addAddress = useCallback((addressData) => {
@@ -333,18 +387,21 @@ const useOrders = (showToast) => {
     };
     setCoupons(prev => [...prev, newCoupon]);
     showToast("Yangi kupon yaratildi", "success");
+    axios.post(`${BASE}/api/coupons`, couponData).catch(() => {});
     return true;
   }, [showToast]);
 
   const updateCoupon = useCallback((code, couponData) => {
     setCoupons(prev => prev.map(c => c.code === code ? { ...c, ...couponData } : c));
     showToast("Kupon muvaffaqiyatli yangilandi", "success");
+    axios.put(`${BASE}/api/coupons/${code}`, couponData).catch(() => {});
     return true;
   }, [showToast]);
 
   const deleteCoupon = useCallback((code) => {
     setCoupons(prev => prev.filter(c => c.code !== code));
     showToast("Kupon o'chirildi", "warning");
+    axios.delete(`${BASE}/api/coupons/${code}`).catch(() => {});
     return true;
   }, [showToast]);
 
@@ -373,18 +430,21 @@ const useOrders = (showToast) => {
     };
     setUsers(prev => [...prev, newUser]);
     showToast("Yangi foydalanuvchi qo'shildi", "success");
+    axios.post(`${BASE}/api/auth/users`, userData).catch(() => {});
     return true;
   }, [showToast]);
 
   const updateUser = useCallback((id, userData) => {
     setUsers(prev => prev.map(u => (u.id === id || u._id === id) ? { ...u, ...userData } : u));
     showToast("Foydalanuvchi yangilandi", "success");
+    axios.put(`${BASE}/api/auth/users/${id}`, userData).catch(() => {});
     return true;
   }, [showToast]);
 
   const deleteUser = useCallback((id) => {
     setUsers(prev => prev.filter(u => u.id !== id && u._id !== id));
     showToast("Foydalanuvchi o'chirildi", "warning");
+    axios.delete(`${BASE}/api/auth/users/${id}`).catch(() => {});
     return true;
   }, [showToast]);
 
@@ -402,6 +462,7 @@ const useOrders = (showToast) => {
   const updateDeliveryZone = useCallback((id, zoneData) => {
     setDeliveryZones(prev => prev.map(z => z.id === id ? { ...z, ...zoneData } : z));
     showToast("Yetkazib berish zonasi yangilandi", "success");
+    axios.put(`${BASE}/api/delivery-zones/${id}`, zoneData).catch(() => {});
     return true;
   }, [showToast]);
 
@@ -413,6 +474,7 @@ const useOrders = (showToast) => {
     };
     setDeliveryZones(prev => [...prev, newZone]);
     showToast("Yangi zona qo'shildi", "success");
+    axios.post(`${BASE}/api/delivery-zones`, zoneData).catch(() => {});
     return newZone;
   }, [showToast]);
 
@@ -420,6 +482,7 @@ const useOrders = (showToast) => {
   const deleteDeliveryZone = useCallback((id) => {
     setDeliveryZones(prev => prev.filter(z => z.id !== id));
     showToast("Zona o'chirildi", "warning");
+    axios.delete(`${BASE}/api/delivery-zones/${id}`).catch(() => {});
     return true;
   }, [showToast]);
 

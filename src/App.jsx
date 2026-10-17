@@ -9,6 +9,9 @@ import ProtectedRoute from './components/ProtectedRoute';
 import PrivateRoute from './components/PrivateRoute';
 import SiteSidebar from './components/SiteSidebar';
 import ScrollToTop from './components/ScrollToTop';
+import BackToTop from './components/BackToTop';
+import CookieConsent from './components/CookieConsent';
+import FloatingContact from './components/FloatingContact';
 
 // Sahifalar — LAZY (code-splitting): har bir sahifa alohida chunk bo'lib
 // yuklanadi. Bu boshlang'ich bundle hajmini keskin kamaytiradi va
@@ -39,6 +42,7 @@ const ReturnsPage = lazy(() => import('./pages/ReturnsPage'));
 const BlogPage = lazy(() => import('./pages/BlogPage'));
 const BlogDetailPage = lazy(() => import('./pages/BlogDetailPage'));
 const LegalPage = lazy(() => import('./pages/LegalPage'));
+const AiPage = lazy(() => import('./pages/AiPage'));
 
 // Sahifa nomlari (document.title) — SEO va foydalanuvchi tajribasi uchun
 const PAGE_TITLES = [
@@ -65,6 +69,7 @@ const PAGE_TITLES = [
   { path: '/ommaviy-oferta', title: 'Ommaviy oferta' },
   { path: '/admin', title: 'Admin panel' },
   { path: '/qidiruv', title: 'Qidiruv natijalari' },
+  { path: '/ai', title: 'Grand AI — Tahlilchi va Yordamchi' },
 ];
 
 const getPageTitle = (pathname) => {
@@ -101,10 +106,12 @@ function App() {
     document.title = `${title} — Grand Decor`;
   }, [location.pathname]);
 
-  // Admin va login sahifalarida o'ng sidebar yashiriladi (o'z layoutlari bor)
+  // Admin, login va AI sahifalarida alohida to'liq layout (musrsiz butun page)
+  const isAiPage = location.pathname === '/ai';
   const hideShell = location.pathname === '/login'
     || location.pathname === '/sayt/kirish'
-    || location.pathname.startsWith('/admin');
+    || location.pathname.startsWith('/admin')
+    || isAiPage;
 
   return (
     <div className="min-h-screen bg-slate-950 text-white flex flex-col select-none">
@@ -195,6 +202,9 @@ function App() {
               <Route path="/shartlar" element={<LegalPage />} />
               <Route path="/ommaviy-oferta" element={<LegalPage />} />
 
+              {/* GRAND AI TAHLILCHI VA YORDAMCHI */}
+              <Route path="/ai" element={<AiPage />} />
+
               {/* ADMIN PANELI (Yopiq Route) */}
               <Route
                 path="/admin"
@@ -212,7 +222,7 @@ function App() {
         </div>
 
         {/* Saytning quyi qismi */}
-        <Footer />
+        {!isAiPage && <Footer />}
       </div>
 
       {/* O'NG TOMON SIDEBAR — barcha sahifalar */}
@@ -222,6 +232,15 @@ function App() {
 
       {/* Global bildirishnomalar */}
       <Toast />
+
+      {/* Back to top tugmasi */}
+      {!hideShell && <BackToTop />}
+
+      {/* Cookie consent banner */}
+      <CookieConsent />
+
+      {/* WhatsApp / Telegram floating bog'lanish */}
+      {!hideShell && <FloatingContact />}
     </div>
   );
 }

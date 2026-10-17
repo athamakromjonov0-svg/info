@@ -12,8 +12,8 @@ const LEVELS = [
     name: "Bronza",
     icon: Star,
     min: 0,
-    color: 'text-orange-400',
-    bg: 'bg-orange-500/10 border-orange-500/20',
+    color: 'text-amber-600',
+    bg: 'bg-amber-500/10 border-amber-600/30',
     perks: ["Har 10 000 so'm = 1 ball", "Standart kuponlar", "Asosiy qo'llab-quvvatlash"],
   },
   {
@@ -28,8 +28,8 @@ const LEVELS = [
     name: "Oltin",
     icon: Crown,
     min: 200,
-    color: 'text-amber-400',
-    bg: 'bg-amber-500/10 border-amber-500/20',
+    color: 'text-amber-300',
+    bg: 'bg-amber-400/10 border-amber-400/30',
     perks: ["Har 10 000 so'm = 2 ball", "Bepul yetkazish", "Eksklyuziv chegirmalar", "Shaxsiy menejer"],
   },
 ];
@@ -59,7 +59,7 @@ export default function LoyaltyPage() {
 
       <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         <PageHero
-          badge="/// Bonus dasturi"
+          badge="Bonus dasturi"
           title="Loyallik"
           highlight="dasturi"
           description="Har bir xaridingizda bonus ballar yig'ing, darajangizni oshiring va ko'proq imtiyozlarga ega bo'ling."
@@ -91,7 +91,7 @@ export default function LoyaltyPage() {
               </div>
               <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
                 <p className="text-xs text-slate-400">
-                  Jami xarid: <span className="text-white font-bold">{new Intl.NumberFormat('uz-UZ').format(Math.round(stats.spent))} so'm</span>
+                  Jami xarid: <span className="text-white font-bold">{new Intl.NumberFormat('uz-UZ').format(Math.round(Number(stats.spent) || 0))} so'm</span>
                   {' '}• Buyurtmalar: <span className="text-white font-bold">{stats.count}</span>
                 </p>
                 <div className="flex items-center gap-2 rounded-2xl border border-amber-500/20 bg-slate-950/60 px-4 py-2">
@@ -129,7 +129,7 @@ export default function LoyaltyPage() {
                   <ul className="mt-4 space-y-2">
                     {level.perks.map((perk, i) => (
                       <li key={i} className="flex items-start gap-2 text-[11px] text-slate-400">
-                        <ShieldCheck className="h-3.5 w-3.5 text-emerald-400 shrink-0 mt-0.5" /> {perk}
+                        <ShieldCheck className="h-3.5 w-3.5 text-amber-400 shrink-0 mt-0.5" /> {perk}
                       </li>
                     ))}
                   </ul>
@@ -142,11 +142,11 @@ export default function LoyaltyPage() {
         {/* QANDAY ISHLAYDI */}
         <div className="rounded-3xl border border-slate-900 bg-slate-950/60 backdrop-blur-xl p-6 sm:p-8">
           <h3 className="text-xs font-black text-white uppercase tracking-widest mb-6 flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-emerald-400" /> Qanday ishlaydi?
+            <Sparkles className="h-4 w-4 text-amber-400" /> Qanday ishlaydi?
           </h3>
           <div className="grid sm:grid-cols-3 gap-6">
             <div className="flex gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-black font-mono">1</div>
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400 font-black font-mono">1</div>
               <p className="text-xs text-slate-400 leading-relaxed">Xarid qiling va <span className="text-white font-bold">har 10 000 so'm</span> uchun 1 bonus ball oling.</p>
             </div>
             <div className="flex gap-3">
@@ -154,7 +154,7 @@ export default function LoyaltyPage() {
               <p className="text-xs text-slate-400 leading-relaxed">Ballar to'plang va <span className="text-white font-bold">darajangiz</span> oshsin — imtiyozlar kengayadi.</p>
             </div>
             <div className="flex gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 font-black font-mono">3</div>
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400 font-black font-mono">3</div>
               <p className="text-xs text-slate-400 leading-relaxed">Ballarni <span className="text-white font-bold">chegirma</span> sifatida ishlating yoki kuponlarga almashtiring.</p>
             </div>
           </div>
@@ -163,12 +163,12 @@ export default function LoyaltyPage() {
         {/* KUPONLAR */}
         <div>
           <h3 className="text-xs font-black text-white uppercase tracking-widest mb-4 flex items-center gap-2">
-            <Percent className="h-4 w-4 text-emerald-400" /> Faol kuponlar
+            <Percent className="h-4 w-4 text-amber-400" /> Faol kuponlar
           </h3>
           <div className="grid sm:grid-cols-3 gap-4">
             {(Array.isArray(coupons) ? coupons : []).map(coupon => (
-              <div key={coupon.code} className="rounded-3xl border border-dashed border-emerald-500/30 bg-emerald-500/5 p-6 text-center hover:bg-emerald-500/10 transition-colors">
-                <p className="text-2xl font-black text-emerald-400 font-mono tracking-widest">{coupon.code}</p>
+              <div key={coupon.code} className="rounded-3xl border border-dashed border-amber-400/30 bg-amber-400/5 p-6 text-center hover:bg-amber-400/10 transition-colors">
+                <p className="text-2xl font-black text-amber-300 font-mono tracking-widest">{coupon.code}</p>
                 <p className="mt-2 text-[11px] text-slate-400">-{coupon.discount}% chegirma</p>
                 <p className="text-[10px] text-slate-600 mt-1">Min. xarid: {new Intl.NumberFormat('uz-UZ').format(coupon.minSpend || 0)} so'm</p>
               </div>

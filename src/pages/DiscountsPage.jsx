@@ -21,12 +21,12 @@ export default function DiscountsPage() {
 
       {/* Yuqori panel */}
       <div className="pt-10 mb-8">
-        <Link to="/" className="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-emerald-400 transition-colors mb-6">
+        <Link to="/" className="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-amber-300 transition-colors mb-6">
           <ArrowLeft className="h-4 w-4" /> Bosh sahifaga qaytish
         </Link>
         <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-widest flex items-center gap-3">
-          <Percent className="h-7 w-7 text-rose-400" />
-          Chegirmalar <span className="text-rose-400">Markazi</span>
+          <Percent className="h-7 w-7 text-amber-400" />
+          Chegirmalar <span className="text-amber-400">Markazi</span>
         </h1>
         <p className="mt-2 text-sm text-slate-500 font-light">
           {loading ? "Chegirmalar yuklanmoqda..." : `${discountedProducts.length} ta mahsulotda chegirma mavjud`}
@@ -51,7 +51,7 @@ export default function DiscountsPage() {
       ) : discountedProducts.length === 0 ? (
         <div className="text-center py-20 border border-dashed border-slate-900 rounded-3xl bg-slate-950/10 max-w-2xl mx-auto flex flex-col items-center p-8">
           <div className="p-4 bg-slate-950 rounded-2xl border border-slate-900 text-slate-700 mb-4">
-            <Percent className="h-8 w-8 text-rose-500/50" />
+            <Percent className="h-8 w-8 text-amber-500/60" />
           </div>
           <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono">Hozircha chegirmalar yo'q</h3>
           <p className="mt-2 text-xs text-slate-500 max-w-sm leading-relaxed">

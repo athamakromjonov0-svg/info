@@ -1,876 +1,673 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import HeroBanner from '../components/HeroBanner';
+import FlashSale from '../components/FlashSale';
 import ProductCard from '../components/ProductCard';
+import SkeletonCard from '../components/SkeletonCard';
 import { useApp } from '../context/AppContext';
 import { 
   Search, 
+  Sparkles, 
+  Crown, 
+  Gem, 
+  ArrowRight, 
+  Star, 
+  CheckCircle2, 
+  Truck, 
+  ShieldCheck, 
+  Palette, 
   SlidersHorizontal, 
-  Layers, 
-  ArrowUpDown, 
-  TrendingUp, 
-  Grid3X3, 
-  Activity,
-  CheckCircle2,
-  FilterX,
-  Clock,
-  Cpu,
-  Percent,
-  Zap,
-  ShieldCheck,
-  Truck,
-  RotateCcw,
-  Sparkles,
-  Star,
-  BadgePercent,
-  Flame,
-  Heart,
-  Package,
-  Gift,
-  Wallet,
-  Info,
-  ChevronRight,
-  Smartphone,
-  Laptop,
-  Monitor,
-  Headphones,
-  Mouse,
-  Keyboard,
-  Camera,
-  Printer,
-  Router,
-  Gamepad2,
-  HardDrive,
-  MemoryStick,
-  Boxes,
-  ShoppingCart,
-  Globe,
-  Banknote,
-  CreditCard,
-  X,
-  ChevronDown,
-  Sliders,
-  Filter,
-  SortDesc,
-  Eye,
-  ThumbsUp,
+  Filter, 
+  Percent, 
+  Send, 
+  MessageSquare, 
+  PhoneCall, 
+  Compass, 
   Award,
-  Calendar,
-  Timer,
-  AlertTriangle,
-  Grid2X2,
-  List,
-  ArrowRight,
-  DollarSign,
-  PackageCheck,
-  Clock3
+  Layers,
+  Heart
 } from 'lucide-react';
 
-/**
- * Premium Kiber-Futuristik Global Vitrina va Katalog Markazi (MainWebsite)
- * A.A.A.uz - Ultra yirik onlayn savdo platformasi
- */
-
-// Kategoriya ikonlari mapping
-const categoryIcons = {
-  'MACBOOK': Laptop,
-  'NOTEBOOK': Laptop,
-  'KOMPYUTERLAR': Monitor,
-  'KOMPYUTER JIHOZLARI': Cpu,
-  'MONITORLAR': Monitor,
-  'KLAVIATURALAR': Keyboard,
-  'SICHQONCHALAR': Mouse,
-  'NAUSHNIKLAR': Headphones,
-  'KOLONKALAR': Headphones,
-  'WEB-KAMERALAR': Camera,
-  'MIKROFONLAR': Camera,
-  'SSD DISKLAR': HardDrive,
-  'RAM XOTIRA': MemoryStick,
-  'VIDEOKARTALAR': Cpu,
-  'PROTSESSORLAR': Cpu,
-  'QUVVAT BLOKLARI': Zap,
-  'KORPUSLAR': Boxes,
-  'SOVUTISH TIZIMLARI': Zap,
-  'ROUTERLAR': Router,
-  'PRINTERLAR': Printer,
-  'PLANSHETLAR': Smartphone,
-  'SMARTFONLAR': Smartphone,
-  'AKSESSUARLAR': Package,
-  "O'YIN KONSOLARI": Gamepad2,
-};
-
-// Kategoriya muvofiq ranglar
-const categoryColors = {
-  'MACBOOK': 'text-red-400 bg-red-500/10',
-  'NOTEBOOK': 'text-blue-400 bg-blue-500/10',
-  'KOMPYUTERLAR': 'text-emerald-400 bg-emerald-500/10',
-  'KOMPYUTER JIHOZLARI': 'text-purple-400 bg-purple-500/10',
-  'MONITORLAR': 'text-cyan-400 bg-cyan-500/10',
-  'KLAVIATURALAR': 'text-amber-400 bg-amber-500/10',
-  'SICHQONCHALAR': 'text-orange-400 bg-orange-500/10',
-  'NAUSHNIKLAR': 'text-indigo-400 bg-indigo-500/10',
-  'KOLONKALAR': 'text-pink-400 bg-pink-500/10',
-  'WEB-KAMERALAR': 'text-lime-400 bg-lime-500/10',
-  'MIKROFONLAR': 'text-teal-400 bg-teal-500/10',
-  'SSD DISKLAR': 'text-sky-400 bg-sky-500/10',
-  'RAM XOTIRA': 'text-violet-400 bg-violet-500/10',
-  'VIDEOKARTALAR': 'text-fuchsia-400 bg-fuchsia-500/10',
-  'PROTSESSORLAR': 'text-rose-400 bg-rose-500/10',
-  'QUVVAT BLOKLARI': 'text-yellow-400 bg-yellow-500/10',
-  'KORPUSLAR': 'text-slate-400 bg-slate-500/10',
-  'SOVUTISH TIZIMLARI': 'text-cyan-400 bg-cyan-500/10',
-  'ROUTERLAR': 'text-blue-400 bg-blue-500/10',
-  'PRINTERLAR': 'text-emerald-400 bg-emerald-500/10',
-  'PLANSHETLAR': 'text-indigo-400 bg-indigo-500/10',
-  'SMARTFONLAR': 'text-purple-400 bg-purple-500/10',
-  'AKSESSUARLAR': 'text-amber-400 bg-amber-500/10',
-  "O'YIN KONSOLARI": 'text-rose-400 bg-rose-500/10',
-};
-
 export default function MainWebsite() {
-  const { 
-    products, 
-    loading, 
-    recentlyViewed, 
-    stats, 
-    compareList, 
-    toggleCompare,
-    categories: allCategories,
-  } = useApp();
-  
-  // ============================================================
-  // FILTRLASH VA SARALASH HOLATLARI
-  // ============================================================
-  const [search, setSearch] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('ALL');
-  const [sortBy, setSortBy] = useState('DEFAULT');
-  const [activeTab, setActiveTab] = useState('CATALOG');
-  const [selectedBrand, setSelectedBrand] = useState('ALL');
+  const { products, categories, blogPosts, showToast, loading } = useApp();
+
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState('popular');
   const [onlyDiscount, setOnlyDiscount] = useState(false);
-  const [onlyInStock, setOnlyInStock] = useState(false);
-  const [showMobileFilters, setShowMobileFilters] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(9);
-  const [viewMode, setViewMode] = useState('grid');
+  const [visibleCount, setVisibleCount] = useState(12);
 
-  // Flash sale taymeri
-  const [flashSaleEnds] = useState(() => {
-    return Date.now() + 8 * 60 * 60 * 1000; // 8 soat
-  });
-  const [timeLeft, setTimeLeft] = useState({ hours: 8, minutes: 0, seconds: 0 });
-
-  // Foydalanuvchi sahifani birinchi marta ochganda yuqoriga silliq siljitish effekti
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
-
-  // Flash sale taymerini yangilash
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const diff = Math.max(0, flashSaleEnds - Date.now());
-      const hours = Math.floor(diff / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-      setTimeLeft({ hours, minutes, seconds });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [flashSaleEnds]);
-
-  // Max price ni topish
-  const maxPrice = useMemo(() => {
-    if (!Array.isArray(products)) return 100000;
-    return Math.max(...products.map(p => Number(p.price) || 0), 100000);
-  }, [products]);
-
-  // Filtrlarni reset qilish
-  const handleResetFilters = useCallback(() => {
-    setSearch('');
-    setSelectedCategory('ALL');
-    setSortBy('DEFAULT');
-    setActiveTab('CATALOG');
-    setSelectedBrand('ALL');
-    setOnlyDiscount(false);
-    setOnlyInStock(false);
-    setCurrentPage(1);
-  }, []);
-
-  // ============================================================
-  // KATEGORIYALAR MATRIX GENERATORI
-  // ============================================================
-  const generatedCategories = useMemo(() => {
-    if (!Array.isArray(products)) return ['ALL'];
-    const unique = new Set(products.map((p) => {
-      if (!p.category) return 'GADGET';
-      if (typeof p.category === 'object') return p.category.name?.toUpperCase() || 'GADGET';
-      return String(p.category).toUpperCase();
-    }));
-    return ['ALL', ...Array.from(unique)];
-  }, [products]);
-
-  // ============================================================
-  // BRENDLAR GENERATORI
-  // ============================================================
-  const brands = useMemo(() => {
-    if (!Array.isArray(products)) return ['ALL'];
-    const allBrands = new Set(products.map(p => (p.name || p.title || '').split(' ')[0].toUpperCase()));
-    return ['ALL', ...Array.from(allBrands).slice(0, 15)];
-  }, [products]);
-
-  // ============================================================
-  // ILG'OR KO'P BOSQICHLI FILTRLASH VA SARALASH
-  // ============================================================
+  // Filtrlangan va saralangan mahsulotlar
   const filteredProducts = useMemo(() => {
-    if (!Array.isArray(products)) return [];
+    let list = Array.isArray(products) ? [...products] : [];
 
-    let result = products.filter((p) => {
-      const pName = p.name || p.title || '';
-      const titleMatch = pName.toLowerCase().includes(search.toLowerCase());
-      const descMatch = p.description?.toLowerCase().includes(search.toLowerCase()) || false;
-      const idMatch = String(p._id || p.id).includes(search);
-      
-      let pCat = 'GADGET';
-      if (p.category) {
-        pCat = typeof p.category === 'object' ? p.category.name || 'GADGET' : String(p.category);
-      }
-      const categoryMatch = selectedCategory === 'ALL' || pCat.toUpperCase() === selectedCategory;
-      
-      const pBrand = (p.name || p.title || '').split(' ')[0].toUpperCase();
-      const brandMatch = selectedBrand === 'ALL' || pBrand === selectedBrand;
-      
-      const discountMatch = !onlyDiscount || Number(p.discount) > 0;
-      const stockMatch = !onlyInStock || Number(p.stock) > 0;
-
-      return (titleMatch || descMatch || idMatch) && categoryMatch && brandMatch && discountMatch && stockMatch;
-    });
-
-    if (activeTab === 'EXCLUSIVE') {
-      result = result.filter(p => Number(p.discount) > 0);
+    // Kategoriya filtri
+    if (selectedCategory !== 'all') {
+      list = list.filter((p) => {
+        const catName = typeof p.category === 'object' ? p.category.name : p.category;
+        return (catName || '').toLowerCase() === selectedCategory.toLowerCase();
+      });
     }
 
-    switch (sortBy) {
-      case 'PRICE_ASC':
-        return [...result].sort((a, b) => {
-          const aPrice = Number(a.discount) > 0 ? a.price * (1 - a.discount / 100) : a.price;
-          const bPrice = Number(b.discount) > 0 ? b.price * (1 - b.discount / 100) : b.price;
-          return aPrice - bPrice;
-        });
-      case 'PRICE_DESC':
-        return [...result].sort((a, b) => {
-          const aPrice = Number(a.discount) > 0 ? a.price * (1 - a.discount / 100) : a.price;
-          const bPrice = Number(b.discount) > 0 ? b.price * (1 - b.discount / 100) : b.price;
-          return bPrice - aPrice;
-        });
-      case 'DISCOUNT':
-        return [...result].sort((a, b) => (Number(b.discount) || 0) - (Number(a.discount) || 0));
-      case 'RATING':
-        return [...result].sort((a, b) => (Number(b.rating) || 5) - (Number(a.rating) || 5));
-      case 'NEWEST':
-        return [...result].sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
-      case 'POPULAR':
-        return [...result].sort((a, b) => (Number(b.reviewsCount) || 0) - (Number(a.reviewsCount) || 0));
-      case 'NAME_ASC':
-        return [...result].sort((a, b) => (a.name || a.title || '').localeCompare(b.name || b.title || ''));
-      case 'NAME_DESC':
-        return [...result].sort((a, b) => (b.name || b.title || '').localeCompare(a.name || a.title || ''));
-      default:
-        return result;
+    // Qidiruv
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      list = list.filter((p) => {
+        const title = (p.title || p.name || '').toLowerCase();
+        const desc = (p.description || '').toLowerCase();
+        const cat = (typeof p.category === 'object' ? p.category.name : p.category || '').toLowerCase();
+        return title.includes(q) || desc.includes(q) || cat.includes(q);
+      });
     }
-  }, [products, search, selectedCategory, sortBy, activeTab, selectedBrand, onlyDiscount, onlyInStock]);
 
-  // ============================================================
-  // PAGINATION LOGIC
-  // ============================================================
-  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / itemsPerPage));
-  const safePage = Math.min(currentPage, totalPages);
-  const paginatedProducts = useMemo(() => {
-    const start = (safePage - 1) * itemsPerPage;
-    return filteredProducts.slice(start, start + itemsPerPage);
-  }, [filteredProducts, safePage, itemsPerPage]);
+    // Faqat chegirmadagilar
+    if (onlyDiscount) {
+      list = list.filter((p) => Number(p.discount) > 0);
+    }
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedCategory, sortBy, activeTab, search, selectedBrand, onlyDiscount, onlyInStock]);
+    // Saralash
+    if (sortBy === 'price_asc') {
+      list.sort((a, b) => (Number(a.price) || 0) - (Number(b.price) || 0));
+    } else if (sortBy === 'price_desc') {
+      list.sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0));
+    } else if (sortBy === 'rating') {
+      list.sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0));
+    } else if (sortBy === 'newest') {
+      list.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
+    } else {
+      // popular
+      list.sort((a, b) => (Number(b.reviewsCount) || 0) - (Number(a.reviewsCount) || 0));
+    }
 
-  // ============================================================
-  // REAL VAQT REJIMIDAGI METRIKALAR
-  // ============================================================
-  const catalogStats = useMemo(() => {
-    const totalInGrid = filteredProducts.length;
-    const itemsWithDiscount = filteredProducts.filter(p => Number(p.discount) > 0).length;
-    const itemsNew = filteredProducts.filter(p => p.isNew).length;
-    const itemsLowStock = filteredProducts.filter(p => Number(p.stock) < 5).length;
-    return { totalInGrid, itemsWithDiscount, itemsNew, itemsLowStock };
-  }, [filteredProducts]);
+    return list;
+  }, [products, selectedCategory, searchQuery, onlyDiscount, sortBy]);
 
-  // Flash sale mahsulotlari
-  const flashSaleProducts = useMemo(() => {
-    return [...(Array.isArray(products) ? products : [])]
-      .filter(p => Number(p.discount) >= 15)
-      .sort((a, b) => Number(b.discount) - Number(a.discount))
-      .slice(0, 4);
-  }, [products]);
+  // Kategoriyalar ro'yxati (katalog uchun)
+  const categoryList = useMemo(() => {
+    if (Array.isArray(categories) && categories.length > 0) return categories;
+    return [
+      { id: '1', name: 'Hashamatli Tassellar', slug: 'tassellar' },
+      { id: '2', name: 'Magnitli Tutqichlar', slug: 'magnitli-tutqichlar' },
+      { id: '3', name: 'Karnizlar & Uchliklar', slug: 'karnizlar' },
+      { id: '4', name: 'Zar Jiyaklar & Trimalar', slug: 'jiyaklar-trimlar' },
+      { id: '5', name: 'Klassik Qisqichlar & Halqalar', slug: 'qisqichlar-halqalar' },
+      { id: '6', name: 'Kristalli & Marvaridli Bezaklar', slug: 'kristalli-aksessuarlar' },
+      { id: '7', name: 'Parda Lentalari & Ilgaklar', slug: 'lentalar-ilgaklar' },
+      { id: '8', name: 'Aqlli Motorli Karnizlar', slug: 'aqlli-karnizlar' }
+    ];
+  }, [categories]);
 
-  // Yangi mahsulotlar
-  const newProducts = useMemo(() => {
-    return (Array.isArray(products) ? products : []).filter(p => p.isNew).slice(0, 4);
-  }, [products]);
+  // Interyer Uslublari bo'yicha Tanlov Ma'lumotlari
+  const interiorStyles = [
+    {
+      title: "Klassika & Barokko",
+      desc: "Og'ir baxmal shokilalar, oltin ipak jiyaklar va quyma latun ilmoqlar bilan qirollik saroylari muhiti.",
+      img: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&auto=format&fit=crop&q=80",
+      link: "/katalog?category=Hashamatli%20Tassellar",
+      badge: "Klassik Tanlov"
+    },
+    {
+      title: "Neoklassika & Elegans",
+      desc: "Nozik marvarid donalari, billur kristalli karniz uchlari va ipak aralash saten bog'ichlar.",
+      img: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&auto=format&fit=crop&q=80",
+      link: "/katalog?category=Kristalli%20&%20Marvaridli%20Bezaklar",
+      badge: "Hashamatli"
+    },
+    {
+      title: "Zamonaviy Minimalizm",
+      desc: "Mat-qora geometrik magnitlar, yashirin shift profillari va chiziqli toza dizayn.",
+      img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&auto=format&fit=crop&q=80",
+      link: "/katalog?category=Magnitli%20Tutqichlar",
+      badge: "Trend 2026"
+    },
+    {
+      title: "Aqlli Uy & High-Tech",
+      desc: "Ovozsiz motorli karnizlar, Alice va Siri orqali pultsiz avtomatik pardalarni ochish tizimi.",
+      img: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=600&auto=format&fit=crop&q=80",
+      link: "/katalog?category=Karnizlar%20%26%20Uchliklar",
+      badge: "Smart Home"
+    }
+  ];
 
-  // Top rated mahsulotlar
-  const topRatedProducts = useMemo(() => {
-    return [...(Array.isArray(products) ? products : [])]
-      .sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0))
-      .slice(0, 4);
-  }, [products]);
-
-  // Kam omborli mahsulotlar
-  const lowStockProducts = useMemo(() => {
-    return (Array.isArray(products) ? products : [])
-      .filter(p => Number(p.stock) > 0 && Number(p.stock) < 5)
-      .slice(0, 4);
-  }, [products]);
-
-  // Narx formatlash
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('uz-UZ').format(Math.round(price)) + " so'm";
-  };
-
-  // Kategoriya sarlavhasi
-  const getCategoryLabel = (cat) => {
-    if (cat === 'ALL') return 'Barcha Gadjetlar';
-    return cat;
-  };
-
-  // Kategoriya slug
-  const getCategorySlug = (cat) => {
-    return String(cat).toLowerCase().replace(/\s+/g, '-');
-  };
+  // Mijozlar Fikrlari
+  const testimonials = [
+    {
+      name: "Gulnora Karimova",
+      city: "Toshkent sh.",
+      role: "Interyer Dizayneri",
+      text: "Grand Décor'dan mijozlarim uchun muntazam ravishda ipak shokilalar va kristalli karniz uchliklarini olaman. Sifati O'zbekistonda tengsiz, har bir detal qo'lda nafis ishlangan!",
+      rating: 5,
+      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
+    },
+    {
+      name: "Bobur Mirzayev",
+      city: "Samarqand sh.",
+      role: "Xonadon Egasi",
+      text: "Mehmonxonamiz uchun magnitli marvarid tutqichlar va motorli karniz buyurtma qildik. Devorni teshib o'tirmay osongina ulandi, Alisa orqali boshqarilishi esa butun oilamizga yoqdi.",
+      rating: 5,
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80"
+    },
+    {
+      name: "Madina Usmonova",
+      city: "Buxoro sh.",
+      role: "Parda Saloni Rahbari",
+      text: "Zar jiyaklar va Fransuz to'lqin lentalari juda pishiq. Yetkazib berish ham juda tez — Toshkentdan Buxoroga ertasi kuniyoq yetib keldi. Rahmat sizga!",
+      rating: 5,
+      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80"
+    }
+  ];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-32 font-sans select-none text-white relative min-h-screen">
+    <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-amber-400 selection:text-slate-950">
       
-      {/* ============================================================
-      KIBER-FON CHIZIQLARI VA PLAZMA MATRITSASI
-      ============================================================ */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1c1914_1px,transparent_1px),linear-gradient(to_bottom,#1c1914_1px,transparent_1px)] bg-[size:6rem_6rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_60%,transparent_100%)] pointer-events-none opacity-20 -z-10" />
-
-      {/* ============================================================
-      BREKDOWN: YUQORI STATISTIK PANEL
-      ============================================================ */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-10 pt-6">
-        <div className="rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-xl p-3 text-center">
-          <div className="text-xl font-black text-emerald-400">{stats?.totalProducts || 0}</div>
-          <div className="mt-1 text-[9px] text-slate-500 font-mono uppercase tracking-wider">Mahsulotlar</div>
-        </div>
-        <div className="rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-xl p-3 text-center">
-          <div className="text-xl font-black text-blue-400">{stats?.totalCategories || 0}</div>
-          <div className="mt-1 text-[9px] text-slate-500 font-mono uppercase tracking-wider">Kategoriyalar</div>
-        </div>
-        <div className="rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-xl p-3 text-center">
-          <div className="text-xl font-black text-rose-400">{stats?.discountedProducts || 0}</div>
-          <div className="mt-1 text-[9px] text-slate-500 font-mono uppercase tracking-wider">Chegirmalar</div>
-        </div>
-        <div className="rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-xl p-3 text-center">
-          <div className="text-xl font-black text-amber-400">{stats?.newProducts || 0}</div>
-          <div className="mt-1 text-[9px] text-slate-500 font-mono uppercase tracking-wider">Yangi kelgan</div>
-        </div>
-        <div className="rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-xl p-3 text-center">
-          <div className="text-xl font-black text-purple-400">{stats?.totalOrders || 0}</div>
-          <div className="mt-1 text-[9px] text-slate-500 font-mono uppercase tracking-wider">Buyurtmalar</div>
-        </div>
-        <div className="rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-xl p-3 text-center">
-          <div className="text-xl font-black text-cyan-400">{stats?.lowStockProducts || 0}</div>
-          <div className="mt-1 text-[9px] text-slate-500 font-mono uppercase tracking-wider">Kam zaxira</div>
-        </div>
+      {/* 1. TOP DESIGNER ANNOUNCEMENT BAR */}
+      <div className="bg-gradient-to-r from-amber-600/30 via-amber-500/20 to-yellow-600/30 border-b border-amber-400/20 py-2 px-4 text-center">
+        <p className="text-xs text-amber-200/90 font-medium flex items-center justify-center gap-2 flex-wrap">
+          <Sparkles className="h-3.5 w-3.5 text-amber-400 shrink-0 animate-pulse" />
+          <span>500 000 so'mdan yuqori buyurtmalarga butun O'zbekiston bo'ylab yetkazish <strong>BEPUL!</strong></span>
+          <span className="hidden sm:inline text-amber-400/40">•</span>
+          <span className="hidden sm:inline text-amber-300">Pardangiz fotosuratini yuboring — bepul dizayner maslahatini oling</span>
+        </p>
       </div>
 
-      {/* ============================================================
-      1. KIBER HERO BANNER SEGMENTI
-      ============================================================ */}
-      <div className="mb-14 relative">
-        <div className="absolute -top-10 left-1/4 w-72 h-72 bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none" />
-        <HeroBanner />
-      </div>
+      {/* 2. HERO BANNER */}
+      <HeroBanner />
 
-      {/* ============================================================
-      XUSUSIYATLAR PANELI (UX BELGILARI)
-      ============================================================ */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-14">
-        <div className="rounded-2xl border border-slate-900/60 bg-slate-900/20 backdrop-blur-md p-4 flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-            <Truck className="h-5 w-5 text-emerald-400" />
-          </div>
-          <div>
-            <p className="text-xs font-bold text-white">Tezkor yetkazish</p>
-            <p className="text-[9px] text-slate-500 mt-0.5">1-2 kun ichida</p>
-          </div>
-        </div>
-        <div className="rounded-2xl border border-slate-900/60 bg-slate-900/20 backdrop-blur-md p-4 flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 border border-blue-500/20">
-            <ShieldCheck className="h-5 w-5 text-blue-400" />
-          </div>
-          <div>
-            <p className="text-xs font-bold text-white">1 yil kafolat</p>
-            <p className="text-[9px] text-slate-500 mt-0.5">Rasmiy himoya</p>
-          </div>
-        </div>
-        <div className="rounded-2xl border border-slate-900/60 bg-slate-900/20 backdrop-blur-md p-4 flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-500/10 border border-purple-500/20">
-            <RotateCcw className="h-5 w-5 text-purple-400" />
-          </div>
-          <div>
-            <p className="text-xs font-bold text-white">14 kun qaytarish</p>
-            <p className="text-[9px] text-slate-500 mt-0.5">Bepul qaytarish</p>
-          </div>
-        </div>
-        <div className="rounded-2xl border border-slate-900/60 bg-slate-900/20 backdrop-blur-md p-4 flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 border border-amber-500/20">
-            <CreditCard className="h-5 w-5 text-amber-400" />
-          </div>
-          <div>
-            <p className="text-xs font-bold text-white">Xavfsiz to'lov</p>
-            <p className="text-[9px] text-slate-500 mt-0.5">Naqd / Karta / Click</p>
-          </div>
-        </div>
-      </div>
+      {/* 3. FLASH SALE COUNTDOWN */}
+      <FlashSale />
 
-      {/* ============================================================
-      FLASH SALE SEKSIYASI
-      ============================================================ */}
-      {flashSaleProducts.length > 0 && (
-        <div className="mb-14">
-          <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 bg-gradient-to-r from-rose-500/20 to-orange-500/20 border border-rose-500/30 rounded-2xl px-4 py-2.5">
-                <Flame className="h-5 w-5 text-rose-500 animate-pulse" />
-                <h2 className="text-lg font-black uppercase tracking-widest">
-                  Flash <span className="text-rose-500">Sale</span>
-                </h2>
+      {/* 3. VISUAL CATEGORIES SECTION */}
+      <section className="py-12 sm:py-16 border-b border-slate-900/80 relative">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:mb-10">
+            <div>
+              <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-amber-400 mb-2">
+                <Crown className="h-4 w-4" />
+                <span>Kolleksiyalar</span>
               </div>
-              <div className="flex items-center gap-1.5 font-mono">
-                <div className="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs font-black text-rose-400">{String(timeLeft.hours).padStart(2, '0')}</div>
-                <span className="text-rose-500 font-bold">:</span>
-                <div className="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs font-black text-rose-400">{String(timeLeft.minutes).padStart(2, '0')}</div>
-                <span className="text-rose-500 font-bold">:</span>
-                <div className="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs font-black text-rose-400">{String(timeLeft.seconds).padStart(2, '0')}</div>
-              </div>
+              <h2 className="font-serif text-2xl sm:text-4xl font-bold text-white tracking-tight">
+                Parda Aksessuarlari Kategoriyalari
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-400 mt-1">
+                Uyingizdagi har bir xona va pardaga mos keluvchi saralangan bezaklar
+              </p>
             </div>
-            <Link to="/chegirmalar" className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-400 hover:text-rose-300 transition-colors">
-              Barcha chegirmalar <ChevronRight className="h-3.5 w-3.5" />
+
+            <Link
+              to="/katalog"
+              className="inline-flex items-center gap-2 text-xs font-bold text-amber-400 hover:text-amber-300 transition-colors uppercase tracking-wider group"
+            >
+              <span>Barcha kategoriyalar</span>
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
-          <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
-            {flashSaleProducts.map((product) => (
-              <ProductCard key={product._id || product.id} product={product} />
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6">
+            {categoryList.map((cat, idx) => (
+              <button
+                key={cat.id || idx}
+                onClick={() => {
+                  setSelectedCategory(cat.name);
+                  document.getElementById('catalog-section')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="group relative rounded-2xl border border-slate-900 bg-slate-900/40 p-4 sm:p-5 text-left transition-all duration-300 hover:-translate-y-1.5 hover:border-amber-400/40 hover:bg-slate-900/80 hover:shadow-[0_15px_30px_-10px_rgba(255,193,7,0.15)] flex flex-col justify-between h-44 sm:h-52 overflow-hidden"
+              >
+                {/* Fon Rasmi (Subtle overlay) */}
+                <div className="absolute inset-0 z-0 opacity-15 group-hover:opacity-30 transition-opacity duration-500">
+                  <img
+                    src={cat.image || "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=400&q=80"}
+                    alt={cat.name}
+                    className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent" />
+                </div>
+
+                <div className="relative z-10">
+                  <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-400 mb-3 group-hover:scale-110 group-hover:bg-amber-400 group-hover:text-slate-950 transition-all duration-300 shadow-md">
+                    <Gem className="h-5 w-5 sm:h-6 sm:w-6" />
+                  </div>
+                  <h3 className="font-serif font-bold text-sm sm:text-base text-white group-hover:text-amber-300 transition-colors leading-snug line-clamp-2">
+                    {cat.name}
+                  </h3>
+                </div>
+
+                <div className="relative z-10 flex items-center justify-between pt-2 border-t border-slate-800/60">
+                  <span className="text-[10px] sm:text-xs text-amber-400/80 font-medium">
+                    Kolleksiyani ko'rish
+                  </span>
+                  <ArrowRight className="h-3.5 w-3.5 text-amber-400 transition-transform group-hover:translate-x-1" />
+                </div>
+              </button>
             ))}
           </div>
-        </div>
-      )}
 
-      {/* ============================================================
-      KATEGORIYA GRID PANELI
-      ============================================================ */}
-      {generatedCategories.length > 1 && (
-        <div className="mb-14">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-black uppercase tracking-widest flex items-center gap-2">
-              <Boxes className="h-5 w-5 text-emerald-400" /> Kategoriyalar <span className="text-slate-600 font-normal">/// {generatedCategories.length - 1} TUR</span>
-            </h2>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            {generatedCategories.filter(c => c !== 'ALL').slice(0, 18).map((cat) => {
-              const CatIcon = categoryIcons[cat] || Package;
-              const colorCls = categoryColors[cat] || 'text-slate-400 bg-slate-500/10';
-              const count = products.filter(p => {
-                let pCat = p.category;
-                if (typeof pCat === 'object') pCat = pCat.name || '';
-                return String(pCat).toUpperCase() === cat;
-              }).length;
-              return (
-                <Link
-                  key={cat}
-                  to={`/kategoriya/${encodeURIComponent(cat.toLowerCase())}`}
-                  className="group rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-xl p-4 hover:border-emerald-500/30 hover:bg-slate-950/60 transition-all duration-300 flex flex-col items-center text-center gap-2"
-                >
-                  <div className={`flex h-12 w-12 items-center justify-center rounded-xl border border-slate-800 ${colorCls} group-hover:scale-110 transition-transform duration-300`}>
-                    <CatIcon className="h-6 w-6" />
+        </div>
+      </section>
+
+      {/* 4. HAFTA TAVSIYASI — SPOTLIGHT SPECIAL */}
+      <section className="py-12 sm:py-16 border-b border-slate-900/80 bg-gradient-to-b from-slate-950 via-slate-900/30 to-slate-950 relative overflow-hidden">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          
+          <div className="relative rounded-3xl border border-amber-400/30 bg-gradient-to-r from-slate-900 via-slate-900/80 to-slate-950 p-6 sm:p-10 lg:p-12 overflow-hidden shadow-2xl">
+            
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+              
+              <div className="lg:col-span-7 space-y-4">
+                <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/40 bg-amber-400/15 px-3.5 py-1 text-xs font-bold text-amber-300 uppercase tracking-widest">
+                  <Crown className="h-3.5 w-3.5 text-amber-400" />
+                  <span>Hafta Tavsiyasi • Cheklangan Miqdor</span>
+                </div>
+
+                <h2 className="font-serif text-2xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
+                  Imperator Oltin Ipak Tassel Shokila
+                </h2>
+
+                <p className="text-sm text-slate-300 leading-relaxed font-light">
+                  Italiya ipak tolasidan mohir ustalar tomonidan 100% qo'lda to'qilgan saroy shokilasi. O'rtasidagi qirrali billur kristali yorug'likda serjilo nur taratadi.
+                </p>
+
+                <div className="flex flex-wrap gap-2 pt-1">
+                  <span className="text-xs bg-slate-900 border border-slate-800 text-amber-200 px-3 py-1 rounded-xl">✓ 100% Ipak ip</span>
+                  <span className="text-xs bg-slate-900 border border-slate-800 text-amber-200 px-3 py-1 rounded-xl">✓ Swarovski shisha billuri</span>
+                  <span className="text-xs bg-slate-900 border border-slate-800 text-amber-200 px-3 py-1 rounded-xl">✓ Juft komplekt</span>
+                </div>
+
+                <div className="flex items-baseline gap-4 pt-2">
+                  <span className="text-2xl sm:text-4xl font-black text-amber-300 font-sans">
+                    345 000 so'm
+                  </span>
+                  <span className="text-base sm:text-lg line-through text-slate-500 font-sans">
+                    460 000 so'm
+                  </span>
+                  <span className="text-xs font-bold bg-amber-400 text-slate-950 px-2.5 py-1 rounded-lg">
+                    -25% TEJASH
+                  </span>
+                </div>
+
+                <div className="pt-2 flex flex-wrap gap-4">
+                  <Link
+                    to="/product/1"
+                    className="inline-flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 px-7 py-3 text-sm font-bold shadow-lg shadow-amber-400/25 hover:shadow-amber-400/40 hover:scale-[1.02] transition-all"
+                  >
+                    <span>Batafsil ko'rish</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                  <Link
+                    to="/katalog?category=Hashamatli%20Tassellar"
+                    className="inline-flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900/60 px-6 py-3 text-sm font-medium text-slate-300 hover:text-white hover:border-amber-400/40 transition-colors"
+                  >
+                    <span>Boshqa shokilalar</span>
+                  </Link>
+                </div>
+              </div>
+
+              <div className="lg:col-span-5 relative flex justify-center">
+                <div className="relative w-full max-w-sm aspect-[4/5] rounded-2xl overflow-hidden border-2 border-amber-400/40 shadow-2xl">
+                  <img
+                    src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&auto=format&fit=crop&q=80"
+                    alt="Imperator Oltin Ipak Tassel"
+                    className="h-full w-full object-cover object-center"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                  <div className="absolute bottom-4 left-4 right-4 text-center p-3 rounded-xl bg-slate-950/90 border border-amber-400/30 backdrop-blur-md">
+                    <span className="text-xs font-bold text-amber-300">Grand Décor Qirollik Seriyasi</span>
                   </div>
-                  <p className="text-[10px] font-bold text-slate-300 group-hover:text-white uppercase tracking-wide leading-tight">{cat}</p>
-                  <span className="text-[9px] font-mono text-slate-600">{count} ta</span>
-                </Link>
-              );
-            })}
+                </div>
+              </div>
+
+            </div>
+
           </div>
+
         </div>
-      )}
+      </section>
 
-      {/* 2. DUAL-TABS TIZIMI (CATALOG VS EXCLUSIVE PIPELINE) */}
-      <div className="flex border-b border-slate-900 mb-10 overflow-x-auto no-scrollbar select-none gap-6">
-        <button
-          onClick={() => { setActiveTab('CATALOG'); setSelectedCategory('ALL'); }}
-          className={`pb-4 text-xs font-bold uppercase tracking-widest font-mono transition relative whitespace-nowrap flex items-center gap-2 ${
-            activeTab === 'CATALOG' ? 'text-emerald-400' : 'text-slate-500 hover:text-slate-300'
-          }`}
-        >
-          {activeTab === 'CATALOG' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400 shadow-[0_0_10px_#FFC107]" />}
-          <Grid3X3 className="h-4 w-4" /> BARCHA TOVARLAR MATRIXI
-        </button>
-        
-        <button
-          onClick={() => { setActiveTab('EXCLUSIVE'); setSelectedCategory('ALL'); }}
-          className={`pb-4 text-xs font-bold uppercase tracking-widest font-mono transition relative whitespace-nowrap flex items-center gap-2 ${
-            activeTab === 'EXCLUSIVE' ? 'text-rose-400' : 'text-slate-500 hover:text-slate-300'
-          }`}
-        >
-          {activeTab === 'EXCLUSIVE' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-rose-500 shadow-[0_0_10px_#E5B20D]" />}
-          <TrendingUp className="h-4 w-4" /> EKSKLYUZIV KIBER CHEGIRMALAR
-        </button>
+      {/* 5. INTERYER USLUBI BO'YICHA TANLASH (INTERIOR STYLE GUIDE) */}
+      <section className="py-12 sm:py-16 border-b border-slate-900/80">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          
+          <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12">
+            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-amber-400 mb-2">
+              <Compass className="h-4 w-4" />
+              <span>Dizayner Qo'llanmasi</span>
+            </div>
+            <h2 className="font-serif text-2xl sm:text-4xl font-bold text-white tracking-tight">
+              Interyer Uslubi Bo'yicha Tanlang
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-400 mt-2">
+              Uyingiz qaysi uslubda bezatilgan? Pardalaringiz bilan 100% uyg'unlashuvchi to'g'ri aksessuarlarni toping
+            </p>
+          </div>
 
-        {/* Ko'rinish rejimi */}
-        <div className="ml-auto hidden sm:flex items-center gap-1">
-          <button
-            onClick={() => setViewMode('grid')}
-            className={`p-2 rounded-lg border transition-all ${
-              viewMode === 'grid' ? 'bg-slate-900 border-slate-700 text-emerald-400' : 'border-slate-900 text-slate-500 hover:text-white'
-            }`}
-          >
-            <Grid2X2 className="h-3.5 w-3.5" />
-          </button>
-          <button
-            onClick={() => setViewMode('list')}
-            className={`p-2 rounded-lg border transition-all ${
-              viewMode === 'list' ? 'bg-slate-900 border-slate-700 text-emerald-400' : 'border-slate-900 text-slate-500 hover:text-white'
-            }`}
-          >
-            <List className="h-3.5 w-3.5" />
-          </button>
-        </div>
-      </div>
-
-      {/* 3. INTEGRATSIYALASHGAN FILTR VA QIDIRUV STRUKTURASI */}
-      <div className="bg-slate-950/40 backdrop-blur-xl border border-slate-900 rounded-2xl p-4 md:p-6 mb-10 shadow-2xl relative">
-        <div className="absolute top-0 right-10 -translate-y-1/2 flex items-center gap-2 bg-slate-950 border border-slate-900 px-3 py-1 rounded-lg text-[9px] font-mono tracking-wider text-slate-500">
-          <Activity className="h-3 w-3 text-emerald-400 animate-pulse" /> LIVE_FILTER_STREAM
-        </div>
-
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          {/* Chap qism: Real vaqtli matnli kiber qidiruv */}
-          <div className="relative flex-1 w-full">
-            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600" />
-            <input
-              type="text"
-              placeholder="Katalog tizimidan resurslarni qidirish..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-xl border border-slate-900 bg-slate-950 py-3 pl-11 pr-24 text-xs text-white placeholder-slate-700 focus:border-emerald-500/30 focus:outline-none focus:ring-0 transition font-medium font-mono"
-            />
-            {search && (
-              <button 
-                onClick={() => setSearch('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] uppercase font-mono font-bold bg-slate-900 border border-slate-800 px-2 py-1 rounded-md text-slate-400 hover:text-white transition"
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {interiorStyles.map((item, idx) => (
+              <div
+                key={idx}
+                className="group relative rounded-2xl border border-slate-900 bg-slate-950/80 overflow-hidden flex flex-col justify-between hover:border-amber-400/40 hover:shadow-[0_15px_30px_rgba(255,193,7,0.12)] transition-all duration-300"
               >
-                Tozalash
-              </button>
-            )}
+                <div className="relative w-full aspect-[4/3] overflow-hidden bg-slate-900">
+                  <img
+                    src={item.img}
+                    alt={item.title}
+                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute top-3 left-3 rounded-lg bg-slate-950/90 border border-amber-400/30 px-2.5 py-1 text-[10px] font-bold text-amber-300 backdrop-blur-md uppercase tracking-wider">
+                    {item.badge}
+                  </div>
+                </div>
+
+                <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+                  <div>
+                    <h3 className="font-serif font-bold text-lg text-white group-hover:text-amber-300 transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-xs text-slate-400 mt-1.5 line-clamp-3 leading-relaxed">
+                      {item.desc}
+                    </p>
+                  </div>
+
+                  <Link
+                    to={item.link}
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-400 hover:text-amber-300 transition-colors pt-2 border-t border-slate-900"
+                  >
+                    <span>Uslubdagi modellarni ko'rish</span>
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </div>
+            ))}
           </div>
 
-          {/* O'ng qism: Saralash matritsasi */}
-          <div className="flex items-center gap-2 shrink-0 w-full lg:w-auto">
-            <div className="flex items-center gap-3 bg-slate-950 px-4 py-2.5 rounded-xl border border-slate-900 w-full lg:w-auto justify-between lg:justify-start">
-              <span className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                <ArrowUpDown className="h-3.5 w-3.5 text-slate-500" /> Saralash:
-              </span>
+        </div>
+      </section>
+
+      {/* 6. ASOSIY MAHSULOTLAR KATALOGI (MAIN CATALOG) */}
+      <section id="catalog-section" className="py-12 sm:py-16 border-b border-slate-900/80">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          
+          {/* Katalog Yuqori Boshqaruvi */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+            <div>
+              <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-amber-400 mb-2">
+                <Palette className="h-4 w-4" />
+                <span>Vitrina</span>
+              </div>
+              <h2 className="font-serif text-2xl sm:text-4xl font-bold text-white tracking-tight">
+                Saralangan Parda Aksessuarlari
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-400 mt-1">
+                Jami {filteredProducts.length} ta eksklyuziv mahsulot mavjud
+              </p>
+            </div>
+
+            {/* Qidiruv & Saralash */}
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Qidiruv */}
+              <div className="relative w-full sm:w-64">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Katalogdan izlash..."
+                  className="w-full bg-slate-900/80 border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400/50"
+                />
+                <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-500" />
+              </div>
+
+              {/* Saralash */}
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="bg-transparent text-xs font-bold font-mono text-emerald-400 focus:outline-none cursor-pointer border-none p-0 pr-6 uppercase tracking-tight"
+                className="bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-400/50 cursor-pointer"
               >
-                <option value="DEFAULT" className="bg-slate-950 text-slate-400">Standart Shlyuz</option>
-                <option value="PRICE_ASC" className="bg-slate-950 text-slate-400">Narx: O'sish</option>
-                <option value="PRICE_DESC" className="bg-slate-950 text-slate-400">Narx: Kamayish</option>
-                <option value="DISCOUNT" className="bg-slate-950 text-slate-400">Chegirma</option>
-                <option value="RATING" className="bg-slate-950 text-slate-400">Reyting</option>
-                <option value="NEWEST" className="bg-slate-950 text-slate-400">Yangi</option>
-                <option value="POPULAR" className="bg-slate-950 text-slate-400">Ommabop</option>
-                <option value="NAME_ASC" className="bg-slate-950 text-slate-400">Nomi: A-Z</option>
-                <option value="NAME_DESC" className="bg-slate-950 text-slate-400">Nomi: Z-A</option>
+                <option value="popular">Eng mashhur</option>
+                <option value="price_asc">Narx: Arzonroq</option>
+                <option value="price_desc">Narx: Qimmatroq</option>
+                <option value="rating">Reyting bo'yicha</option>
+                <option value="newest">Yangi kelganlar</option>
               </select>
+
+              {/* Chegirma filtri */}
+              <button
+                onClick={() => setOnlyDiscount(!onlyDiscount)}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border transition-colors ${
+                  onlyDiscount
+                    ? 'bg-amber-400 text-slate-950 border-amber-400'
+                    : 'bg-slate-900/80 border-slate-800 text-slate-400 hover:text-white'
+                }`}
+              >
+                <Percent className="h-3.5 w-3.5" />
+                <span>Chegirmalar</span>
+              </button>
             </div>
           </div>
-        </div>
 
-        {/* DINAMIK KATEGORIYALAR CHIZIG'I */}
-        <div className="mt-5 pt-5 border-t border-slate-900/60 flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 select-none no-scrollbar">
-          <div className="hidden md:flex items-center gap-1 text-[10px] font-mono font-bold text-slate-600 uppercase tracking-widest shrink-0 mr-2 border-r border-slate-900 pr-3">
-            <SlidersHorizontal className="h-3.5 w-3.5 text-slate-500" /> Sektorlar:
-          </div>
-          
-          {generatedCategories.map((cat) => {
-            const isSelected = selectedCategory === cat;
-            return cat === 'ALL' ? (
+          {/* Kategoriya Kapsulalari (Tabs) */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8 scrollbar-none">
+            <button
+              onClick={() => setSelectedCategory('all')}
+              className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+                selectedCategory === 'all'
+                  ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/30'
+                  : 'bg-slate-900/70 text-slate-400 border border-slate-800 hover:text-white hover:border-slate-700'
+              }`}
+            >
+              Barcha Mahsulotlar ({products.length})
+            </button>
+
+            {categoryList.map((cat, idx) => (
               <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`rounded-xl px-4 py-2 text-[10px] font-bold uppercase tracking-wider border whitespace-nowrap transition-all active:scale-[0.97] ${
-                  isSelected
-                    ? 'bg-emerald-500 border-emerald-500 text-slate-950 font-black shadow-[0_0_15px_rgba(255,193,7,0.3)]'
-                    : 'bg-slate-950/80 border-slate-900 text-slate-400 hover:text-white hover:border-slate-800'
+                key={cat.id || idx}
+                onClick={() => setSelectedCategory(cat.name)}
+                className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+                  selectedCategory.toLowerCase() === cat.name.toLowerCase()
+                    ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/30'
+                    : 'bg-slate-900/70 text-slate-400 border border-slate-800 hover:text-white hover:border-slate-700'
                 }`}
               >
-                Barcha Gadjetlar
+                {cat.name}
               </button>
-            ) : (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`rounded-xl px-4 py-2 text-[10px] font-bold uppercase tracking-wider border whitespace-nowrap transition-all active:scale-[0.97] ${
-                  isSelected
-                    ? 'bg-emerald-500 border-emerald-500 text-slate-950 font-black shadow-[0_0_15px_rgba(255,193,7,0.3)]'
-                    : 'bg-slate-950/80 border-slate-900 text-slate-400 hover:text-white hover:border-slate-800'
-                }`}
-              >
-                {cat}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Qo'shimcha filtrlari */}
-        <div className="mt-4 pt-4 border-t border-slate-900/60 flex flex-wrap items-center gap-2">
-          <div className="flex items-center gap-1 text-[10px] font-mono font-bold text-slate-600 uppercase tracking-widest shrink-0 mr-2">
-            <Filter className="h-3.5 w-3.5 text-slate-500" /> Brend:
-          </div>
-          <select
-            value={selectedBrand}
-            onChange={(e) => setSelectedBrand(e.target.value)}
-            className="bg-slate-950 border border-slate-900 rounded-lg px-3 py-1.5 text-[10px] font-bold font-mono text-emerald-400 focus:outline-none cursor-pointer"
-          >
-            {brands.map((brand) => (
-              <option key={brand} value={brand} className="bg-slate-950 text-slate-400">
-                {brand === 'ALL' ? 'Barchasi' : brand}
-              </option>
             ))}
-          </select>
-
-          <button
-            onClick={() => setOnlyDiscount(!onlyDiscount)}
-            className={`px-3 py-1.5 rounded-lg border text-[10px] font-bold uppercase tracking-wider transition-all ${
-              onlyDiscount ? 'bg-rose-500/10 border-rose-500/30 text-rose-400' : 'border-slate-900 text-slate-500 hover:text-white'
-            }`}
-          >
-            <Percent className="h-3 w-3 inline mr-1" /> Chegirmalilar
-          </button>
-
-          <button
-            onClick={() => setOnlyInStock(!onlyInStock)}
-            className={`px-3 py-1.5 rounded-lg border text-[10px] font-bold uppercase tracking-wider transition-all ${
-              onlyInStock ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'border-slate-900 text-slate-500 hover:text-white'
-            }`}
-          >
-            <PackageCheck className="h-3 w-3 inline mr-1" /> Omborida bor
-          </button>
-        </div>
-      </div>
-
-      {/* METRIKALAR PANELI VA FILTR STATUSI */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs text-slate-500 mb-6 font-mono px-1 gap-3">
-        <div className="flex items-center gap-1.5 bg-slate-950/50 px-3 py-1.5 rounded-lg border border-slate-900 text-[11px]">
-          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-          Ekran matritsasida: <span className="text-white font-bold">{catalogStats.totalInGrid} ta resurs</span> topildi
-          {catalogStats.itemsWithDiscount > 0 && (
-            <>
-              <span className="text-slate-800">|</span> 
-              <span className="text-rose-400 font-bold">{catalogStats.itemsWithDiscount} ta maxsus taklif</span>
-            </>
-          )}
-          {catalogStats.itemsNew > 0 && (
-            <>
-              <span className="text-slate-800">|</span>
-              <span className="text-amber-400 font-bold">{catalogStats.itemsNew} yangi</span>
-            </>
-          )}
-        </div>
-
-        {(search || selectedCategory !== 'ALL' || sortBy !== 'DEFAULT' || activeTab !== 'CATALOG' || selectedBrand !== 'ALL' || onlyDiscount || onlyInStock) && (
-          <button
-            onClick={handleResetFilters}
-            className="flex items-center gap-1.5 text-rose-400 hover:text-rose-300 font-bold uppercase tracking-wider transition text-[10px] bg-rose-500/5 px-3 py-1.5 rounded-lg border border-rose-500/10"
-          >
-            <FilterX className="h-3.5 w-3.5" /> Filtrlarni tozalash
-          </button>
-        )}
-      </div>
-
-      {/* 4. ASOSIY MAHSULOTLAR GRIDI YOKI SKELETON INTEGRATSIYASI */}
-      {loading ? (
-        <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="animate-pulse border border-slate-900 bg-slate-950/20 rounded-2xl p-4 flex flex-col gap-4 relative overflow-hidden h-72 sm:h-[520px]">
-              <div className="aspect-square w-full rounded-xl bg-slate-900/60 border border-slate-900/80" />
-              <div className="space-y-3 flex-1 mt-2">
-                <div className="h-4 bg-slate-900 rounded w-1/3" />
-                <div className="h-5 bg-slate-900 rounded w-3/4" />
-                <div className="h-3 bg-slate-900 rounded w-full" />
-                <div className="h-3 bg-slate-900 rounded w-5/6" />
-              </div>
-              <div className="flex items-center justify-between mt-auto pt-3 border-t border-slate-900/40">
-                <div className="h-6 bg-slate-900 rounded w-1/3" />
-                <div className="h-10 bg-slate-900 rounded-xl w-1/2" />
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : filteredProducts.length === 0 ? (
-        <div className="text-center py-24 border border-dashed border-slate-900 rounded-3xl bg-slate-950/10 backdrop-blur-sm max-w-2xl mx-auto flex flex-col items-center justify-center p-6 shadow-xl">
-          <div className="p-4 bg-slate-950 rounded-2xl border border-slate-900 text-slate-700 mb-4">
-            <Layers className="h-8 w-8 text-slate-600 animate-pulse" />
           </div>
-          <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono">Hech qanday kiber-aktiv topilmadi</h3>
-          <p className="mt-2 text-xs text-slate-500 max-w-sm leading-relaxed font-light">
-            Siz kiritgan kalit so'zlar yoki tanlangan sektor segmentlari bo'yicha ma'lumotlar omborida hech qanday moslik aniqlanmadi.
-          </p>
-          <button
-            onClick={handleResetFilters}
-            className="mt-6 px-4 py-2.5 bg-slate-900 hover:bg-slate-850 text-emerald-400 font-bold text-[10px] uppercase font-mono tracking-widest rounded-xl border border-slate-800 transition active:scale-95"
-          >
-            Tizim parametrlarini tiklash
-          </button>
-        </div>
-      ) : (
-        <>
-          {viewMode === 'grid' ? (
-            <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
-              {paginatedProducts.map((product) => (
-                <ProductCard key={product._id || product.id} product={product} />
+
+          {/* Mahsulotlar Grid */}
+          {loading && filteredProducts.length === 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6">
+              <SkeletonCard count={8} />
+            </div>
+          ) : filteredProducts.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6">
+              {filteredProducts.slice(0, visibleCount).map((product) => (
+                <ProductCard key={product.id || product._id} product={product} />
               ))}
             </div>
           ) : (
-            <div className="space-y-4">
-              {paginatedProducts.map((product) => (
-                <ProductCard key={product._id || product.id} product={product} />
-              ))}
-            </div>
-          )}
-
-          {/* PAGINATION */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-10">
+            <div className="text-center py-16 bg-slate-900/30 rounded-3xl border border-slate-900">
+              <Sparkles className="h-10 w-10 text-amber-400/50 mx-auto mb-3" />
+              <h3 className="text-base font-bold text-white">Mahsulot topilmadi</h3>
+              <p className="text-xs text-slate-500 mt-1">Boshqa parametr yoki so'z bilan qidirib ko'ring</p>
               <button
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                disabled={safePage === 1}
-                className="p-2 rounded-xl border border-slate-900 bg-slate-950/50 text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+                onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setOnlyDiscount(false); }}
+                className="mt-4 px-4 py-2 rounded-xl bg-slate-800 text-amber-300 text-xs font-bold hover:bg-slate-700 transition-colors"
               >
-                <ChevronRight className="h-4 w-4 rotate-180" />
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).slice(0, 7).map(page => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`h-9 w-9 rounded-xl border text-xs font-mono font-bold transition-all ${
-                    safePage === page
-                      ? 'bg-emerald-500 border-emerald-500 text-slate-950'
-                      : 'border-slate-900 bg-slate-950/50 text-slate-400 hover:text-white'
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
-              <button
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                disabled={safePage === totalPages}
-                className="p-2 rounded-xl border border-slate-900 bg-slate-950/50 text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
-              >
-                <ChevronRight className="h-4 w-4" />
+                Filtrni tozalash
               </button>
             </div>
           )}
-        </>
-      )}
 
-      {/* ============================================================
-      YANGI KELGAN MAHSULOTLAR
-      ============================================================ */}
-      {newProducts.length > 0 && (
-        <div className="mt-20">
-          <div className="flex items-center gap-2 mb-8 border-b border-slate-900 pb-4">
-            <Sparkles className="h-5 w-5 text-amber-400" />
-            <h2 className="text-lg font-black uppercase tracking-widest">
-              Yangi <span className="text-amber-400">Kelganlar</span>
-            </h2>
-            <Link to="/yangi-kelganlar" className="ml-auto text-[10px] font-bold text-slate-500 hover:text-white flex items-center gap-1">
-              Hammasi <ChevronRight className="h-3 w-3" />
-            </Link>
+          {/* Ko'proq yuklash */}
+          {visibleCount < filteredProducts.length && (
+            <div className="text-center mt-10">
+              <button
+                onClick={() => setVisibleCount(prev => prev + 8)}
+                className="px-8 py-3.5 rounded-xl border border-amber-400/30 bg-slate-900/80 text-amber-300 text-xs font-bold uppercase tracking-wider hover:bg-amber-400 hover:text-slate-950 transition-all duration-300 shadow-md"
+              >
+                Yana mahsulotlarni yuklash ({filteredProducts.length - visibleCount} ta qoldi)
+              </button>
+            </div>
+          )}
+
+        </div>
+      </section>
+
+      {/* 7. MIJOZLAR RASMLARI VA LOOKBOOK */}
+      <section className="py-12 sm:py-16 border-b border-slate-900/80 bg-slate-950">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+            <div>
+              <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-amber-400 mb-2">
+                <Heart className="h-4 w-4" />
+                <span>#GrandDecorUylar</span>
+              </div>
+              <h2 className="font-serif text-2xl sm:text-4xl font-bold text-white tracking-tight">
+                Mijozlarimiz Uylaridagi Grand Décor
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-400 mt-1">
+                Bizning aksessuarlarimiz bilan bezatilgan real xonadonlar va villalar
+              </p>
+            </div>
+
+            <span className="text-xs text-slate-500 font-mono">15 000+ baxtli xonadon</span>
           </div>
-          <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
-            {newProducts.map((product) => (
-              <ProductCard key={product._id || product.id} product={product} />
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+            <div className="rounded-2xl overflow-hidden aspect-square border border-slate-900 relative group">
+              <img
+                src="https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=600&auto=format&fit=crop&q=80"
+                alt="Living Room Decor"
+                className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
+                <span className="text-xs font-semibold text-white">Toshkent, Tashkent City Villa</span>
+              </div>
+            </div>
+
+            <div className="rounded-2xl overflow-hidden aspect-square border border-slate-900 relative group">
+              <img
+                src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=600&auto=format&fit=crop&q=80"
+                alt="Bedroom Curtains"
+                className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
+                <span className="text-xs font-semibold text-white">Samarqand, Grand Hotel Suite</span>
+              </div>
+            </div>
+
+            <div className="rounded-2xl overflow-hidden aspect-square border border-slate-900 relative group">
+              <img
+                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&auto=format&fit=crop&q=80"
+                alt="Modern Drapes"
+                className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
+                <span className="text-xs font-semibold text-white">Toshkent, Mirabad Avenue</span>
+              </div>
+            </div>
+
+            <div className="rounded-2xl overflow-hidden aspect-square border border-slate-900 relative group">
+              <img
+                src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&auto=format&fit=crop&q=80"
+                alt="Classic Tassels"
+                className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
+                <span className="text-xs font-semibold text-white">Buxoro, Qasr Rezidensiya</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* 8. SAMIMIY TAQRIZLAR (TESTIMONIALS) */}
+      <section className="py-12 sm:py-16 border-b border-slate-900/80 bg-gradient-to-b from-slate-950 via-slate-900/20 to-slate-950">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          
+          <div className="text-center max-w-xl mx-auto mb-10">
+            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-amber-400 mb-2">
+              <Star className="h-4 w-4 fill-amber-400" />
+              <span>Mijozlarimiz Bahosi</span>
+            </div>
+            <h2 className="font-serif text-2xl sm:text-4xl font-bold text-white tracking-tight">
+              Bizga Ishonganlar Fikri
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {testimonials.map((t, idx) => (
+              <div
+                key={idx}
+                className="rounded-2xl border border-slate-900 bg-slate-900/40 p-6 flex flex-col justify-between space-y-4 hover:border-amber-400/30 transition-colors"
+              >
+                <div>
+                  <div className="flex items-center gap-1 text-amber-400 mb-3">
+                    {[...Array(t.rating)].map((_, i) => (
+                      <Star key={i} className="h-4 w-4 fill-amber-400" />
+                    ))}
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-300 font-light leading-relaxed italic">
+                    "{t.text}"
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3 pt-3 border-t border-slate-900">
+                  <img src={t.avatar} alt={t.name} className="h-10 w-10 rounded-full object-cover border border-amber-400/30" />
+                  <div>
+                    <h4 className="text-xs font-bold text-white">{t.name}</h4>
+                    <p className="text-[10px] text-amber-400/80">{t.role} • {t.city}</p>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
-        </div>
-      )}
 
-      {/* ============================================================
-      TOP REYTINGLI MAHSULOTLAR
-      ============================================================ */}
-      {topRatedProducts.length > 0 && (
-        <div className="mt-20">
-          <div className="flex items-center gap-2 mb-8 border-b border-slate-900 pb-4">
-            <Star className="h-5 w-5 text-yellow-400" />
-            <h2 className="text-lg font-black uppercase tracking-widest">
-              Top <span className="text-yellow-400">Reyting</span>
-            </h2>
-            <span className="text-[10px] font-mono text-slate-600 bg-slate-950 border border-slate-900 px-2 py-0.5 rounded-lg ml-2">
-              ENG YAXSHILAR
-            </span>
-          </div>
-          <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
-            {topRatedProducts.map((product) => (
-              <ProductCard key={product._id || product.id} product={product} />
-            ))}
-          </div>
         </div>
-      )}
+      </section>
 
-      {/* ============================================================
-      KAM OMBORLI MAHSULOTLAR (SHOSHILINCH)
-      ============================================================ */}
-      {lowStockProducts.length > 0 && (
-        <div className="mt-20">
-          <div className="flex items-center gap-2 mb-8 border-b border-slate-900 pb-4">
-            <AlertTriangle className="h-5 w-5 text-rose-400" />
-            <h2 className="text-lg font-black uppercase tracking-widest">
-              Oxirgi <span className="text-rose-400">Nusxalar</span>
-            </h2>
-            <span className="text-[10px] font-mono text-rose-400 bg-rose-500/10 border border-rose-500/20 px-2 py-0.5 rounded-lg ml-2 animate-pulse">
-              SHOSHILINCH!
-            </span>
+      {/* 9. VIP DIZAYNER KONSULTATSIYASI BLOKI (CTA) */}
+      <section className="py-16 sm:py-20 relative overflow-hidden bg-gradient-to-r from-amber-500/10 via-slate-900 to-amber-500/10 border-t border-amber-400/20">
+        <div className="mx-auto max-w-4xl px-4 text-center space-y-5">
+          <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/40 bg-amber-400/20 px-4 py-1.5 text-xs font-bold text-amber-300 uppercase tracking-widest">
+            <Crown className="h-4 w-4 text-amber-400" />
+            <span>VIP Dizayner Xizmati</span>
           </div>
-          <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
-            {lowStockProducts.map((product) => (
-              <ProductCard key={product._id || product.id} product={product} />
-            ))}
-          </div>
-        </div>
-      )}
 
-      {/* 5. KO'RILGAN MAHSULOTLAR BO'LIMI */}
-      {recentlyViewed.length > 0 && (
-        <div className="mt-20">
-          <div className="flex items-center gap-2 mb-8 border-b border-slate-900 pb-4">
-            <Clock className="h-5 w-5 text-blue-400" />
-            <h2 className="text-lg font-black uppercase tracking-widest">
-              Yaqinda <span className="text-blue-400">Ko'rilgan</span>
-            </h2>
-            <span className="text-[10px] font-mono text-slate-600 bg-slate-950 border border-slate-900 px-2 py-0.5 rounded-lg ml-2">
-              {recentlyViewed.length} TA
-            </span>
+          <h2 className="font-serif text-3xl sm:text-5xl font-bold text-white leading-tight">
+            Pardangizga Qaysi Aksessuar Mos Kelishini Bilmayapsizmi?
+          </h2>
+
+          <p className="text-sm sm:text-base text-slate-300 font-light max-w-2xl mx-auto">
+            Xonangiz yoki pardangiz fotosuratini bizga yuboring. Tajribali dizaynerlarimiz 15 daqiqa ichida interyeringizga eng mos keluvchi 3 xil eksklyuziv variantni taklif qilishadi!
+          </p>
+
+          <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
+            <a
+              href="https://t.me/akromjonov2011"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 px-8 py-4 text-sm font-bold shadow-xl shadow-amber-400/30 hover:shadow-amber-400/50 hover:scale-[1.02] transition-all"
+            >
+              <Send className="h-4 w-4" />
+              <span>Telegram orqali fotosurat yuborish</span>
+            </a>
+
+            <a
+              href="tel:+998712008800"
+              className="inline-flex items-center gap-2.5 rounded-xl border border-amber-400/40 bg-slate-950/80 px-7 py-4 text-sm font-semibold text-white hover:bg-slate-900 transition-colors"
+            >
+              <PhoneCall className="h-4 w-4 text-amber-400" />
+              <span>+998 (71) 200-88-00</span>
+            </a>
           </div>
-          <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-5">
-            {recentlyViewed.slice(0, 5).map((product) => (
-              <ProductCard key={product._id || product.id} product={product} />
-            ))}
-          </div>
+
+          <p className="text-[11px] text-slate-500 pt-2">
+            Konsultatsiya mutlaqo BEPUL • Har kuni 09:00 dan 21:00 gacha
+          </p>
         </div>
-      )}
+      </section>
+
     </div>
   );
 }

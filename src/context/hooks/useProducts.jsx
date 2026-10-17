@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
-import seedDb from '../../../db.json';
+// Frontend zaxirasi — faqat mahsulot va kategoriyalar (parollar/buyurtmalar kirmaydi).
+// Yangilash: node scripts/sync-seed-catalog.cjs
+import seedDb from '../../data/seed-catalog.json';
 
 const BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
@@ -25,7 +27,10 @@ const saveLocal = (key, value) => {
   catch { /* localStorage to'la bo'lishi mumkin */ }
 };
 
-const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80';
+// Neytral placeholder — mahsulotda rasm bo'lmasa boshqa mahsulot/galereya rasmi ishlatilmaydi (spec 2.1-band)
+const FALLBACK_IMAGE = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(
+  `<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'><rect width='600' height='600' fill='#0d1220'/><rect x='14' y='14' width='572' height='572' rx='28' fill='none' stroke='#F5C518' stroke-opacity='0.35' stroke-width='3'/><text x='300' y='300' text-anchor='middle' fill='#F5C518' font-family='Georgia, serif' font-size='44' font-weight='bold'>Grand Décor</text><text x='300' y='340' text-anchor='middle' fill='#8b93a7' font-family='Arial, sans-serif' font-size='20'>Mahsulot rasmi</text></svg>`
+);
 
 const normalizeImage = (image) => {
   if (!image) return FALLBACK_IMAGE;
@@ -71,6 +76,13 @@ const useProducts = (showToast) => {
     return () => window.removeEventListener('storage', syncFromStorage);
   }, []);
 
+  // PERFORMANCE: ma'lumotlar o'zgarmasa state'ni yangilamaymiz (keraksiz re-renderlarni oldini olish)
+  const lastProductsKey = useRef('');
+
+  const productsKey = (list) => list
+    .map(p => `${p.id}|${p.price}|${p.stock}|${p.discount}|${p.title}|${p.rating}|${p.reviewsCount}|${p.featured}|${p.image}`)
+    .join('~');
+
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
@@ -79,7 +91,11 @@ const useProducts = (showToast) => {
       const data = res.data;
       const all = Array.isArray(data) ? data : (Array.isArray(data.data) ? data.data : []);
       const normalized = all.map(p => ({ ...p, image: normalizeImage(p.image) }));
-      setProducts(normalized);
+      const key = productsKey(normalized);
+      if (key !== lastProductsKey.current) {
+        lastProductsKey.current = key;
+        setProducts(normalized);
+      }
       serverAvailable.current = true;
     } catch (error) {
       console.error('fetchProducts xato:', error);
@@ -87,8 +103,12 @@ const useProducts = (showToast) => {
       // Lokal zaxirada ma'lumot bor bo'lsa — u ishlatiladi (toast bermaymiz, yumshoq rejim)
       if (!loadLocal(PRODUCTS_KEY)) {
         if (seedProducts.length > 0) {
-          // Server yo'q va lokal ham bo'sh — db.json zaxirasini yuklaymiz
-          setProducts(seedProducts);
+          // Server yo'q va lokal ham bo'sh — seed zaxirasini yuklaymiz
+          const key2 = productsKey(seedProducts);
+          if (key2 !== lastProductsKey.current) {
+            lastProductsKey.current = key2;
+            setProducts(seedProducts);
+          }
           showToast(
             useSeedMode
               ? "Zaxira ma'lumotlar yuklandi"
@@ -104,16 +124,22 @@ const useProducts = (showToast) => {
     }
   }, [showToast]);
 
+  const lastCategoriesKey = useRef('');
+
   const fetchCategories = useCallback(async () => {
     try {
       if (useSeedMode) throw new Error('SEED_MODE');
       const res = await api.get('/categories');
       const data = res.data;
       const all = Array.isArray(data) ? data : (Array.isArray(data.data) ? data.data : []);
-      if (all.length > 0) setCategories(all);
+      const key = all.map(c => `${c.id}|${c.name}`).join('~');
+      if (all.length > 0 && key !== lastCategoriesKey.current) {
+        lastCategoriesKey.current = key;
+        setCategories(all);
+      }
     } catch (error) {
       console.error('fetchCategories xato:', error);
-      // Server yo'q va kategoriyalar bo'sh bo'lsa — db.json zaxirasi
+      // Server yo'q va kategoriyalar bo'sh bo'lsa — seed zaxirasi
       if (seedCategories.length > 0) {
         setCategories(prev => (prev.length > 0 ? prev : seedCategories));
       }
@@ -128,14 +154,15 @@ const useProducts = (showToast) => {
     return () => clearTimeout(t);
   }, [fetchProducts, fetchCategories]);
 
-  // REAL VAQT: server ulangan bo'lsa, katalog va kategoriyalarni davriy yangilab turamiz
+  // REAL VAQT: server ulangan bo'lsa, katalog va kategoriyalarni davriy yangilab turamiz.
+  // PERFORMANCE: sahifa ko'rinmas bo'lsa (boshqa tab) polling to'xtatiladi.
   useEffect(() => {
     const interval = setInterval(() => {
-      if (navigator.onLine && serverAvailable.current) {
+      if (navigator.onLine && serverAvailable.current && document.visibilityState === 'visible') {
         fetchProducts();
         fetchCategories();
       }
-    }, 30000);
+    }, 10000);
     return () => clearInterval(interval);
   }, [fetchProducts, fetchCategories]);
 

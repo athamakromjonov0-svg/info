@@ -11,7 +11,7 @@ import {
   BadgePercent, Database, ShoppingBag, Wallet, Receipt, Trophy,
   Terminal, Grid2X2, List as ListIcon, CheckCheck, PieChart, LineChart,
   ShieldCheck, Minus, Truck, Newspaper, FileText as FileTextIcon,
-  Clock, Wifi, WifiOff, Radio, User
+  Wifi, WifiOff, Radio, User
 } from 'lucide-react';
 
 /* ============================================================
@@ -51,10 +51,10 @@ const formatTime = (dateStr) => {
 };
 
 const STATUS_COLORS = {
-  'Qabul qilindi': 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+  'Qabul qilindi': 'bg-amber-400/10 text-amber-300 border-amber-400/20',
   'Jarayonda': 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-  'Yetkazilmoqda': 'bg-violet-500/10 text-violet-400 border-violet-500/20',
-  'Yetkazildi': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+  'Yetkazilmoqda': 'bg-amber-400/10 text-amber-300 border-amber-400/20',
+  'Yetkazildi': 'bg-amber-400/10 text-amber-300 border-amber-400/20',
   'Bekor qilindi': 'bg-rose-500/10 text-rose-400 border-rose-500/20',
   'Qaytarildi': 'bg-slate-500/10 text-slate-400 border-slate-500/20',
 };
@@ -69,20 +69,20 @@ const ORDER_STATUSES = [
 ];
 
 const PAYMENT_METHODS = {
-  cash: { label: 'Naqd pul', icon: 'Banknote', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' },
-  card: { label: 'Bank kartasi', icon: 'CreditCard', color: 'text-blue-400 bg-blue-500/10 border-blue-500/20' },
+  cash: { label: 'Naqd pul', icon: 'Banknote', color: 'text-amber-300 bg-amber-400/10 border-amber-400/20' },
+  card: { label: 'Bank kartasi', icon: 'CreditCard', color: 'text-amber-300 bg-amber-400/10 border-amber-400/20' },
   click: { label: 'Click', icon: 'Zap', color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' },
-  payme: { label: 'Payme', icon: 'Zap', color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20' },
+  payme: { label: 'Payme', icon: 'Zap', color: 'text-amber-300 bg-amber-400/10 border-amber-400/20' },
 };
 
 const ROLE_COLORS = {
   admin: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
-  moderator: 'bg-violet-500/10 text-violet-400 border-violet-500/20',
-  user: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+  moderator: 'bg-amber-400/10 text-amber-300 border-amber-400/20',
+  user: 'bg-amber-400/10 text-amber-300 border-amber-400/20',
 };
 
 const USER_STATUS_COLORS = {
-  active: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+  active: 'bg-amber-400/10 text-amber-300 border-amber-400/20',
   blocked: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
   pending: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
 };
@@ -167,6 +167,15 @@ export default function AdminDashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
   const [newCoupon, setNewCoupon] = useState({ code: '', discount: '', minSpend: '', active: true });
+
+  // Mobil sidebar ochilganda orqa sahifa skroll qilinmasin (lg + katta ekranda lock kerak emas)
+  useEffect(() => {
+    if (mobileSidebarOpen && window.innerWidth < 1024) {
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = ''; };
+    }
+    return undefined;
+  }, [mobileSidebarOpen]);
   const [editingCoupon, setEditingCoupon] = useState(null);
   const [newUser, setNewUser] = useState({ name: '', email: '', role: 'user', password: '' });
   const [editingUser, setEditingUser] = useState(null);
@@ -467,7 +476,7 @@ export default function AdminDashboard() {
     try {
       if (addCategory) {
         await addCategory({ name: newCategoryName.trim() });
-        addActivityLog?.({ action: `Yangi kategoriya yaratildi: ${newCategoryName.trim()}`, user: 'Admin Terminal', type: 'category' });
+        addActivityLog?.({ action: `Yangi kategoriya yaratildi: ${newCategoryName.trim()}`, user: 'Admin', type: 'category' });
         showToast("Yangi kategoriya tizimga muvaffaqiyatli kiritildi!", "success");
         setNewCategoryName('');
       } else {
@@ -495,7 +504,7 @@ export default function AdminDashboard() {
     }
     try {
       await updateCategory(categoryEditId, { name: categoryEditName.trim() });
-      addActivityLog?.({ action: `Kategoriya yangilandi: ${categoryEditName.trim()}`, user: 'Admin Terminal', type: 'category' });
+      addActivityLog?.({ action: `Kategoriya yangilandi: ${categoryEditName.trim()}`, user: 'Admin', type: 'category' });
       setCategoryEditId(null);
       setCategoryEditName('');
     } catch {
@@ -508,7 +517,7 @@ export default function AdminDashboard() {
     if (!deleteConfirmId) return;
     try {
       await deleteCategory(deleteConfirmId);
-      addActivityLog?.({ action: 'Kategoriya o\'chirildi', user: 'Admin Terminal', type: 'category' });
+      addActivityLog?.({ action: 'Kategoriya o\'chirildi', user: 'Admin', type: 'category' });
       setDeleteConfirmId(null);
       showToast("Kategoriya o'chirildi", "warning");
     } catch {
@@ -541,13 +550,13 @@ export default function AdminDashboard() {
     try {
       if (editingId) {
         await updateProduct(editingId, productPayload);
-        addActivityLog?.({ action: `Mahsulot yangilandi: ${form.title}`, user: 'Admin Terminal', type: 'product' });
+        addActivityLog?.({ action: `Mahsulot yangilandi: ${form.title}`, user: 'Admin', type: 'product' });
         setEditingId(null);
         resetForm();
         showToast("Resurs muvaffaqiyatli yangilandi!", "success");
       } else {
         await addProduct({ ...productPayload, rating: 5.0, reviewsCount: 0 });
-        addActivityLog?.({ action: `Yangi mahsulot qo'shildi: ${form.title}`, user: 'Admin Terminal', type: 'product' });
+        addActivityLog?.({ action: `Yangi mahsulot qo'shildi: ${form.title}`, user: 'Admin', type: 'product' });
         resetForm();
         showToast("Yangi resurs konveyerga qo'shildi!", "success");
       }
@@ -574,7 +583,7 @@ export default function AdminDashboard() {
           minSpend: Number(newCoupon.minSpend) || 0,
           active: newCoupon.active,
         });
-        addActivityLog?.({ action: `Kupon yangilandi: ${newCoupon.code.toUpperCase()}`, user: 'Admin Terminal', type: 'coupon' });
+        addActivityLog?.({ action: `Kupon yangilandi: ${newCoupon.code.toUpperCase()}`, user: 'Admin', type: 'coupon' });
         showToast("Kupon muvaffaqiyatli yangilandi", "success");
       } else {
         await addCoupon({
@@ -583,7 +592,7 @@ export default function AdminDashboard() {
           minSpend: Number(newCoupon.minSpend) || 0,
           active: true,
         });
-        addActivityLog?.({ action: `Yangi kupon yaratildi: ${newCoupon.code.toUpperCase()}`, user: 'Admin Terminal', type: 'coupon' });
+        addActivityLog?.({ action: `Yangi kupon yaratildi: ${newCoupon.code.toUpperCase()}`, user: 'Admin', type: 'coupon' });
         showToast("Yangi kupon yaratildi", "success");
       }
       setShowCouponModal(false);
@@ -606,7 +615,7 @@ export default function AdminDashboard() {
     if (!deleteConfirmId) return;
     try {
       await deleteCoupon(deleteConfirmId);
-      addActivityLog?.({ action: `Kupon o'chirildi: ${deleteConfirmId}`, user: 'Admin Terminal', type: 'coupon' });
+      addActivityLog?.({ action: `Kupon o'chirildi: ${deleteConfirmId}`, user: 'Admin', type: 'coupon' });
       setDeleteConfirmId(null);
     } catch {
       showToast("Kuponni o'chirishda xatolik", "error");
@@ -636,7 +645,7 @@ export default function AdminDashboard() {
           email: newUser.email,
           role: newUser.role,
         });
-        addActivityLog?.({ action: `Foydalanuvchi yangilandi: ${newUser.name}`, user: 'Admin Terminal', type: 'user' });
+        addActivityLog?.({ action: `Foydalanuvchi yangilandi: ${newUser.name}`, user: 'Admin', type: 'user' });
         showToast('Foydalanuvchi yangilandi', 'success');
       } else {
         await addUser({
@@ -645,7 +654,7 @@ export default function AdminDashboard() {
           role: newUser.role,
           password: newUser.password,
         });
-        addActivityLog?.({ action: `Yangi foydalanuvchi qo'shildi: ${newUser.name}`, user: 'Admin Terminal', type: 'user' });
+        addActivityLog?.({ action: `Yangi foydalanuvchi qo'shildi: ${newUser.name}`, user: 'Admin', type: 'user' });
         showToast('Yangi foydalanuvchi qo\'shildi', 'success');
       }
       setShowUserModal(false);
@@ -670,7 +679,7 @@ export default function AdminDashboard() {
       await updateUser(user._id || user.id, { status: newStatus });
       addActivityLog?.({
         action: newStatus === 'blocked' ? `Foydalanuvchi bloklandi: ${user.name}` : `Foydalanuvchi faollashtirildi: ${user.name}`,
-        user: 'Admin Terminal',
+        user: 'Admin',
         type: 'user',
       });
       showToast(newStatus === 'blocked' ? 'Foydalanuvchi bloklandi' : 'Foydalanuvchi faollashtirildi', newStatus === 'blocked' ? 'warning' : 'success');
@@ -684,7 +693,7 @@ export default function AdminDashboard() {
     if (!deleteConfirmId) return;
     try {
       await deleteUser(deleteConfirmId);
-      addActivityLog?.({ action: 'Foydalanuvchi o\'chirildi', user: 'Admin Terminal', type: 'user' });
+      addActivityLog?.({ action: 'Foydalanuvchi o\'chirildi', user: 'Admin', type: 'user' });
       setDeleteConfirmId(null);
       showToast("Foydalanuvchi o'chirildi", "warning");
     } catch {
@@ -696,7 +705,7 @@ export default function AdminDashboard() {
   const handleOrderStatusChange = async (orderId, newStatus) => {
     try {
       await updateOrderStatus(orderId, newStatus);
-      addActivityLog?.({ action: `Buyurtma ${orderId} statusi: ${newStatus}`, user: 'Admin Terminal', type: 'order' });
+      addActivityLog?.({ action: `Buyurtma ${orderId} statusi: ${newStatus}`, user: 'Admin', type: 'order' });
     } catch {
       showToast("Status o'zgartirishda xatolik", "error");
     }
@@ -706,7 +715,7 @@ export default function AdminDashboard() {
   const handleCancelOrder = async (orderId) => {
     try {
       await cancelOrder(orderId);
-      addActivityLog?.({ action: `Buyurtma bekor qilindi: ${orderId}`, user: 'Admin Terminal', type: 'order' });
+      addActivityLog?.({ action: `Buyurtma bekor qilindi: ${orderId}`, user: 'Admin', type: 'order' });
     } catch {
       showToast("Bekor qilishda xatolik", "error");
     }
@@ -723,7 +732,7 @@ export default function AdminDashboard() {
           await updateOrderStatus(orderId, bulkAction);
         }
       }
-      addActivityLog?.({ action: `${selectedOrders.length} ta buyurtma uchun ommaviy amal: ${bulkAction}`, user: 'Admin Terminal', type: 'order' });
+      addActivityLog?.({ action: `${selectedOrders.length} ta buyurtma uchun ommaviy amal: ${bulkAction}`, user: 'Admin', type: 'order' });
       showToast(`${selectedOrders.length} ta buyurtma uchun amal bajarildi`, 'success');
       setSelectedOrders([]);
       setSelectAllOrders(false);
@@ -739,7 +748,7 @@ export default function AdminDashboard() {
     if (selectedProductIds.length === 0) return;
     try {
       await bulkDeleteProducts(selectedProductIds);
-      addActivityLog?.({ action: `${selectedProductIds.length} ta mahsulot ommaviy o'chirildi`, user: 'Admin Terminal', type: 'product' });
+      addActivityLog?.({ action: `${selectedProductIds.length} ta mahsulot ommaviy o'chirildi`, user: 'Admin', type: 'product' });
       setSelectedProductIds([]);
       setSelectAllProducts(false);
       setShowProductBulkConfirm(false);
@@ -777,7 +786,7 @@ export default function AdminDashboard() {
     if (!deleteConfirmId) return;
     try {
       await deleteProduct(deleteConfirmId);
-      addActivityLog?.({ action: 'Mahsulot o\'chirildi', user: 'Admin Terminal', type: 'product' });
+      addActivityLog?.({ action: 'Mahsulot o\'chirildi', user: 'Admin', type: 'product' });
       if (editingId === deleteConfirmId) resetForm();
       setDeleteConfirmId(null);
       showToast("Resurs tizimdan o'chirildi.", "success");
@@ -805,7 +814,7 @@ export default function AdminDashboard() {
   const handleSettingsSave = (e) => {
     e.preventDefault();
     updateSettings(tempSettings);
-    addActivityLog?.({ action: 'Tizim sozlamalari yangilandi', user: 'Admin Terminal', type: 'settings' });
+    addActivityLog?.({ action: 'Tizim sozlamalari yangilandi', user: 'Admin', type: 'settings' });
   };
 
   // Bildirishnoma sozlamalarini saqlash
@@ -834,11 +843,11 @@ export default function AdminDashboard() {
     };
     if (editingBlogId) {
       updateBlogPost(editingBlogId, payload);
-      addActivityLog?.({ action: `Blog maqola yangilandi: ${payload.title}`, user: 'Admin Terminal', type: 'product' });
+      addActivityLog?.({ action: `Blog maqola yangilandi: ${payload.title}`, user: 'Admin', type: 'product' });
       showToast("Maqola yangilandi", "success");
     } else {
       addBlogPost(payload);
-      addActivityLog?.({ action: `Yangi blog maqola yaratildi: ${payload.title}`, user: 'Admin Terminal', type: 'product' });
+      addActivityLog?.({ action: `Yangi blog maqola yaratildi: ${payload.title}`, user: 'Admin', type: 'product' });
       showToast("Yangi maqola yaratildi", "success");
     }
     setShowBlogModal(false);
@@ -865,7 +874,7 @@ export default function AdminDashboard() {
   // Blog maqolani o'chirish
   const handleDeleteBlog = (post) => {
     deleteBlogPost(post.id);
-    addActivityLog?.({ action: `Blog maqola o'chirildi: ${post.title}`, user: 'Admin Terminal', type: 'product' });
+    addActivityLog?.({ action: `Blog maqola o'chirildi: ${post.title}`, user: 'Admin', type: 'product' });
     showToast("Maqola o'chirildi", "warning");
   };
 
@@ -874,7 +883,7 @@ export default function AdminDashboard() {
     Object.keys(localStorage)
       .filter(k => k.startsWith('vortex_'))
       .forEach(k => localStorage.removeItem(k));
-    addActivityLog?.({ action: 'Lokal ma\'lumotlar bazasi tozalandi', user: 'Admin Terminal', type: 'settings' });
+    addActivityLog?.({ action: 'Lokal ma\'lumotlar bazasi tozalandi', user: 'Admin', type: 'settings' });
     setConfirmReset(false);
     showToast("Lokal ma'lumotlar tozalandi. Sahifa yangilanadi...", "info");
     setTimeout(() => window.location.reload(), 1200);
@@ -1045,7 +1054,7 @@ export default function AdminDashboard() {
           }
         }
 
-        addActivityLog?.({ action: `${successCount} ta mahsulot import qilindi (fayl: ${file.name})`, user: 'Admin Terminal', type: 'product' });
+        addActivityLog?.({ action: `${successCount} ta mahsulot import qilindi (fayl: ${file.name})`, user: 'Admin', type: 'product' });
         showToast(
           successCount > 0
             ? `${successCount} ta mahsulot muvaffaqiyatli import qilindi${failCount > 0 ? `, ${failCount} ta xato` : ''}`
@@ -1096,7 +1105,7 @@ export default function AdminDashboard() {
         {/* Logo */}
         <div className="px-5 py-6 border-b border-slate-900">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-slate-950 shadow-lg shadow-emerald-500/20">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-300 via-amber-400 to-yellow-500 text-slate-950 shadow-lg shadow-amber-400/20">
               <Terminal className="h-5 w-5" />
             </div>
             <div>
@@ -1128,11 +1137,11 @@ export default function AdminDashboard() {
                       onClick={() => changeTab(item.id)}
                       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all group relative ${
                         isActive
-                          ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_20px_rgba(255,193,7,0.12)]'
+                          ? 'bg-amber-400/10 text-amber-300 border border-amber-400/20 shadow-[0_0_20px_rgba(255,193,7,0.12)]'
                           : 'text-slate-400 hover:text-white hover:bg-slate-900/60 border border-transparent'
                       }`}
                     >
-                      <Icon className={`h-4 w-4 shrink-0 transition ${isActive ? 'text-emerald-400' : 'text-slate-500 group-hover:text-slate-300'}`} />
+                      <Icon className={`h-4 w-4 shrink-0 transition ${isActive ? 'text-amber-300' : 'text-slate-500 group-hover:text-slate-300'}`} />
                       <span className="flex-1 text-left">{item.label}</span>
                       {badge !== null && badge !== undefined && (item.id !== 'notifications' || badge > 0) && (
                         <span className={`text-[9px] font-mono font-black px-1.5 py-0.5 rounded-md min-w-[20px] text-center ${
@@ -1143,7 +1152,7 @@ export default function AdminDashboard() {
                           {badge}
                         </span>
                       )}
-                      {isActive && <span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-0.5 bg-emerald-400 rounded-full" />}
+                      {isActive && <span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-0.5 bg-amber-400 rounded-full" />}
                     </button>
                   );
                 })}
@@ -1157,8 +1166,8 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between rounded-xl border border-slate-900 bg-slate-950/60 px-3 py-2.5">
             <div className="flex items-center gap-2">
               <span className={`relative flex h-2.5 w-2.5`}>
-                <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping ${networkStatus === 'online' ? 'bg-emerald-400' : 'bg-rose-500'}`} />
-                <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${networkStatus === 'online' ? 'bg-emerald-400' : 'bg-rose-500'}`} />
+                <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping ${networkStatus === 'online' ? 'bg-amber-400' : 'bg-rose-500'}`} />
+                <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${networkStatus === 'online' ? 'bg-amber-400' : 'bg-rose-500'}`} />
               </span>
               <span className="text-[10px] font-mono font-bold text-slate-400 uppercase">
                 {networkStatus === 'online' ? 'Tarmoq: Ulangan' : 'Tarmoq: Uzilgan'}
@@ -1175,14 +1184,14 @@ export default function AdminDashboard() {
   const renderDashboard = () => (
     <div className="space-y-8">
       {/* REAL VAQT HOLAT PANELI */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.04] backdrop-blur-xl px-5 py-3.5">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-400/20 bg-amber-400/[0.04] backdrop-blur-xl px-5 py-3.5">
         <div className="flex items-center gap-3">
           <div className="relative flex h-2.5 w-2.5">
-            <span className="absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping bg-emerald-400" />
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400" />
+            <span className="absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping bg-amber-400" />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-400" />
           </div>
           <div>
-            <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest font-mono flex items-center gap-1.5">
+            <p className="text-[10px] font-black text-amber-300 uppercase tracking-widest font-mono flex items-center gap-1.5">
               <Radio className="h-3.5 w-3.5" /> Real vaqt rejimi: yoqilgan
             </p>
             <p className="text-[9px] text-slate-500 font-mono mt-0.5">
@@ -1199,33 +1208,33 @@ export default function AdminDashboard() {
 
       {/* KPI KARTALARI */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="rounded-2xl border border-slate-900 bg-slate-950/60 backdrop-blur-md p-5 shadow-xl relative overflow-hidden group hover:border-emerald-500/30 transition-all duration-300">
-          <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-emerald-500/5 blur-2xl group-hover:bg-emerald-500/10 transition" />
+        <div className="rounded-2xl border border-slate-900 bg-slate-950/60 backdrop-blur-md p-5 shadow-xl relative overflow-hidden group hover:border-amber-400/30 transition-all duration-300">
+          <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-amber-400/5 blur-2xl group-hover:bg-amber-400/10 transition" />
           <div className="flex items-center justify-between mb-3">
-            <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20"><DollarSign className="h-5 w-5" /></div>
-            <ArrowUpRight className="h-4 w-4 text-emerald-400" />
+            <div className="p-3 bg-amber-400/10 text-amber-300 rounded-xl border border-amber-400/20"><DollarSign className="h-5 w-5" /></div>
+            <ArrowUpRight className="h-4 w-4 text-amber-300" />
           </div>
           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">Umumiy daromad</p>
           <p className="text-lg font-black text-white mt-1 font-mono tracking-tight">{formatShortNumber(orderStats.totalRevenue)}</p>
           <p className="text-[10px] text-slate-600 mt-1 font-mono">{orderStats.count} ta faol buyurtma</p>
         </div>
 
-        <div className="rounded-2xl border border-slate-900 bg-slate-950/60 backdrop-blur-md p-5 shadow-xl relative overflow-hidden group hover:border-blue-500/30 transition-all duration-300">
-          <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-blue-500/5 blur-2xl group-hover:bg-blue-500/10 transition" />
+        <div className="rounded-2xl border border-slate-900 bg-slate-950/60 backdrop-blur-md p-5 shadow-xl relative overflow-hidden group hover:border-amber-400/30 transition-all duration-300">
+          <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-amber-400/5 blur-2xl group-hover:bg-amber-400/10 transition" />
           <div className="flex items-center justify-between mb-3">
-            <div className="p-3 bg-blue-500/10 text-blue-400 rounded-xl border border-blue-500/20"><ShoppingCart className="h-5 w-5" /></div>
-            <ArrowUpRight className="h-4 w-4 text-blue-400" />
+            <div className="p-3 bg-amber-400/10 text-amber-300 rounded-xl border border-amber-400/20"><ShoppingCart className="h-5 w-5" /></div>
+            <ArrowUpRight className="h-4 w-4 text-amber-300" />
           </div>
-          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">Buyurtmalar</p>
-          <p className="text-lg font-black text-white mt-1 font-mono">{orderStats.count} <span className="text-xs text-slate-600 font-normal">ta</span></p>
-          <p className="text-[10px] text-slate-600 mt-1 font-mono">{orderStats.totalItems} ta mahsulot sotildi</p>
+          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">Jami buyurtmalar</p>
+          <p className="text-lg font-black text-white mt-1 font-mono">{(orders || []).length} <span className="text-xs text-slate-600 font-normal">ta</span></p>
+          <p className="text-[10px] text-slate-600 mt-1 font-mono">{orderStats.count} ta faol buyurtma</p>
         </div>
 
-        <div className="rounded-2xl border border-slate-900 bg-slate-950/60 backdrop-blur-md p-5 shadow-xl relative overflow-hidden group hover:border-violet-500/30 transition-all duration-300">
-          <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-violet-500/5 blur-2xl group-hover:bg-violet-500/10 transition" />
+        <div className="rounded-2xl border border-slate-900 bg-slate-950/60 backdrop-blur-md p-5 shadow-xl relative overflow-hidden group hover:border-amber-400/30 transition-all duration-300">
+          <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-amber-400/5 blur-2xl group-hover:bg-amber-400/10 transition" />
           <div className="flex items-center justify-between mb-3">
-            <div className="p-3 bg-violet-500/10 text-violet-400 rounded-xl border border-violet-500/20"><Package className="h-5 w-5" /></div>
-            <TrendingUp className="h-4 w-4 text-violet-400" />
+            <div className="p-3 bg-amber-400/10 text-amber-300 rounded-xl border border-amber-400/20"><Package className="h-5 w-5" /></div>
+            <TrendingUp className="h-4 w-4 text-amber-300" />
           </div>
           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">Katalog hajmi</p>
           <p className="text-lg font-black text-white mt-1 font-mono">{analytics.total} <span className="text-xs text-slate-600 font-normal">tovar</span></p>
@@ -1240,7 +1249,7 @@ export default function AdminDashboard() {
           </div>
           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">O'rtacha buyurtma</p>
           <p className="text-lg font-black text-white mt-1 font-mono">{formatShortNumber(orderStats.avgOrder)}</p>
-          <p className="text-[10px] text-slate-600 mt-1 font-mono">{bonusPoints} bonus bal mavjud</p>
+          <p className="text-[10px] text-slate-600 mt-1 font-mono">{orderStats.count} ta buyurtma asosida</p>
         </div>
       </div>
 
@@ -1270,7 +1279,7 @@ export default function AdminDashboard() {
                 const amount = Number(bonusAmount);
                 if (!amount || amount <= 0) { showToast("Ballar sonini kiriting!", "error"); return; }
                 addBonusPoints(amount * 10000);
-                addActivityLog?.({ action: `${amount} bonus bal qo'shildi`, user: 'Admin Terminal', type: 'user' });
+                addActivityLog?.({ action: `${amount} bonus bal qo'shildi`, user: 'Admin', type: 'user' });
                 setBonusAmount('');
               }}
               className="px-4 py-2.5 rounded-xl bg-amber-400 text-slate-950 text-xs font-black uppercase tracking-wider hover:bg-amber-300 transition flex items-center gap-1.5"
@@ -1282,7 +1291,7 @@ export default function AdminDashboard() {
                 const amount = Number(bonusAmount);
                 if (!amount || amount <= 0) { showToast("Ballar sonini kiriting!", "error"); return; }
                 if (!spendBonusPoints(amount)) { showToast("Balansda yetarli ball yo'q!", "error"); return; }
-                addActivityLog?.({ action: `${amount} bonus bal yechib olindi`, user: 'Admin Terminal', type: 'user' });
+                addActivityLog?.({ action: `${amount} bonus bal yechib olindi`, user: 'Admin', type: 'user' });
                 setBonusAmount('');
               }}
               className="px-4 py-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-black uppercase tracking-wider hover:bg-rose-500/20 transition flex items-center gap-1.5"
@@ -1300,7 +1309,7 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-xs font-black text-white uppercase tracking-wider font-mono flex items-center gap-2">
-                <LineChart className="h-4 w-4 text-emerald-400" /> 7 Kunlik Daromad Dinamikasi
+                <LineChart className="h-4 w-4 text-amber-300" /> 7 Kunlik Daromad Dinamikasi
               </h3>
               <p className="text-[10px] text-slate-500 mt-1 font-mono">Oxirgi 7 kun ichidagi savdo faolligi</p>
             </div>
@@ -1310,7 +1319,7 @@ export default function AdminDashboard() {
                   key={r}
                   onClick={() => setDateRange(r)}
                   className={`px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold uppercase transition border ${
-                    dateRange === r ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-slate-950 border-slate-900 text-slate-500 hover:text-white'
+                    dateRange === r ? 'bg-amber-400/10 text-amber-300 border-amber-400/30' : 'bg-slate-950 border-slate-900 text-slate-500 hover:text-white'
                   }`}
                 >
                   {r.replace('days', ' kun')}
@@ -1325,7 +1334,7 @@ export default function AdminDashboard() {
                 <div key={day.key} className="flex-1 flex flex-col items-center gap-2 group">
                   <span className="text-[9px] font-mono text-slate-500 opacity-0 group-hover:opacity-100 transition font-bold">{formatShortNumber(day.total)}</span>
                   <div
-                    className="w-full rounded-t-lg bg-gradient-to-t from-emerald-500/20 to-emerald-400/80 group-hover:to-emerald-300 transition-all duration-300 relative overflow-hidden"
+                    className="w-full rounded-t-lg bg-gradient-to-t from-amber-500/20 to-amber-400/80 group-hover:to-amber-300 transition-all duration-300 relative overflow-hidden"
                     style={{ height: `${h}%`, transition: 'height 0.6s ease' }}
                   >
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-white/10 transition" />
@@ -1340,7 +1349,7 @@ export default function AdminDashboard() {
         {/* Status taqsimoti */}
         <div className="rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-xl p-6 shadow-xl">
           <h3 className="text-xs font-black text-white uppercase tracking-wider font-mono flex items-center gap-2 mb-6">
-            <PieChart className="h-4 w-4 text-blue-400" /> Buyurtma Statuslari
+            <PieChart className="h-4 w-4 text-amber-300" /> Buyurtma Statuslari
           </h3>
           <div className="space-y-3">
             {statusDistribution.map((s, i) => {
@@ -1370,7 +1379,7 @@ export default function AdminDashboard() {
             <h3 className="text-xs font-black text-white uppercase tracking-wider font-mono flex items-center gap-2">
               <Receipt className="h-4 w-4 text-amber-400" /> Oxirgi Buyurtmalar
             </h3>
-            <button onClick={() => changeTab('orders')} className="flex items-center gap-1 text-[10px] font-bold text-emerald-400 hover:text-emerald-300 transition">
+            <button onClick={() => changeTab('orders')} className="flex items-center gap-1 text-[10px] font-bold text-amber-300 hover:text-amber-200 transition">
               Barchasi <ChevronRight className="h-3 w-3" />
             </button>
           </div>
@@ -1387,7 +1396,7 @@ export default function AdminDashboard() {
                 onClick={() => setOrderDetails(order)}
                 className="w-full flex items-center gap-4 px-6 py-4 hover:bg-slate-900/40 transition text-left group"
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 border border-slate-800 text-slate-500 group-hover:text-emerald-400 group-hover:border-emerald-500/30 transition">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 border border-slate-800 text-slate-500 group-hover:text-amber-300 group-hover:border-amber-400/30 transition">
                   <ShoppingBag className="h-4 w-4" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -1397,7 +1406,7 @@ export default function AdminDashboard() {
                   </p>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="text-xs font-black text-emerald-400 font-mono">{formatPrice(order.total)}</p>
+                  <p className="text-xs font-black text-amber-300 font-mono">{formatPrice(order.total)}</p>
                   <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-[9px] font-bold border mt-1 ${STATUS_COLORS[order.status] || 'bg-slate-900 text-slate-400 border-slate-800'}`}>
                     {order.status}
                   </span>
@@ -1413,14 +1422,14 @@ export default function AdminDashboard() {
             <h3 className="text-xs font-black text-white uppercase tracking-wider font-mono flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-rose-400" /> Kritik Zaxira
             </h3>
-            <span className={`text-[9px] font-mono font-bold px-2 py-1 rounded-lg border ${lowStockProducts.length > 0 ? 'bg-rose-500/10 text-rose-400 border-rose-500/20 animate-pulse' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
+            <span className={`text-[9px] font-mono font-bold px-2 py-1 rounded-lg border ${lowStockProducts.length > 0 ? 'bg-rose-500/10 text-rose-400 border-rose-500/20 animate-pulse' : 'bg-amber-400/10 text-amber-300 border-amber-400/20'}`}>
               {lowStockProducts.length} TA
             </span>
           </div>
           <div className="divide-y divide-slate-900">
             {lowStockProducts.length === 0 && (
               <div className="text-center py-10 text-xs text-slate-600 font-mono uppercase">
-                <ShieldCheck className="h-6 w-6 text-emerald-400 mx-auto mb-2" />
+                <ShieldCheck className="h-6 w-6 text-amber-300 mx-auto mb-2" />
                 Zaxira yetarli
               </div>
             )}
@@ -1481,10 +1490,10 @@ export default function AdminDashboard() {
       {/* CHAP: FORMA */}
       <div className="lg:col-span-1 flex flex-col gap-6 lg:sticky lg:top-24">
         {/* Kategoriya qo'shish */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-xl p-6 shadow-xl border-t-violet-500/20">
+        <div className="rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-xl p-6 shadow-xl border-t-amber-400/20">
           <div className="flex items-center justify-between border-b border-slate-900 pb-3 mb-4">
             <h2 className="text-xs font-black text-white uppercase tracking-wider font-mono flex items-center gap-2">
-              <FolderPlus className="h-4 w-4 text-violet-400" /> Yangi Kategoriya Qo'shish
+              <FolderPlus className="h-4 w-4 text-amber-300" /> Yangi Kategoriya Qo'shish
             </h2>
           </div>
           <form onSubmit={handleCategorySubmit} className="flex gap-2">
@@ -1493,11 +1502,11 @@ export default function AdminDashboard() {
                 type="text"
                 value={newCategoryName}
                 onChange={(e) => setNewCategoryName(e.target.value)}
-                className="w-full rounded-xl border border-slate-900 bg-slate-950/90 px-3 py-2.5 text-xs text-white focus:border-violet-500/50 focus:outline-none transition font-medium"
+                className="w-full rounded-xl border border-slate-900 bg-slate-950/90 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition font-medium"
                 placeholder="Masalan: iPhone, Aksessuarlar..."
               />
             </div>
-            <button type="submit" disabled={isCatSubmitting} className="bg-violet-500 text-slate-950 px-4 rounded-xl flex items-center justify-center transition active:scale-95 disabled:opacity-50">
+            <button type="submit" disabled={isCatSubmitting} className="bg-amber-400 text-slate-950 px-4 rounded-xl flex items-center justify-center transition active:scale-95 disabled:opacity-50">
               {isCatSubmitting ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4 font-black" />}
             </button>
           </form>
@@ -1513,10 +1522,10 @@ export default function AdminDashboard() {
         </div>
 
         {/* Mahsulot formasi */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-xl p-6 shadow-xl border-t-emerald-500/20">
+        <div className="rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-xl p-6 shadow-xl border-t-amber-400/20">
           <div className="flex items-center justify-between border-b border-slate-900 pb-4 mb-5">
             <h2 className="text-xs font-black text-white uppercase tracking-wider font-mono flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-emerald-400" />
+              <Sparkles className="h-4 w-4 text-amber-300" />
               {editingId ? "Sxemani O'zgartirish" : "Yangi Resurs Kiritish"}
             </h2>
             {editingId && (
@@ -1532,7 +1541,7 @@ export default function AdminDashboard() {
               <input
                 type="text" required value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
-                className="w-full rounded-xl border border-slate-900 bg-slate-950/90 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition font-medium"
+                className="w-full rounded-xl border border-slate-900 bg-slate-950/90 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition font-medium"
                 placeholder='Masalan: MacBook Pro 16"'
               />
             </div>
@@ -1543,7 +1552,7 @@ export default function AdminDashboard() {
                 <input
                   type="number" required value={form.price}
                   onChange={(e) => setForm({ ...form, price: e.target.value })}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-950/90 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition font-mono"
+                  className="w-full rounded-xl border border-slate-900 bg-slate-950/90 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition font-mono"
                   placeholder="3499000" min="0"
                 />
               </div>
@@ -1552,7 +1561,7 @@ export default function AdminDashboard() {
                 <select
                   value={form.category}
                   onChange={(e) => setForm({ ...form, category: e.target.value })}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-950/90 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition font-medium"
+                  className="w-full rounded-xl border border-slate-900 bg-slate-950/90 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition font-medium"
                 >
                   <option disabled value="Sektor tanlang">Sektor tanlang</option>
                   {dbCategories.map((cat) => (
@@ -1568,7 +1577,7 @@ export default function AdminDashboard() {
                 <input
                   type="number" value={form.discount}
                   onChange={(e) => setForm({ ...form, discount: e.target.value })}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-950/90 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition font-mono"
+                  className="w-full rounded-xl border border-slate-900 bg-slate-950/90 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition font-mono"
                   min="0" max="99"
                 />
               </div>
@@ -1577,7 +1586,7 @@ export default function AdminDashboard() {
                 <input
                   type="number" value={form.stock}
                   onChange={(e) => setForm({ ...form, stock: e.target.value })}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-950/90 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition font-mono"
+                  className="w-full rounded-xl border border-slate-900 bg-slate-950/90 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition font-mono"
                   min="0"
                 />
               </div>
@@ -1589,10 +1598,10 @@ export default function AdminDashboard() {
                 <input
                   type="url" required value={form.image}
                   onChange={(e) => { setForm({ ...form, image: e.target.value }); setImagePreview(e.target.value); }}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-950/90 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition"
+                  className="w-full rounded-xl border border-slate-900 bg-slate-950/90 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition"
                   placeholder="Rasm havolasini kiriting..."
                 />
-                <button type="button" onClick={() => setImagePreview(form.image)} className="p-2.5 rounded-xl border border-slate-900 bg-slate-950 text-slate-500 hover:text-emerald-400 hover:border-emerald-500/30 transition shrink-0">
+                <button type="button" onClick={() => setImagePreview(form.image)} className="p-2.5 rounded-xl border border-slate-900 bg-slate-950 text-slate-500 hover:text-amber-300 hover:border-amber-400/30 transition shrink-0">
                   <Eye className="h-4 w-4" />
                 </button>
               </div>
@@ -1608,7 +1617,7 @@ export default function AdminDashboard() {
               <input
                 type="text" value={form.specs}
                 onChange={(e) => setForm({ ...form, specs: e.target.value })}
-                className="w-full rounded-xl border border-slate-900 bg-slate-950/90 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition"
+                className="w-full rounded-xl border border-slate-900 bg-slate-950/90 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition"
                 placeholder="M3 Max, 48GB RAM, 1TB SSD"
               />
             </div>
@@ -1618,7 +1627,7 @@ export default function AdminDashboard() {
               <textarea
                 rows="2" value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                className="w-full rounded-xl border border-slate-900 bg-slate-950/90 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition font-light"
+                className="w-full rounded-xl border border-slate-900 bg-slate-950/90 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition font-light"
                 placeholder="Mahsulot haqida tavsif..."
               />
             </div>
@@ -1627,7 +1636,7 @@ export default function AdminDashboard() {
               <input
                 type="checkbox" id="isNew" checked={form.isNew}
                 onChange={(e) => setForm({ ...form, isNew: e.target.checked })}
-                className="h-4 w-4 rounded bg-slate-950 text-emerald-500 accent-emerald-400 cursor-pointer"
+                className="h-4 w-4 rounded bg-slate-950 text-amber-400 accent-amber-400 cursor-pointer"
               />
               <label htmlFor="isNew" className="text-[10px] font-bold text-slate-300 uppercase tracking-wider cursor-pointer font-mono select-none">
                 "Yangi" Statusini Yoqish
@@ -1638,7 +1647,7 @@ export default function AdminDashboard() {
               <button
                 type="submit" disabled={isSubmitting}
                 className={`flex-1 flex items-center justify-center gap-2 rounded-xl py-3 text-xs font-black uppercase tracking-wider transition active:scale-[0.98] disabled:opacity-50 ${
-                  editingId ? 'bg-amber-400 text-slate-950' : 'bg-emerald-400 text-slate-950'
+                  editingId ? 'bg-amber-400 text-slate-950' : 'bg-amber-400 text-slate-950'
                 }`}
               >
                 {isSubmitting ? <RefreshCw className="h-4 w-4 animate-spin" /> : editingId ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
@@ -1663,21 +1672,21 @@ export default function AdminDashboard() {
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600" />
               <input
                 type="text" placeholder="Tizimdan qidirish..." value={search} onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-xl border border-slate-900 bg-slate-950 py-2 pl-9 pr-3 text-xs text-white focus:outline-none focus:border-emerald-500/30 transition"
+                className="w-full rounded-xl border border-slate-900 bg-slate-950 py-2 pl-9 pr-3 text-xs text-white focus:outline-none focus:border-amber-400/30 transition"
               />
             </div>
             <div className="flex items-center gap-2">
-              <button onClick={() => setShowExportModal(true)} className="px-3 py-2 rounded-xl border border-slate-900 bg-slate-950 text-slate-400 hover:text-emerald-400 hover:border-emerald-500/30 transition flex items-center gap-1.5 text-[10px] font-bold uppercase font-mono">
+              <button onClick={() => setShowExportModal(true)} className="px-3 py-2 rounded-xl border border-slate-900 bg-slate-950 text-slate-400 hover:text-amber-300 hover:border-amber-400/30 transition flex items-center gap-1.5 text-[10px] font-bold uppercase font-mono">
                 <Download className="h-3.5 w-3.5" /> Eksport
               </button>
-              <button onClick={() => setShowImportModal(true)} className="px-3 py-2 rounded-xl border border-slate-900 bg-slate-950 text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 transition flex items-center gap-1.5 text-[10px] font-bold uppercase font-mono">
+              <button onClick={() => setShowImportModal(true)} className="px-3 py-2 rounded-xl border border-slate-900 bg-slate-950 text-slate-400 hover:text-amber-300 hover:border-amber-400/30 transition flex items-center gap-1.5 text-[10px] font-bold uppercase font-mono">
                 <Upload className="h-3.5 w-3.5" /> Import
               </button>
               <div className="flex items-center gap-1 p-1 rounded-xl border border-slate-900 bg-slate-950">
-                <button onClick={() => setProductViewMode('table')} className={`p-1.5 rounded-lg transition ${productViewMode === 'table' ? 'bg-emerald-500/10 text-emerald-400' : 'text-slate-500 hover:text-white'}`}>
+                <button onClick={() => setProductViewMode('table')} className={`p-1.5 rounded-lg transition ${productViewMode === 'table' ? 'bg-amber-400/10 text-amber-300' : 'text-slate-500 hover:text-white'}`}>
                   <Grid2X2 className="h-3.5 w-3.5" />
                 </button>
-                <button onClick={() => setProductViewMode('cards')} className={`p-1.5 rounded-lg transition ${productViewMode === 'cards' ? 'bg-emerald-500/10 text-emerald-400' : 'text-slate-500 hover:text-white'}`}>
+                <button onClick={() => setProductViewMode('cards')} className={`p-1.5 rounded-lg transition ${productViewMode === 'cards' ? 'bg-amber-400/10 text-amber-300' : 'text-slate-500 hover:text-white'}`}>
                   <ListIcon className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -1689,7 +1698,7 @@ export default function AdminDashboard() {
             <button
               onClick={() => setSelectedCategory('ALL')}
               className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition shrink-0 ${
-                selectedCategory === 'ALL' ? 'bg-emerald-400 text-slate-950' : 'bg-slate-900 text-slate-400 hover:text-white'
+                selectedCategory === 'ALL' ? 'bg-amber-400 text-slate-950' : 'bg-slate-900 text-slate-400 hover:text-white'
               }`}
             >
               Barchasi
@@ -1698,7 +1707,7 @@ export default function AdminDashboard() {
               <button
                 key={cat.id} onClick={() => setSelectedCategory(cat.id)}
                 className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition border shrink-0 ${
-                  selectedCategory === cat.id ? 'bg-emerald-400 border-emerald-400 text-slate-950' : 'bg-slate-900 border-slate-900 text-slate-400 hover:text-white'
+                  selectedCategory === cat.id ? 'bg-amber-400 border-amber-400 text-slate-950' : 'bg-slate-900 border-slate-900 text-slate-400 hover:text-white'
                 }`}
               >
                 {cat.name}
@@ -1708,7 +1717,7 @@ export default function AdminDashboard() {
 
           {/* Qo'shimcha filtrlar */}
           <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-900/60">
-            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="bg-slate-950 border border-slate-900 rounded-lg px-3 py-1.5 text-[10px] font-bold font-mono text-emerald-400 focus:outline-none cursor-pointer">
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="bg-slate-950 border border-slate-900 rounded-lg px-3 py-1.5 text-[10px] font-bold font-mono text-amber-300 focus:outline-none cursor-pointer">
               <option value="default" className="bg-slate-950 text-slate-400">Standart tartib</option>
               <option value="price_asc" className="bg-slate-950 text-slate-400">Narx: O'sish</option>
               <option value="price_desc" className="bg-slate-950 text-slate-400">Narx: Kamayish</option>
@@ -1725,12 +1734,12 @@ export default function AdminDashboard() {
             <input
               type="number" placeholder="Maks. narx" value={maxPrice}
               onChange={(e) => setMaxPrice(e.target.value)}
-              className="bg-slate-950 border border-slate-900 rounded-lg px-3 py-1.5 text-[10px] font-mono text-white focus:outline-none focus:border-emerald-500/30 transition w-28"
+              className="bg-slate-950 border border-slate-900 rounded-lg px-3 py-1.5 text-[10px] font-mono text-white focus:outline-none focus:border-amber-400/30 transition w-28"
             />
             <button
               onClick={() => setOnlyDiscount(!onlyDiscount)}
               className={`px-3 py-1.5 rounded-lg border text-[10px] font-bold uppercase tracking-wider transition ${
-                onlyDiscount ? 'bg-rose-500/10 border-rose-500/30 text-rose-400' : 'border-slate-900 text-slate-500 hover:text-white'
+                onlyDiscount ? 'bg-amber-400/10 border-amber-400/30 text-amber-300' : 'border-slate-900 text-slate-500 hover:text-white'
               }`}
             >
               <Percent className="h-3 w-3 inline mr-1" /> Chegirmalilar
@@ -1738,7 +1747,7 @@ export default function AdminDashboard() {
             <button
               onClick={() => setOnlyInStock(!onlyInStock)}
               className={`px-3 py-1.5 rounded-lg border text-[10px] font-bold uppercase tracking-wider transition ${
-                onlyInStock ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'border-slate-900 text-slate-500 hover:text-white'
+                onlyInStock ? 'bg-amber-400/10 border-amber-400/30 text-amber-300' : 'border-slate-900 text-slate-500 hover:text-white'
               }`}
             >
               <PackageCheck className="h-3 w-3 inline mr-1" /> Omborida bor
@@ -1768,7 +1777,7 @@ export default function AdminDashboard() {
                         setSelectAllProducts(e.target.checked);
                         setSelectedProductIds(e.target.checked ? paginatedProducts.map(p => p._id || p.id) : []);
                       }}
-                      className="h-3.5 w-3.5 accent-emerald-400 cursor-pointer"
+                      className="h-3.5 w-3.5 accent-amber-400 cursor-pointer"
                     />
                   </th>
                   <th className="p-4">Resurs (Node)</th>
@@ -1788,7 +1797,7 @@ export default function AdminDashboard() {
                   const isChecked = selectedProductIds.includes(currentId);
 
                   return (
-                    <tr key={currentId} className={`hover:bg-slate-900/40 transition-colors group ${isChecked ? 'bg-emerald-500/5' : ''}`}>
+                    <tr key={currentId} className={`hover:bg-slate-900/40 transition-colors group ${isChecked ? 'bg-amber-400/5' : ''}`}>
                       <td className="p-4">
                         <input
                           type="checkbox"
@@ -1801,7 +1810,7 @@ export default function AdminDashboard() {
                               setSelectAllProducts(false);
                             }
                           }}
-                          className="h-3.5 w-3.5 accent-emerald-400 cursor-pointer"
+                          className="h-3.5 w-3.5 accent-amber-400 cursor-pointer"
                         />
                       </td>
                       <td className="p-4">
@@ -1809,11 +1818,11 @@ export default function AdminDashboard() {
                           <div className="relative h-10 w-10 rounded-xl overflow-hidden bg-slate-900 shrink-0 border border-slate-800">
                             <img src={p.image || p.img} alt="" className="h-full w-full object-cover group-hover:scale-110 transition" />
                             {displayDiscount > 0 && (
-                              <div className="absolute top-0 left-0 bg-rose-500 text-[8px] font-black text-white px-1 py-0.5 rounded-br">-{displayDiscount}%</div>
+                              <div className="absolute top-0 left-0 bg-amber-400 text-[8px] font-black text-slate-950 px-1 py-0.5 rounded-br">-{displayDiscount}%</div>
                             )}
                           </div>
                           <div>
-                            <p className="font-bold text-white uppercase group-hover:text-emerald-400 transition">{p.name || p.title}</p>
+                            <p className="font-bold text-white uppercase group-hover:text-amber-300 transition">{p.name || p.title}</p>
                             <p className="text-[9px] text-slate-600 font-mono">ID: #{currentId}</p>
                           </div>
                         </div>
@@ -1822,7 +1831,7 @@ export default function AdminDashboard() {
                         <span className="inline-flex items-center rounded-md bg-slate-900 border border-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-400 font-mono">{catName}</span>
                       </td>
                       <td className="p-4 font-mono font-bold">
-                        {displayDiscount > 0 ? <span className="text-rose-400">-{displayDiscount}%</span> : <span className="text-slate-700">—</span>}
+                        {displayDiscount > 0 ? <span className="text-amber-300">-{displayDiscount}%</span> : <span className="text-slate-700">—</span>}
                       </td>
                       <td className="p-4 font-mono font-bold">
                         <span className={isLowStock ? 'text-rose-400' : 'text-slate-300'}>{p.stock || 0} ta</span>
@@ -1830,7 +1839,7 @@ export default function AdminDashboard() {
                       <td className="p-4 font-mono font-black text-slate-200">{formatPrice(p.price)}</td>
                       <td className="p-4 text-right">
                         <div className="flex justify-end gap-1.5">
-                          <button onClick={() => { setPreviewProduct(p); setShowPreviewModal(true); }} className="p-2 text-slate-500 hover:text-blue-400 transition">
+                          <button onClick={() => { setPreviewProduct(p); setShowPreviewModal(true); }} className="p-2 text-slate-500 hover:text-amber-300 transition">
                             <Eye className="h-4 w-4" />
                           </button>
                           <button onClick={() => handleEditInit(p)} className="p-2 text-slate-500 hover:text-amber-400 transition">
@@ -1862,7 +1871,7 @@ export default function AdminDashboard() {
               const currentId = p._id || p.id;
               const catName = typeof p.category === 'object' ? p.category?.name : p.category;
               return (
-                <div key={currentId} className="rounded-xl border border-slate-900 bg-slate-950/60 p-3 flex gap-3 hover:border-emerald-500/30 transition group">
+                <div key={currentId} className="rounded-xl border border-slate-900 bg-slate-950/60 p-3 flex gap-3 hover:border-amber-400/30 transition group">
                   <div className="h-16 w-16 rounded-lg overflow-hidden bg-slate-900 border border-slate-800 shrink-0">
                     <img src={p.image || p.img} alt="" className="h-full w-full object-cover group-hover:scale-110 transition" />
                   </div>
@@ -1870,7 +1879,7 @@ export default function AdminDashboard() {
                     <p className="text-[11px] font-bold text-white truncate uppercase">{p.name || p.title}</p>
                     <p className="text-[9px] text-slate-600 font-mono mt-0.5">{catName} • ID: {currentId}</p>
                     <div className="flex items-center justify-between mt-1.5">
-                      <span className="text-[11px] font-black text-emerald-400 font-mono">{formatPrice(p.price)}</span>
+                      <span className="text-[11px] font-black text-amber-300 font-mono">{formatPrice(p.price)}</span>
                       <span className={`text-[9px] font-mono font-bold ${Number(p.stock) < 5 ? 'text-rose-400' : 'text-slate-500'}`}>{p.stock || 0} ta</span>
                     </div>
                   </div>
@@ -1903,7 +1912,7 @@ export default function AdminDashboard() {
                   key={page}
                   onClick={() => setCurrentPage(page)}
                   className={`h-8 w-8 rounded-lg border text-[10px] font-mono font-bold transition ${
-                    safeProductPage === page ? 'bg-emerald-400 border-emerald-400 text-slate-950' : 'border-slate-900 bg-slate-950 text-slate-400 hover:text-white'
+                    safeProductPage === page ? 'bg-amber-400 border-amber-400 text-slate-950' : 'border-slate-900 bg-slate-950 text-slate-400 hover:text-white'
                   }`}
                 >
                   {page}
@@ -1936,29 +1945,29 @@ export default function AdminDashboard() {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Qo'shish formasi */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-xl p-6 shadow-xl border-t-violet-500/20 lg:sticky lg:top-24">
+        <div className="rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-xl p-6 shadow-xl border-t-amber-400/20 lg:sticky lg:top-24">
           <h2 className="text-xs font-black text-white uppercase tracking-wider font-mono flex items-center gap-2 mb-5">
-            <FolderPlus className="h-4 w-4 text-violet-400" /> Yangi Kategoriya
+            <FolderPlus className="h-4 w-4 text-amber-300" /> Yangi Kategoriya
           </h2>
           <form onSubmit={handleCategorySubmit} className="space-y-3">
             <input
               type="text"
               value={newCategoryName}
               onChange={(e) => setNewCategoryName(e.target.value)}
-              className="w-full rounded-xl border border-slate-900 bg-slate-950/90 px-3 py-2.5 text-xs text-white focus:border-violet-500/50 focus:outline-none transition"
+              className="w-full rounded-xl border border-slate-900 bg-slate-950/90 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition"
               placeholder="Kategoriya nomi..."
             />
-            <button type="submit" disabled={isCatSubmitting} className="w-full bg-violet-500 text-slate-950 rounded-xl py-3 text-xs font-black uppercase tracking-wider hover:bg-violet-400 transition active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2">
+            <button type="submit" disabled={isCatSubmitting} className="w-full bg-amber-400 text-slate-950 rounded-xl py-3 text-xs font-black uppercase tracking-wider hover:bg-amber-300 transition active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2">
               {isCatSubmitting ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />} Qo'shish
             </button>
           </form>
           <div className="mt-5 pt-5 border-t border-slate-900">
             <p className="text-[10px] font-mono text-slate-500 mb-3 flex items-center gap-2">
-              <Info className="h-3.5 w-3.5 text-blue-400" /> Jami: {dbCategories.length} ta kategoriya
+              <Info className="h-3.5 w-3.5 text-amber-300" /> Jami: {dbCategories.length} ta kategoriya
             </p>
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-xl border border-slate-900 bg-slate-950/60 p-3 text-center">
-                <p className="text-lg font-black text-violet-400 font-mono">{catsWithCount.filter(c => c.count > 0).length}</p>
+                <p className="text-lg font-black text-amber-300 font-mono">{catsWithCount.filter(c => c.count > 0).length}</p>
                 <p className="text-[9px] text-slate-500 uppercase tracking-wider font-mono mt-0.5">Faol</p>
               </div>
               <div className="rounded-xl border border-slate-900 bg-slate-950/60 p-3 text-center">
@@ -1978,8 +1987,8 @@ export default function AdminDashboard() {
           <div className="divide-y divide-slate-900">
             {catsWithCount.map((cat) => (
               <div key={cat.id} className="flex items-center gap-4 px-6 py-4 hover:bg-slate-900/30 transition group">
-                <div className="h-10 w-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center shrink-0">
-                  <Layers className="h-4 w-4 text-violet-400" />
+                <div className="h-10 w-10 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center shrink-0">
+                  <Layers className="h-4 w-4 text-amber-300" />
                 </div>
                 <div className="flex-1 min-w-0">
                   {categoryEditId === cat.id ? (
@@ -2041,7 +2050,7 @@ export default function AdminDashboard() {
         </div>
         <div className="rounded-2xl border border-slate-900 bg-slate-950/60 p-4">
           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">Yakunlangan</p>
-          <p className="text-xl font-black text-emerald-400 mt-1 font-mono">{(orders || []).filter(o => o.status === 'Yetkazildi').length}</p>
+          <p className="text-xl font-black text-amber-300 mt-1 font-mono">{(orders || []).filter(o => o.status === 'Yetkazildi').length}</p>
         </div>
         <div className="rounded-2xl border border-slate-900 bg-slate-950/60 p-4">
           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">Bekor qilingan</p>
@@ -2057,7 +2066,7 @@ export default function AdminDashboard() {
             <input
               type="text" placeholder="Buyurtma ID yoki mijoz qidirish..." value={orderSearch}
               onChange={(e) => setOrderSearch(e.target.value)}
-              className="w-full rounded-xl border border-slate-900 bg-slate-950 py-2.5 pl-9 pr-3 text-xs text-white focus:outline-none focus:border-emerald-500/30 transition"
+              className="w-full rounded-xl border border-slate-900 bg-slate-950 py-2.5 pl-9 pr-3 text-xs text-white focus:outline-none focus:border-amber-400/30 transition"
             />
           </div>
           <select
@@ -2081,7 +2090,7 @@ export default function AdminDashboard() {
         {/* Ommaviy amallar */}
         {selectedOrders.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-900/60">
-            <span className="text-[10px] font-mono font-bold text-emerald-400">{selectedOrders.length} ta tanlandi:</span>
+            <span className="text-[10px] font-mono font-bold text-amber-300">{selectedOrders.length} ta tanlandi:</span>
             <select
               value={bulkAction}
               onChange={(e) => setBulkAction(e.target.value)}
@@ -2096,7 +2105,7 @@ export default function AdminDashboard() {
             <button
               onClick={() => setShowBulkConfirm(true)}
               disabled={!bulkAction}
-              className="px-3 py-1.5 rounded-lg bg-emerald-400 text-slate-950 text-[10px] font-black uppercase tracking-wider disabled:opacity-40 transition hover:bg-emerald-300"
+              className="px-3 py-1.5 rounded-lg bg-amber-400 text-slate-950 text-[10px] font-black uppercase tracking-wider disabled:opacity-40 transition hover:bg-amber-300"
             >
               Qo'llash
             </button>
@@ -2121,7 +2130,7 @@ export default function AdminDashboard() {
                       setSelectAllOrders(e.target.checked);
                       setSelectedOrders(e.target.checked ? filteredOrders.map(o => o.id) : []);
                     }}
-                    className="h-3.5 w-3.5 accent-emerald-400 cursor-pointer"
+                    className="h-3.5 w-3.5 accent-amber-400 cursor-pointer"
                   />
                 </th>
                 <th className="p-4">Buyurtma ID</th>
@@ -2138,7 +2147,7 @@ export default function AdminDashboard() {
                 const isSelected = selectedOrders.includes(order.id);
                 const payMethod = PAYMENT_METHODS[order.paymentMethod];
                 return (
-                  <tr key={order.id} className={`hover:bg-slate-900/40 transition-colors group ${isSelected ? 'bg-emerald-500/5' : ''}`}>
+                  <tr key={order.id} className={`hover:bg-slate-900/40 transition-colors group ${isSelected ? 'bg-amber-400/5' : ''}`}>
                     <td className="p-4">
                       <input
                         type="checkbox"
@@ -2151,11 +2160,11 @@ export default function AdminDashboard() {
                             setSelectAllOrders(false);
                           }
                         }}
-                        className="h-3.5 w-3.5 accent-emerald-400 cursor-pointer"
+                        className="h-3.5 w-3.5 accent-amber-400 cursor-pointer"
                       />
                     </td>
                     <td className="p-4">
-                      <button onClick={() => setOrderDetails(order)} className="font-bold text-emerald-400 hover:text-emerald-300 transition font-mono group-hover:underline">
+                      <button onClick={() => setOrderDetails(order)} className="font-bold text-amber-300 hover:text-amber-200 transition font-mono group-hover:underline">
                         {order.id}
                       </button>
                     </td>
@@ -2180,7 +2189,7 @@ export default function AdminDashboard() {
                         {payMethod?.label || order.paymentMethod || '—'}
                       </span>
                     </td>
-                    <td className="p-4 font-mono font-black text-emerald-400">{formatPrice(order.total)}</td>
+                    <td className="p-4 font-mono font-black text-amber-300">{formatPrice(order.total)}</td>
                     <td className="p-4">
                       <select
                         value={order.status}
@@ -2194,7 +2203,7 @@ export default function AdminDashboard() {
                     </td>
                     <td className="p-4 text-right">
                       <div className="flex justify-end gap-1.5">
-                        <button onClick={() => setOrderDetails(order)} className="p-2 text-slate-500 hover:text-blue-400 transition">
+                        <button onClick={() => setOrderDetails(order)} className="p-2 text-slate-500 hover:text-amber-300 transition">
                           <Eye className="h-4 w-4" />
                         </button>
                         {order.status !== 'Bekor qilindi' && order.status !== 'Yetkazildi' && (
@@ -2236,12 +2245,12 @@ export default function AdminDashboard() {
             <input
               type="text" placeholder="Kupon qidirish..." value={couponSearch}
               onChange={(e) => setCouponSearch(e.target.value)}
-              className="w-full sm:w-56 rounded-xl border border-slate-900 bg-slate-950 py-2.5 pl-9 pr-3 text-xs text-white focus:outline-none focus:border-emerald-500/30 transition"
+              className="w-full sm:w-56 rounded-xl border border-slate-900 bg-slate-950 py-2.5 pl-9 pr-3 text-xs text-white focus:outline-none focus:border-amber-400/30 transition"
             />
           </div>
           <button
             onClick={() => { setEditingCoupon(null); setNewCoupon({ code: '', discount: '', minSpend: '', active: true }); setShowCouponModal(true); }}
-            className="px-4 py-2.5 rounded-xl bg-emerald-400 text-slate-950 text-xs font-black uppercase tracking-wider hover:bg-emerald-300 transition flex items-center gap-2 shrink-0"
+            className="px-4 py-2.5 rounded-xl bg-amber-400 text-slate-950 text-xs font-black uppercase tracking-wider hover:bg-amber-300 transition flex items-center gap-2 shrink-0"
           >
             <Plus className="h-4 w-4" /> Yangi kupon
           </button>
@@ -2254,11 +2263,11 @@ export default function AdminDashboard() {
           const active = coupon.active !== false;
           return (
             <div key={coupon.code} className={`rounded-2xl border p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 ${
-              active ? 'border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-slate-950/40' : 'border-slate-900 bg-slate-950/40 opacity-70'
+              active ? 'border-amber-400/20 bg-gradient-to-br from-amber-400/5 to-slate-950/40' : 'border-slate-900 bg-slate-950/40 opacity-70'
             }`}>
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className={`p-3 rounded-xl border ${active ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-slate-900 border-slate-800 text-slate-500'}`}>
+                  <div className={`p-3 rounded-xl border ${active ? 'bg-amber-400/10 border-amber-400/20 text-amber-300' : 'bg-slate-900 border-slate-800 text-slate-500'}`}>
                     <Percent className="h-5 w-5" />
                   </div>
                   <div>
@@ -2268,14 +2277,14 @@ export default function AdminDashboard() {
                 </div>
                 <button
                   onClick={() => toggleCouponActive(coupon)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${active ? 'bg-emerald-500' : 'bg-slate-800'}`}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${active ? 'bg-amber-400' : 'bg-slate-800'}`}
                 >
                   <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${active ? 'translate-x-6' : 'translate-x-1'}`} />
                 </button>
               </div>
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <div className="rounded-xl bg-slate-950/60 border border-slate-900 p-3 text-center">
-                  <p className="text-lg font-black text-emerald-400 font-mono">-{coupon.discount}%</p>
+                  <p className="text-lg font-black text-amber-300 font-mono">-{coupon.discount}%</p>
                   <p className="text-[9px] text-slate-500 uppercase tracking-wider font-mono mt-0.5">Chegirma</p>
                 </div>
                 <div className="rounded-xl bg-slate-950/60 border border-slate-900 p-3 text-center">
@@ -2319,7 +2328,7 @@ export default function AdminDashboard() {
         </div>
         <div className="rounded-2xl border border-slate-900 bg-slate-950/60 p-4">
           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">Moderatorlar</p>
-          <p className="text-xl font-black text-violet-400 mt-1 font-mono">{(contextUsers || []).filter(u => u.role === 'moderator').length}</p>
+          <p className="text-xl font-black text-amber-300 mt-1 font-mono">{(contextUsers || []).filter(u => u.role === 'moderator').length}</p>
         </div>
         <div className="rounded-2xl border border-slate-900 bg-slate-950/60 p-4">
           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">Bloklanganlar</p>
@@ -2334,7 +2343,7 @@ export default function AdminDashboard() {
           <input
             type="text" placeholder="Foydalanuvchi qidirish..." value={userSearch}
             onChange={(e) => setUserSearch(e.target.value)}
-            className="w-full rounded-xl border border-slate-900 bg-slate-950 py-2.5 pl-9 pr-3 text-xs text-white focus:outline-none focus:border-emerald-500/30 transition"
+            className="w-full rounded-xl border border-slate-900 bg-slate-950 py-2.5 pl-9 pr-3 text-xs text-white focus:outline-none focus:border-amber-400/30 transition"
           />
         </div>
         <select
@@ -2349,7 +2358,7 @@ export default function AdminDashboard() {
         </select>
         <button
           onClick={() => { setEditingUser(null); setNewUser({ name: '', email: '', role: 'user', password: '' }); setShowUserModal(true); }}
-          className="px-4 py-2.5 rounded-xl bg-emerald-400 text-slate-950 text-xs font-black uppercase tracking-wider hover:bg-emerald-300 transition flex items-center gap-2 shrink-0"
+          className="px-4 py-2.5 rounded-xl bg-amber-400 text-slate-950 text-xs font-black uppercase tracking-wider hover:bg-amber-300 transition flex items-center gap-2 shrink-0"
         >
           <UserPlus className="h-4 w-4" /> Yangi foydalanuvchi
         </button>
@@ -2377,13 +2386,13 @@ export default function AdminDashboard() {
                     <div className="flex items-center gap-3">
                       <div className={`h-10 w-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0 border ${
                         user.role === 'admin' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' :
-                        user.role === 'moderator' ? 'bg-violet-500/10 text-violet-400 border-violet-500/20' :
-                        'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                        user.role === 'moderator' ? 'bg-amber-400/10 text-amber-300 border-amber-400/20' :
+                        'bg-amber-400/10 text-amber-300 border-amber-400/20'
                       }`}>
                         {(user.name || '?').charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <p className="font-bold text-white group-hover:text-emerald-400 transition">{user.name}</p>
+                        <p className="font-bold text-white group-hover:text-amber-300 transition">{user.name}</p>
                         <p className="text-[9px] text-slate-600 font-mono">{user.email}</p>
                       </div>
                     </div>
@@ -2395,16 +2404,16 @@ export default function AdminDashboard() {
                   </td>
                   <td className="p-4">
                     <span className={`inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[9px] font-bold border font-mono uppercase ${USER_STATUS_COLORS[user.status] || 'bg-slate-900 text-slate-400 border-slate-800'}`}>
-                      <span className={`h-1.5 w-1.5 rounded-full ${user.status === 'active' ? 'bg-emerald-400' : user.status === 'blocked' ? 'bg-rose-400' : 'bg-amber-400'}`} />
+                      <span className={`h-1.5 w-1.5 rounded-full ${user.status === 'active' ? 'bg-amber-400' : user.status === 'blocked' ? 'bg-rose-400' : 'bg-amber-400'}`} />
                       {user.status === 'active' ? 'Faol' : user.status === 'blocked' ? 'Bloklangan' : 'Kutilmoqda'}
                     </span>
                   </td>
                   <td className="p-4 text-slate-400 font-mono">{formatDate(user.joined)}</td>
                   <td className="p-4 font-mono font-bold text-slate-300">{user.orders || 0}</td>
-                  <td className="p-4 font-mono font-black text-emerald-400">{formatShortNumber(user.spent)}</td>
+                  <td className="p-4 font-mono font-black text-amber-300">{formatShortNumber(user.spent)}</td>
                   <td className="p-4 text-right">
                     <div className="flex justify-end gap-1.5">
-                      <button onClick={() => toggleUserStatus(user)} className={`p-2 transition ${user.status === 'active' ? 'text-slate-500 hover:text-amber-400' : 'text-slate-500 hover:text-emerald-400'}`} title={user.status === 'active' ? 'Bloklash' : 'Faollashtirish'}>
+                      <button onClick={() => toggleUserStatus(user)} className={`p-2 transition ${user.status === 'active' ? 'text-slate-500 hover:text-amber-400' : 'text-slate-500 hover:text-amber-300'}`} title={user.status === 'active' ? 'Bloklash' : 'Faollashtirish'}>
                         {user.status === 'active' ? <Ban className="h-4 w-4" /> : <UserCheck className="h-4 w-4" />}
                       </button>
                       <button onClick={() => handleEditUser(user)} className="p-2 text-slate-500 hover:text-amber-400 transition">
@@ -2445,7 +2454,7 @@ export default function AdminDashboard() {
               key={f}
               onClick={() => setActivityFilter(f)}
               className={`px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition border ${
-                activityFilter === f ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-slate-950 border-slate-900 text-slate-500 hover:text-white'
+                activityFilter === f ? 'bg-amber-400/10 text-amber-300 border-amber-400/30' : 'bg-slate-950 border-slate-900 text-slate-500 hover:text-white'
               }`}
             >
               {f === 'all' ? 'Barchasi' : f}
@@ -2460,19 +2469,19 @@ export default function AdminDashboard() {
           <div className="absolute left-4 top-2 bottom-2 w-px bg-slate-900" />
           {filteredActivities.map((activity) => (
             <div key={activity.id} className="relative flex items-start gap-4 p-3 rounded-xl hover:bg-slate-900/30 transition group">
-              <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-800 bg-slate-950 group-hover:border-emerald-500/30 transition">
-                <Activity className="h-3.5 w-3.5 text-emerald-400" />
+              <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-800 bg-slate-950 group-hover:border-amber-400/30 transition">
+                <Activity className="h-3.5 w-3.5 text-amber-300" />
               </div>
               <div className="flex-1 min-w-0 pt-0.5">
                 <p className="text-xs font-bold text-white">{activity.action}</p>
                 <p className="text-[10px] text-slate-500 mt-0.5">{activity.user} • {activity.time}</p>
               </div>
               <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border uppercase font-mono shrink-0 ${
-                activity.type === 'product' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
-                activity.type === 'order' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
-                activity.type === 'user' ? 'bg-violet-500/10 text-violet-400 border-violet-500/20' :
+                activity.type === 'product' ? 'bg-amber-400/10 text-amber-300 border-amber-400/20' :
+                activity.type === 'order' ? 'bg-amber-400/10 text-amber-300 border-amber-400/20' :
+                activity.type === 'user' ? 'bg-amber-400/10 text-amber-300 border-amber-400/20' :
                 activity.type === 'coupon' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
-                activity.type === 'category' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' :
+                activity.type === 'category' ? 'bg-amber-400/10 text-amber-300 border-amber-400/20' :
                 'bg-slate-500/10 text-slate-400 border-slate-500/20'
               }`}>
                 {activity.type}
@@ -2497,7 +2506,7 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="rounded-2xl border border-slate-900 bg-slate-950/60 backdrop-blur-md p-5 shadow-xl">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2.5 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20"><TrendingUp className="h-4 w-4" /></div>
+            <div className="p-2.5 bg-amber-400/10 text-amber-300 rounded-xl border border-amber-400/20"><TrendingUp className="h-4 w-4" /></div>
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">Umumiy savdo</p>
           </div>
           <p className="text-lg font-black text-white font-mono">{formatShortNumber(orderStats.totalRevenue)}</p>
@@ -2505,7 +2514,7 @@ export default function AdminDashboard() {
         </div>
         <div className="rounded-2xl border border-slate-900 bg-slate-950/60 backdrop-blur-md p-5 shadow-xl">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2.5 bg-blue-500/10 text-blue-400 rounded-xl border border-blue-500/20"><ShoppingBag className="h-4 w-4" /></div>
+            <div className="p-2.5 bg-amber-400/10 text-amber-300 rounded-xl border border-amber-400/20"><ShoppingBag className="h-4 w-4" /></div>
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">Sotilgan tovarlar</p>
           </div>
           <p className="text-lg font-black text-white font-mono">{orderStats.totalItems} <span className="text-xs text-slate-600 font-normal">dona</span></p>
@@ -2513,11 +2522,11 @@ export default function AdminDashboard() {
         </div>
         <div className="rounded-2xl border border-slate-900 bg-slate-950/60 backdrop-blur-md p-5 shadow-xl">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2.5 bg-violet-500/10 text-violet-400 rounded-xl border border-violet-500/20"><Wallet className="h-4 w-4" /></div>
+            <div className="p-2.5 bg-amber-400/10 text-amber-300 rounded-xl border border-amber-400/20"><Wallet className="h-4 w-4" /></div>
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">O'rtacha chek</p>
           </div>
           <p className="text-lg font-black text-white font-mono">{formatShortNumber(orderStats.avgOrder)}</p>
-          <p className="text-[10px] text-slate-600 mt-1 font-mono">1 buyurtma uchun</p>
+          <p className="text-[10px] text-slate-600 mt-1 font-mono">{orderStats.count} ta buyurtma asosida</p>
         </div>
         <div className="rounded-2xl border border-slate-900 bg-slate-950/60 backdrop-blur-md p-5 shadow-xl">
           <div className="flex items-center gap-3 mb-3">
@@ -2533,7 +2542,7 @@ export default function AdminDashboard() {
         {/* Kategoriya taqsimoti */}
         <div className="rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-xl p-6 shadow-xl">
           <h3 className="text-xs font-black text-white uppercase tracking-wider font-mono flex items-center gap-2 mb-6">
-            <Layers className="h-4 w-4 text-emerald-400" /> Kategoriyalar bo'yicha taqsimot
+            <Layers className="h-4 w-4 text-amber-300" /> Kategoriyalar bo'yicha taqsimot
           </h3>
           <div className="space-y-3">
             {categoryDistribution.map((cat, i) => {
@@ -2558,7 +2567,7 @@ export default function AdminDashboard() {
         {/* Status donut */}
         <div className="rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-xl p-6 shadow-xl">
           <h3 className="text-xs font-black text-white uppercase tracking-wider font-mono flex items-center gap-2 mb-6">
-            <PieChart className="h-4 w-4 text-blue-400" /> Status Dastasi (Donut)
+            <PieChart className="h-4 w-4 text-amber-300" /> Status Dastasi (Donut)
           </h3>
           {(() => {
             const total = statusDistribution.reduce((s, d) => s + d.count, 0);
@@ -2597,16 +2606,16 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-xl p-6">
           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono mb-2 flex items-center gap-2">
-            <Database className="h-3.5 w-3.5 text-blue-400" /> Katalog qiymati
+            <Database className="h-3.5 w-3.5 text-amber-300" /> Katalog qiymati
           </p>
           <p className="text-xl font-black text-white font-mono">{formatShortNumber(analytics.grossValuation)}</p>
           <p className="text-[10px] text-slate-600 mt-1 font-mono">{analytics.total} ta mahsulot x ombor narxi</p>
         </div>
         <div className="rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-xl p-6">
           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono mb-2 flex items-center gap-2">
-            <BadgePercent className="h-3.5 w-3.5 text-rose-400" /> Chegirmali tovarlar
+            <BadgePercent className="h-3.5 w-3.5 text-amber-400" /> Chegirmali tovarlar
           </p>
-          <p className="text-xl font-black text-rose-400 font-mono">{analytics.discountedCount} <span className="text-xs text-slate-600 font-normal">ta</span></p>
+          <p className="text-xl font-black text-amber-300 font-mono">{analytics.discountedCount} <span className="text-xs text-slate-600 font-normal">ta</span></p>
           <p className="text-[10px] text-slate-600 mt-1 font-mono">umumiy katalogning {analytics.total ? Math.round((analytics.discountedCount / analytics.total) * 100) : 0}%</p>
         </div>
         <div className="rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-xl p-6">
@@ -2626,13 +2635,13 @@ export default function AdminDashboard() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xs font-black text-white uppercase tracking-wider font-mono flex items-center gap-2">
-            <Newspaper className="h-4 w-4 text-emerald-400" /> Blog boshqaruvi
+            <Newspaper className="h-4 w-4 text-amber-300" /> Blog boshqaruvi
           </h2>
           <p className="text-[10px] text-slate-500 mt-1 font-mono">{(blogPosts || []).length} ta maqola • saytda avtomatik ko'rsatiladi</p>
         </div>
         <button
           onClick={() => { setEditingBlogId(null); setBlogForm({ title: '', excerpt: '', category: 'Maslahatlar', date: '', readTime: 5, image: '', author: 'Grand Decor Studio', content: '' }); setShowBlogModal(true); }}
-          className="px-4 py-2.5 rounded-xl bg-emerald-400 text-slate-950 text-xs font-black uppercase tracking-wider hover:bg-emerald-300 transition flex items-center gap-2"
+          className="px-4 py-2.5 rounded-xl bg-amber-400 text-slate-950 text-xs font-black uppercase tracking-wider hover:bg-amber-300 transition flex items-center gap-2"
         >
           <Plus className="h-4 w-4" /> Yangi maqola
         </button>
@@ -2661,7 +2670,7 @@ export default function AdminDashboard() {
                         <img src={post.image} alt="" className="h-full w-full object-cover" />
                       </div>
                       <div className="min-w-0">
-                        <p className="font-bold text-white group-hover:text-emerald-400 transition line-clamp-1 max-w-xs">{post.title}</p>
+                        <p className="font-bold text-white group-hover:text-amber-300 transition line-clamp-1 max-w-xs">{post.title}</p>
                         <p className="text-[9px] text-slate-600 font-mono mt-0.5">{post.author} • {post.readTime} daqiqa</p>
                       </div>
                     </div>
@@ -2675,7 +2684,7 @@ export default function AdminDashboard() {
                   <td className="p-4 font-mono font-bold text-slate-300 flex items-center gap-1">
                     <Eye className="h-3.5 w-3.5 text-slate-600" /> {post.views || 0}
                   </td>
-                  <td className="p-4 font-mono font-bold text-rose-400">{post.likes || 0}</td>
+                  <td className="p-4 font-mono font-bold text-amber-300">{post.likes || 0}</td>
                   <td className="p-4 text-right">
                     <div className="flex justify-end gap-1.5">
                       <button onClick={() => handleEditBlog(post)} className="p-2 text-slate-500 hover:text-amber-400 transition">
@@ -2707,7 +2716,7 @@ export default function AdminDashboard() {
           <div className="max-w-2xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar bg-slate-950 rounded-2xl border border-slate-800 p-6">
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-base font-black text-white font-mono uppercase flex items-center gap-2">
-                <FileTextIcon className="h-4 w-4 text-emerald-400" />
+                <FileTextIcon className="h-4 w-4 text-amber-300" />
                 {editingBlogId ? 'Maqolani Tahrirlash' : 'Yangi Maqola'}
               </h3>
               <button onClick={() => setShowBlogModal(false)} className="p-2 rounded-lg hover:bg-slate-800 transition text-slate-400 hover:text-white">
@@ -2720,7 +2729,7 @@ export default function AdminDashboard() {
                 <input
                   type="text" required value={blogForm.title}
                   onChange={(e) => setBlogForm({ ...blogForm, title: e.target.value })}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition"
+                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition"
                   placeholder="Maqola sarlavhasi..."
                 />
               </div>
@@ -2730,7 +2739,7 @@ export default function AdminDashboard() {
                   <select
                     value={blogForm.category}
                     onChange={(e) => setBlogForm({ ...blogForm, category: e.target.value })}
-                    className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition"
+                    className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition"
                   >
                     <option>Interyer</option>
                     <option>Maslahatlar</option>
@@ -2743,7 +2752,7 @@ export default function AdminDashboard() {
                   <input
                     type="date" value={blogForm.date}
                     onChange={(e) => setBlogForm({ ...blogForm, date: e.target.value })}
-                    className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition font-mono [color-scheme:dark]"
+                    className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition font-mono [color-scheme:dark]"
                   />
                 </div>
                 <div>
@@ -2751,7 +2760,7 @@ export default function AdminDashboard() {
                   <input
                     type="number" min="1" value={blogForm.readTime}
                     onChange={(e) => setBlogForm({ ...blogForm, readTime: e.target.value })}
-                    className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition font-mono"
+                    className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition font-mono"
                   />
                 </div>
                 <div>
@@ -2759,7 +2768,7 @@ export default function AdminDashboard() {
                   <input
                     type="text" value={blogForm.author}
                     onChange={(e) => setBlogForm({ ...blogForm, author: e.target.value })}
-                    className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition"
+                    className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition"
                   />
                 </div>
               </div>
@@ -2768,7 +2777,7 @@ export default function AdminDashboard() {
                 <input
                   type="text" value={blogForm.image}
                   onChange={(e) => setBlogForm({ ...blogForm, image: e.target.value })}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition"
+                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition"
                   placeholder="/banner/banner1.png yoki https://..."
                 />
               </div>
@@ -2777,7 +2786,7 @@ export default function AdminDashboard() {
                 <textarea
                   rows="2" value={blogForm.excerpt}
                   onChange={(e) => setBlogForm({ ...blogForm, excerpt: e.target.value })}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition resize-none"
+                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition resize-none"
                   placeholder="Maqola haqida qisqacha..."
                 />
               </div>
@@ -2786,11 +2795,11 @@ export default function AdminDashboard() {
                 <textarea
                   rows="8" value={blogForm.content}
                   onChange={(e) => setBlogForm({ ...blogForm, content: e.target.value })}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition resize-y"
+                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition resize-y"
                   placeholder="Birinchi xatboshi...&#10;Ikkinchi xatboshi..."
                 />
               </div>
-              <button type="submit" className="w-full bg-emerald-400 text-slate-950 rounded-xl py-3 text-xs font-black uppercase tracking-wider hover:bg-emerald-300 transition">
+              <button type="submit" className="w-full bg-amber-400 text-slate-950 rounded-xl py-3 text-xs font-black uppercase tracking-wider hover:bg-amber-300 transition">
                 {editingBlogId ? 'Yangilash' : "Qo'shish"}
               </button>
             </form>
@@ -2827,7 +2836,7 @@ export default function AdminDashboard() {
                 key={f}
                 onClick={() => setNotificationFilter(f)}
                 className={`px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition ${
-                  notificationFilter === f ? 'bg-emerald-500/10 text-emerald-400' : 'text-slate-500 hover:text-white'
+                  notificationFilter === f ? 'bg-amber-400/10 text-amber-300' : 'text-slate-500 hover:text-white'
                 }`}
               >
                 {f === 'all' ? 'Barchasi' : f === 'unread' ? "O'qilmagan" : 'O\'qilgan'}
@@ -2836,7 +2845,7 @@ export default function AdminDashboard() {
           </div>
           <button
             onClick={markAllNotificationsRead}
-            className="px-3 py-2 rounded-xl border border-slate-900 bg-slate-950 text-slate-400 hover:text-emerald-400 hover:border-emerald-500/30 transition flex items-center gap-1.5 text-[10px] font-bold uppercase font-mono"
+            className="px-3 py-2 rounded-xl border border-slate-900 bg-slate-950 text-slate-400 hover:text-amber-300 hover:border-amber-400/30 transition flex items-center gap-1.5 text-[10px] font-bold uppercase font-mono"
           >
             <CheckCheck className="h-3.5 w-3.5" /> Hammasini o'qildi
           </button>
@@ -2860,13 +2869,13 @@ export default function AdminDashboard() {
           <button
             key={notif.id}
             onClick={() => markNotificationRead(notif.id)}
-            className={`w-full flex items-start gap-4 px-6 py-4 transition text-left hover:bg-slate-900/30 ${!notif.read ? 'bg-emerald-500/[0.03]' : 'opacity-60'}`}
+            className={`w-full flex items-start gap-4 px-6 py-4 transition text-left hover:bg-slate-900/30 ${!notif.read ? 'bg-amber-400/[0.03]' : 'opacity-60'}`}
           >
             <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${
-              notif.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+              notif.type === 'success' ? 'bg-amber-400/10 text-amber-300 border-amber-400/20' :
               notif.type === 'error' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' :
               notif.type === 'warning' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
-              'bg-blue-500/10 text-blue-400 border-blue-500/20'
+              'bg-amber-400/10 text-amber-300 border-amber-400/20'
             }`}>
               {notif.type === 'success' && <CheckCircle className="h-4 w-4" />}
               {notif.type === 'error' && <XCircle className="h-4 w-4" />}
@@ -2877,7 +2886,7 @@ export default function AdminDashboard() {
               <p className={`text-xs font-bold ${!notif.read ? 'text-white' : 'text-slate-400'}`}>{notif.message}</p>
               <p className="text-[10px] text-slate-600 mt-1 font-mono">{formatDate(notif.time)} • {formatTime(notif.time)}</p>
             </div>
-            {!notif.read && <span className="mt-1.5 h-2 w-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />}
+            {!notif.read && <span className="mt-1.5 h-2 w-2 rounded-full bg-amber-400 animate-pulse shrink-0" />}
           </button>
         ))}
       </div>
@@ -2902,11 +2911,11 @@ export default function AdminDashboard() {
               onClick={() => setSettingsTab(item.id)}
               className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-xs font-bold transition mb-1 ${
                 settingsTab === item.id
-                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                  ? 'bg-amber-400/10 text-amber-300 border border-amber-400/20'
                   : 'text-slate-400 hover:text-white hover:bg-slate-900/60 border border-transparent'
               }`}
             >
-              <Icon className={`h-4 w-4 ${settingsTab === item.id ? 'text-emerald-400' : 'text-slate-500'}`} />
+              <Icon className={`h-4 w-4 ${settingsTab === item.id ? 'text-amber-300' : 'text-slate-500'}`} />
               {item.label}
             </button>
           );
@@ -2918,7 +2927,7 @@ export default function AdminDashboard() {
         {settingsTab === 'general' && (
           <form onSubmit={handleSettingsSave} className="rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-xl p-6 shadow-xl space-y-5">
             <div className="flex items-center gap-2 pb-4 border-b border-slate-900">
-              <Settings className="h-4 w-4 text-emerald-400" />
+              <Settings className="h-4 w-4 text-amber-300" />
               <h3 className="text-xs font-black text-white uppercase tracking-wider font-mono">Umumiy sozlamalar</h3>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -2927,7 +2936,7 @@ export default function AdminDashboard() {
                 <select
                   value={tempSettings.language || 'uz'}
                   onChange={(e) => setTempSettings({ ...tempSettings, language: e.target.value })}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition"
+                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition"
                 >
                   <option value="uz" className="bg-slate-950 text-slate-400">O'zbek tili</option>
                   <option value="ru" className="bg-slate-950 text-slate-400">Русский язык</option>
@@ -2939,7 +2948,7 @@ export default function AdminDashboard() {
                 <select
                   value={tempSettings.currency || 'UZS'}
                   onChange={(e) => setTempSettings({ ...tempSettings, currency: e.target.value })}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition"
+                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition"
                 >
                   <option value="UZS" className="bg-slate-950 text-slate-400">UZS — So'm</option>
                   <option value="USD" className="bg-slate-950 text-slate-400">USD — Dollar</option>
@@ -2961,7 +2970,7 @@ export default function AdminDashboard() {
                   <button
                     type="button"
                     onClick={() => setTempSettings({ ...tempSettings, [item.key]: !tempSettings[item.key] })}
-                    className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-300 ${tempSettings[item.key] ? 'bg-emerald-500' : 'bg-slate-800'}`}
+                    className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-300 ${tempSettings[item.key] ? 'bg-amber-400' : 'bg-slate-800'}`}
                   >
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${tempSettings[item.key] ? 'translate-x-6' : 'translate-x-1'}`} />
                   </button>
@@ -2969,7 +2978,7 @@ export default function AdminDashboard() {
               ))}
             </div>
 
-            <button type="submit" className="w-full bg-emerald-400 text-slate-950 rounded-xl py-3 text-xs font-black uppercase tracking-wider hover:bg-emerald-300 transition flex items-center justify-center gap-2">
+            <button type="submit" className="w-full bg-amber-400 text-slate-950 rounded-xl py-3 text-xs font-black uppercase tracking-wider hover:bg-amber-300 transition flex items-center justify-center gap-2">
               <Save className="h-4 w-4" /> Sozlamalarni saqlash
             </button>
           </form>
@@ -2980,7 +2989,7 @@ export default function AdminDashboard() {
             <div className="rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-xl p-6 shadow-xl">
               <div className="flex items-center justify-between pb-4 border-b border-slate-900">
                 <div className="flex items-center gap-2">
-                  <Truck className="h-4 w-4 text-emerald-400" />
+                  <Truck className="h-4 w-4 text-amber-300" />
                   <h3 className="text-xs font-black text-white uppercase tracking-wider font-mono">Yetkazib berish zonalari</h3>
                 </div>
                 <div className="flex items-center gap-2">
@@ -3001,21 +3010,21 @@ export default function AdminDashboard() {
                   value={newZone.name}
                   onChange={(e) => setNewZone({ ...newZone, name: e.target.value })}
                   placeholder="Zona nomi"
-                  className="col-span-2 sm:col-span-2 rounded-xl border border-slate-900 bg-slate-950 px-3 py-2 text-xs text-white placeholder:text-slate-600 focus:border-emerald-500/30 focus:outline-none"
+                  className="col-span-2 sm:col-span-2 rounded-xl border border-slate-900 bg-slate-950 px-3 py-2 text-xs text-white placeholder:text-slate-600 focus:border-amber-400/30 focus:outline-none"
                 />
                 <input
                   type="number"
                   value={newZone.price}
                   onChange={(e) => setNewZone({ ...newZone, price: e.target.value })}
                   placeholder="Narx (so'm)"
-                  className="rounded-xl border border-slate-900 bg-slate-950 px-3 py-2 text-xs text-white placeholder:text-slate-600 focus:border-emerald-500/30 focus:outline-none font-mono"
+                  className="rounded-xl border border-slate-900 bg-slate-950 px-3 py-2 text-xs text-white placeholder:text-slate-600 focus:border-amber-400/30 focus:outline-none font-mono"
                 />
                 <input
                   type="text"
                   value={newZone.days}
                   onChange={(e) => setNewZone({ ...newZone, days: e.target.value })}
                   placeholder="Muddat (1-2 kun)"
-                  className="rounded-xl border border-slate-900 bg-slate-950 px-3 py-2 text-xs text-white placeholder:text-slate-600 focus:border-emerald-500/30 focus:outline-none"
+                  className="rounded-xl border border-slate-900 bg-slate-950 px-3 py-2 text-xs text-white placeholder:text-slate-600 focus:border-amber-400/30 focus:outline-none"
                 />
                 <div className="flex gap-2">
                   <input
@@ -3023,7 +3032,7 @@ export default function AdminDashboard() {
                     value={newZone.freeFrom}
                     onChange={(e) => setNewZone({ ...newZone, freeFrom: e.target.value })}
                     placeholder="Bepul (so'm)"
-                    className="flex-1 rounded-xl border border-slate-900 bg-slate-950 px-3 py-2 text-xs text-white placeholder:text-slate-600 focus:border-emerald-500/30 focus:outline-none font-mono"
+                    className="flex-1 rounded-xl border border-slate-900 bg-slate-950 px-3 py-2 text-xs text-white placeholder:text-slate-600 focus:border-amber-400/30 focus:outline-none font-mono"
                   />
                   <button
                     onClick={() => {
@@ -3034,10 +3043,10 @@ export default function AdminDashboard() {
                         days: newZone.days || '1-2 kun',
                         freeFrom: Number(newZone.freeFrom) || 0,
                       });
-                      addActivityLog?.({ action: `Yangi zona qo'shildi: ${newZone.name.trim()}`, user: 'Admin Terminal', type: 'settings' });
+                      addActivityLog?.({ action: `Yangi zona qo'shildi: ${newZone.name.trim()}`, user: 'Admin', type: 'settings' });
                       setNewZone({ name: '', price: '', days: '', freeFrom: '' });
                     }}
-                    className="px-3 rounded-xl bg-emerald-400 text-slate-950 hover:bg-emerald-300 transition shrink-0"
+                    className="px-3 rounded-xl bg-amber-400 text-slate-950 hover:bg-amber-300 transition shrink-0"
                   >
                     <Plus className="h-4 w-4" />
                   </button>
@@ -3079,7 +3088,7 @@ export default function AdminDashboard() {
                                 days: zoneEdit.days || zone.days,
                                 freeFrom: Number(zoneEdit.freeFrom) || 0,
                               });
-                              addActivityLog?.({ action: `Zona yangilandi: ${zoneEdit.name || zone.name}`, user: 'Admin Terminal', type: 'settings' });
+                              addActivityLog?.({ action: `Zona yangilandi: ${zoneEdit.name || zone.name}`, user: 'Admin', type: 'settings' });
                               setEditingZoneId(null);
                             }}
                             className="px-2.5 rounded-lg bg-amber-400 text-slate-950 hover:bg-amber-300 transition shrink-0"
@@ -3096,14 +3105,14 @@ export default function AdminDashboard() {
                       </div>
                     ) : (
                       <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-400/10 border border-amber-400/20 text-amber-300">
                           <Truck className="h-4 w-4" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-bold text-white">{zone.name}</p>
                           <p className="text-[10px] text-slate-500 font-mono">{zone.days} • Bepul: {formatShortNumber(zone.freeFrom)} dan</p>
                         </div>
-                        <span className="text-xs font-mono font-black text-emerald-400 shrink-0">{formatPrice(zone.price)}</span>
+                        <span className="text-xs font-mono font-black text-amber-300 shrink-0">{formatPrice(zone.price)}</span>
                         <div className="flex gap-1.5 shrink-0">
                           <button
                             onClick={() => {
@@ -3118,7 +3127,7 @@ export default function AdminDashboard() {
                             onClick={() => {
                               if ((deliveryZones || []).length <= 1) { showToast("Kamida 1 ta zona qolishi kerak!", "error"); return; }
                               deleteDeliveryZone(zone.id);
-                              addActivityLog?.({ action: `Zona o'chirildi: ${zone.name}`, user: 'Admin Terminal', type: 'settings' });
+                              addActivityLog?.({ action: `Zona o'chirildi: ${zone.name}`, user: 'Admin', type: 'settings' });
                             }}
                             className="p-2 text-slate-600 hover:text-rose-400 transition"
                           >
@@ -3144,7 +3153,7 @@ export default function AdminDashboard() {
         {settingsTab === 'notification' && (
           <form onSubmit={handleNotificationSettingsSave} className="rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-xl p-6 shadow-xl space-y-5">
             <div className="flex items-center gap-2 pb-4 border-b border-slate-900">
-              <Bell className="h-4 w-4 text-blue-400" />
+              <Bell className="h-4 w-4 text-amber-300" />
               <h3 className="text-xs font-black text-white uppercase tracking-wider font-mono">Bildirishnoma sozlamalari</h3>
             </div>
             {[
@@ -3161,13 +3170,13 @@ export default function AdminDashboard() {
                 <button
                   type="button"
                   onClick={() => updateNotificationSettings({ [item.key]: !notificationSettings[item.key] })}
-                  className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-300 ${notificationSettings[item.key] ? 'bg-blue-500' : 'bg-slate-800'}`}
+                  className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-300 ${notificationSettings[item.key] ? 'bg-amber-400' : 'bg-slate-800'}`}
                 >
                   <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${notificationSettings[item.key] ? 'translate-x-6' : 'translate-x-1'}`} />
                 </button>
               </div>
             ))}
-            <button type="submit" className="w-full bg-blue-500 text-slate-950 rounded-xl py-3 text-xs font-black uppercase tracking-wider hover:bg-blue-400 transition flex items-center justify-center gap-2">
+            <button type="submit" className="w-full bg-amber-400 text-slate-950 rounded-xl py-3 text-xs font-black uppercase tracking-wider hover:bg-amber-300 transition flex items-center justify-center gap-2">
               <Save className="h-4 w-4" /> Saqlash
             </button>
           </form>
@@ -3186,7 +3195,7 @@ export default function AdminDashboard() {
               </p>
               <button
                 onClick={() => setConfirmReset(true)}
-                className="mt-4 px-4 py-2.5 rounded-xl bg-rose-600 text-slate-950 text-xs font-black uppercase tracking-wider hover:bg-rose-500 transition flex items-center gap-2"
+                className="mt-4 px-4 py-2.5 rounded-xl bg-rose-600 text-white text-xs font-black uppercase tracking-wider hover:bg-rose-500 transition flex items-center gap-2"
               >
                 <Trash2 className="h-4 w-4" /> Tozalashni boshlash
               </button>
@@ -3205,7 +3214,7 @@ export default function AdminDashboard() {
         <div className="max-w-md w-full bg-slate-950 rounded-2xl border border-slate-800 p-6" onClick={(e) => e.stopPropagation()}>
           <div className="flex items-center justify-between mb-5">
             <h3 className="text-base font-black text-white font-mono uppercase flex items-center gap-2">
-              <Percent className="h-4 w-4 text-emerald-400" />
+              <Percent className="h-4 w-4 text-amber-300" />
               {editingCoupon ? 'Kuponni Tahrirlash' : 'Yangi Kupon'}
             </h3>
             <button onClick={() => setShowCouponModal(false)} className="p-2 rounded-lg hover:bg-slate-800 transition text-slate-400 hover:text-white">
@@ -3218,7 +3227,7 @@ export default function AdminDashboard() {
               <input
                 type="text" required value={newCoupon.code}
                 onChange={(e) => setNewCoupon({ ...newCoupon, code: e.target.value.toUpperCase() })}
-                className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs font-mono font-bold text-white uppercase tracking-widest focus:border-emerald-500/50 focus:outline-none transition"
+                className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs font-mono font-bold text-white uppercase tracking-widest focus:border-amber-400/50 focus:outline-none transition"
                 placeholder="SUMMER20"
               />
             </div>
@@ -3228,7 +3237,7 @@ export default function AdminDashboard() {
                 <input
                   type="number" required min="1" max="99" value={newCoupon.discount}
                   onChange={(e) => setNewCoupon({ ...newCoupon, discount: e.target.value })}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition font-mono"
+                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition font-mono"
                   placeholder="20"
                 />
               </div>
@@ -3237,12 +3246,12 @@ export default function AdminDashboard() {
                 <input
                   type="number" min="0" value={newCoupon.minSpend}
                   onChange={(e) => setNewCoupon({ ...newCoupon, minSpend: e.target.value })}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition font-mono"
+                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition font-mono"
                   placeholder="1000000"
                 />
               </div>
             </div>
-            <button type="submit" className="w-full bg-emerald-400 text-slate-950 rounded-xl py-3 text-xs font-black uppercase tracking-wider hover:bg-emerald-300 transition">
+            <button type="submit" className="w-full bg-amber-400 text-slate-950 rounded-xl py-3 text-xs font-black uppercase tracking-wider hover:bg-amber-300 transition">
               {editingCoupon ? 'Yangilash' : "Qo'shish"}
             </button>
           </form>
@@ -3261,7 +3270,7 @@ export default function AdminDashboard() {
           {/* Header */}
           <div className="px-6 py-5 border-b border-slate-900 flex items-start justify-between sticky top-0 bg-slate-950 z-10">
             <div>
-              <p className="text-sm font-black text-emerald-400 font-mono uppercase">{orderDetails.id}</p>
+              <p className="text-sm font-black text-amber-300 font-mono uppercase">{orderDetails.id}</p>
               <p className="text-[10px] text-slate-500 mt-1 font-mono">
                 {formatDate(orderDetails.createdAt)} • {formatTime(orderDetails.createdAt)}
               </p>
@@ -3292,7 +3301,7 @@ export default function AdminDashboard() {
                         <p className="text-xs font-bold text-white truncate">{item.name}</p>
                         <p className="text-[10px] font-mono text-slate-500 mt-0.5">{item.quantity} × {formatPrice(itemPrice)}</p>
                       </div>
-                      <p className="text-xs font-black text-emerald-400 font-mono shrink-0">{formatPrice(itemPrice * item.quantity)}</p>
+                      <p className="text-xs font-black text-amber-300 font-mono shrink-0">{formatPrice(itemPrice * item.quantity)}</p>
                     </div>
                   );
                 })}
@@ -3317,7 +3326,7 @@ export default function AdminDashboard() {
               </div>
               <div className="flex justify-between text-sm pt-2 border-t border-slate-900">
                 <span className="font-black text-white uppercase font-mono">Jami</span>
-                <span className="font-black text-emerald-400 font-mono">{formatPrice(orderDetails.total)}</span>
+                <span className="font-black text-amber-300 font-mono">{formatPrice(orderDetails.total)}</span>
               </div>
             </div>
 
@@ -3325,7 +3334,7 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="rounded-xl border border-slate-900 bg-slate-950/60 p-4">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest font-mono mb-2 flex items-center gap-1.5">
-                  <CreditCard className="h-3.5 w-3.5 text-blue-400" /> To'lov usuli
+                  <CreditCard className="h-3.5 w-3.5 text-amber-300" /> To'lov usuli
                 </p>
                 <span className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-bold border font-mono ${payMethod?.color || 'bg-slate-900 text-slate-400 border-slate-800'}`}>
                   {payMethod?.label || orderDetails.paymentMethod || '—'}
@@ -3361,7 +3370,7 @@ export default function AdminDashboard() {
               {orderDetails.status !== 'Bekor qilindi' && (
                 <button
                   onClick={() => { handleCancelOrder(orderDetails.id); setOrderDetails(null); }}
-                  className="px-4 py-2.5 rounded-xl bg-rose-600 text-slate-950 text-xs font-black uppercase tracking-wider hover:bg-rose-500 transition"
+                  className="px-4 py-2.5 rounded-xl bg-rose-600 text-white text-xs font-black uppercase tracking-wider hover:bg-rose-500 transition"
                 >
                   Bekor qilish
                 </button>
@@ -3409,12 +3418,12 @@ export default function AdminDashboard() {
                 <Menu className="h-4 w-4" />
               </button>
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-slate-900 to-slate-950 text-emerald-400 border border-slate-800">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-slate-900 to-slate-950 text-amber-300 border border-slate-800">
                   <LayoutDashboard className="h-4 w-4" />
                 </div>
                 <div>
                   <h1 className="text-sm font-black tracking-wider uppercase font-mono">
-                    Control <span className="text-emerald-400">Terminal</span>
+                    Control <span className="text-amber-300">Terminal</span>
                   </h1>
                   <p className="text-[9px] text-slate-500 font-mono tracking-widest uppercase hidden sm:block">
                     {SIDEBAR_SECTIONS.flatMap(s => s.items).find(i => i.id === activeTab)?.label || 'Boshqaruv'}
@@ -3440,7 +3449,7 @@ export default function AdminDashboard() {
 
               {/* REAL VAQT: jonli soat */}
               <div className="hidden md:flex flex-col items-end rounded-lg border border-slate-800 bg-slate-950 px-3 py-1">
-                <span className="text-[11px] font-mono font-black text-emerald-400 tabular-nums leading-none">
+                <span className="text-[11px] font-mono font-black text-amber-300 tabular-nums leading-none">
                   {now.toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                 </span>
                 <span className="text-[8px] font-mono text-slate-500 uppercase tracking-widest mt-0.5">
@@ -3449,11 +3458,11 @@ export default function AdminDashboard() {
               </div>
               {/* REAL VAQT: sinxronlash holati */}
               <span className={`hidden sm:inline-flex items-center gap-2 text-[10px] font-mono font-bold tracking-widest uppercase bg-slate-900 px-3 py-1.5 rounded-lg border transition ${
-                networkStatus === 'online' ? 'border-emerald-500/20 text-emerald-400' : 'border-rose-500/30 text-rose-400'
+                networkStatus === 'online' ? 'border-amber-400/20 text-amber-300' : 'border-rose-500/30 text-rose-400'
               }`}>
                 <span className="relative flex h-2 w-2">
-                  <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping ${networkStatus === 'online' ? 'bg-emerald-400' : 'bg-rose-500'}`} />
-                  <span className={`relative inline-flex rounded-full h-2 w-2 ${networkStatus === 'online' ? 'bg-emerald-400' : 'bg-rose-500'}`} />
+                  <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping ${networkStatus === 'online' ? 'bg-amber-400' : 'bg-rose-500'}`} />
+                  <span className={`relative inline-flex rounded-full h-2 w-2 ${networkStatus === 'online' ? 'bg-amber-400' : 'bg-rose-500'}`} />
                 </span>
                 {networkStatus === 'online'
                   ? <><Wifi className="h-3 w-3" /> REAL TIME: SYNC</>
@@ -3524,11 +3533,11 @@ export default function AdminDashboard() {
                     onClick={() => setExportDataset(opt.id)}
                     className={`flex items-center gap-2 p-3 rounded-xl border text-left transition ${
                       exportDataset === opt.id
-                        ? 'border-emerald-500/40 bg-emerald-500/10 text-white'
+                        ? 'border-amber-400/40 bg-amber-400/10 text-white'
                         : 'border-slate-800 bg-slate-900/30 text-slate-400 hover:border-slate-700'
                     }`}
                   >
-                    <Icon className="h-4 w-4 text-emerald-400 shrink-0" />
+                    <Icon className="h-4 w-4 text-amber-300 shrink-0" />
                     <div className="min-w-0">
                       <p className="text-xs font-bold">{opt.label}</p>
                       <p className="text-[9px] text-slate-500 font-mono">{count} ta</p>
@@ -3557,9 +3566,9 @@ export default function AdminDashboard() {
                     exportData(dataset, exportDataset, label, format);
                     setShowExportModal(false);
                   }}
-                  className="w-full flex items-center gap-3 p-4 rounded-xl border border-slate-800 bg-slate-900/30 transition hover:border-emerald-500/30"
+                  className="w-full flex items-center gap-3 p-4 rounded-xl border border-slate-800 bg-slate-900/30 transition hover:border-amber-400/30"
                 >
-                  <FileSpreadsheet className="h-5 w-5 text-emerald-400" />
+                  <FileSpreadsheet className="h-5 w-5 text-amber-300" />
                   <div className="text-left">
                     <p className="text-xs font-bold text-white uppercase">{format.toUpperCase()}</p>
                     <p className="text-[10px] text-slate-500">
@@ -3583,10 +3592,10 @@ export default function AdminDashboard() {
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="border-2 border-dashed border-slate-800 rounded-xl p-8 text-center hover:border-emerald-500/30 transition">
+            <div className="border-2 border-dashed border-slate-800 rounded-xl p-8 text-center hover:border-amber-400/30 transition">
               <Upload className="h-12 w-12 text-slate-600 mx-auto mb-3" />
               <p className="text-xs text-slate-400 mb-3">CSV yoki JSON fayl yuklang</p>
-              <label className="inline-flex items-center gap-2 bg-emerald-500 text-slate-950 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider cursor-pointer hover:bg-emerald-400 transition">
+              <label className="inline-flex items-center gap-2 bg-amber-400 text-slate-950 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider cursor-pointer hover:bg-amber-400 transition">
                 <Upload className="h-4 w-4" /> Fayl Tanlash
                 <input type="file" accept=".csv,.json" onChange={importData} className="hidden" />
               </label>
@@ -3606,7 +3615,7 @@ export default function AdminDashboard() {
                 <X className="h-4 w-4" />
               </button>
               {Number(previewProduct.discount) > 0 && (
-                <div className="absolute top-4 left-4 bg-rose-500 text-white text-xs font-black px-3 py-1 rounded-full">
+                <div className="absolute top-4 left-4 bg-amber-400 text-slate-950 text-xs font-black px-3 py-1 rounded-full">
                   -{previewProduct.discount}%
                 </div>
               )}
@@ -3615,14 +3624,14 @@ export default function AdminDashboard() {
               <h3 className="text-lg font-black text-white mb-2">{previewProduct.name || previewProduct.title}</h3>
               <p className="text-xs text-slate-400 mb-4 leading-relaxed">{previewProduct.description}</p>
               <div className="flex items-center gap-4 mb-4">
-                <p className="text-xl font-black text-emerald-400 font-mono">{formatPrice(previewProduct.price)}</p>
+                <p className="text-xl font-black text-amber-300 font-mono">{formatPrice(previewProduct.price)}</p>
                 {Number(previewProduct.discount) > 0 && (
                   <p className="text-sm text-slate-500 line-through font-mono">{formatPrice(previewProduct.price * (1 + Number(previewProduct.discount) / 100))}</p>
                 )}
               </div>
               <div className="flex items-center gap-4">
                 <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold border ${
-                  previewProduct.isNew ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-slate-900 text-slate-400 border-slate-800'
+                  previewProduct.isNew ? 'bg-amber-400/10 text-amber-300 border-amber-400/20' : 'bg-slate-900 text-slate-400 border-slate-800'
                 }`}>
                   {previewProduct.isNew ? 'YANGI' : 'ODDIY'}
                 </span>
@@ -3661,7 +3670,7 @@ export default function AdminDashboard() {
             </p>
             <div className="flex gap-3">
               <button onClick={() => setShowProductBulkConfirm(false)} className="flex-1 rounded-xl bg-slate-900 border border-slate-800 py-2.5 text-xs text-slate-400 uppercase">Bekor qilish</button>
-              <button onClick={handleBulkDeleteProducts} className="flex-1 rounded-xl bg-rose-600 text-slate-950 font-black py-2.5 text-xs uppercase">O'chirish</button>
+              <button onClick={handleBulkDeleteProducts} className="flex-1 rounded-xl bg-rose-600 text-white font-black py-2.5 text-xs uppercase">O'chirish</button>
             </div>
           </div>
         </div>
@@ -3685,7 +3694,7 @@ export default function AdminDashboard() {
                 <input
                   type="text" required value={newUser.name}
                   onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition"
+                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition"
                   placeholder="Alisher Karimov"
                 />
               </div>
@@ -3694,7 +3703,7 @@ export default function AdminDashboard() {
                 <input
                   type="email" required value={newUser.email}
                   onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition"
+                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition"
                   placeholder="alisher@example.com"
                 />
               </div>
@@ -3703,7 +3712,7 @@ export default function AdminDashboard() {
                 <input
                   type="password" required value={newUser.password}
                   onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition"
+                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition"
                   placeholder="••••••••"
                 />
               </div>
@@ -3712,14 +3721,14 @@ export default function AdminDashboard() {
                 <select
                   value={newUser.role}
                   onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-emerald-500/50 focus:outline-none transition"
+                  className="w-full rounded-xl border border-slate-900 bg-slate-950 px-3 py-2.5 text-xs text-white focus:border-amber-400/50 focus:outline-none transition"
                 >
                   <option value="user">Foydalanuvchi</option>
                   <option value="moderator">Moderator</option>
                   <option value="admin">Admin</option>
                 </select>
               </div>
-              <button type="submit" className="w-full bg-emerald-500 text-slate-950 rounded-xl py-2.5 text-xs font-black uppercase tracking-wider hover:bg-emerald-400 transition">
+              <button type="submit" className="w-full bg-amber-400 text-slate-950 rounded-xl py-2.5 text-xs font-black uppercase tracking-wider hover:bg-amber-400 transition">
                 {editingUser ? 'Yangilash' : "Qo'shish"}
               </button>
             </form>
@@ -3751,7 +3760,7 @@ export default function AdminDashboard() {
               <button onClick={() => setDeleteConfirmId(null)} className="flex-1 rounded-xl bg-slate-900 border border-slate-800 py-2.5 text-xs text-slate-400 uppercase">Bekor qilish</button>
               <button
                 onClick={handleUniversalDelete}
-                className="flex-1 rounded-xl bg-rose-600 text-slate-950 font-black py-2.5 text-xs uppercase"
+                className="flex-1 rounded-xl bg-rose-600 text-white font-black py-2.5 text-xs uppercase"
               >
                 O'chirish
               </button>
@@ -3773,7 +3782,7 @@ export default function AdminDashboard() {
             </p>
             <div className="flex gap-3">
               <button onClick={() => setConfirmReset(false)} className="flex-1 rounded-xl bg-slate-900 border border-slate-800 py-2.5 text-xs text-slate-400 uppercase">Bekor qilish</button>
-              <button onClick={handleResetData} className="flex-1 rounded-xl bg-rose-600 text-slate-950 font-black py-2.5 text-xs uppercase">Ha, tozalash</button>
+              <button onClick={handleResetData} className="flex-1 rounded-xl bg-rose-600 text-white font-black py-2.5 text-xs uppercase">Ha, tozalash</button>
             </div>
           </div>
         </div>
@@ -3783,10 +3792,10 @@ export default function AdminDashboard() {
       {notification && (
         <div className="fixed bottom-6 right-6 z-[130] flex items-center gap-3 bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-2xl max-w-sm animate-in slide-in-from-bottom-4 duration-200">
           <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${
-            notification.type === 'success' ? 'bg-emerald-500/10 text-emerald-400' :
+            notification.type === 'success' ? 'bg-amber-400/10 text-amber-300' :
             notification.type === 'error' ? 'bg-rose-500/10 text-rose-400' :
             notification.type === 'warning' ? 'bg-amber-500/10 text-amber-400' :
-            'bg-blue-500/10 text-blue-400'
+            'bg-amber-400/10 text-amber-300'
           }`}>
             {notification.type === 'success' && <CheckCircle className="h-4 w-4" />}
             {notification.type === 'error' && <XCircle className="h-4 w-4" />}

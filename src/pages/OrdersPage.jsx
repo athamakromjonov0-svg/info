@@ -5,10 +5,10 @@ import PageHero from '../components/PageHero';
 import { useApp } from '../context/AppContext';
 
 const STATUS_STYLES = {
-  'Qabul qilindi': { color: 'text-blue-400 bg-blue-500/10 border-blue-500/30', icon: Clock },
-  'Tayyorlanmoqda': { color: 'text-amber-400 bg-amber-500/10 border-amber-500/30', icon: Package },
-  "Yo'lda": { color: 'text-purple-400 bg-purple-500/10 border-purple-500/30', icon: Truck },
-  'Yetkazildi': { color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30', icon: PackageCheck },
+  'Qabul qilindi': { color: 'text-amber-300 bg-amber-400/10 border-amber-400/20', icon: Clock },
+  'Tayyorlanmoqda': { color: 'text-amber-300 bg-amber-400/10 border-amber-400/20', icon: Package },
+  "Yo'lda": { color: 'text-amber-300 bg-amber-400/10 border-amber-400/20', icon: Truck },
+  'Yetkazildi': { color: 'text-amber-300 bg-amber-400/10 border-amber-400/20', icon: PackageCheck },
   'Bekor qilindi': { color: 'text-rose-400 bg-rose-500/10 border-rose-500/30', icon: PackageX },
 };
 
@@ -47,11 +47,11 @@ export default function OrdersPage() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-slate-950 font-sans select-none relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_10%,rgba(59,130,246,0.06),transparent_40%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_10%,rgba(255,193,7,0.06),transparent_40%)] pointer-events-none" />
 
       <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         <PageHero
-          badge="/// Buyurtmalarim"
+          badge="Buyurtmalarim"
           title="Buyurtma"
           highlight="tarixi"
           description="Barcha buyurtmalaringizni kuzatib boring: status, to'lov, yetkazib berish ma'lumotlari."
@@ -69,7 +69,7 @@ export default function OrdersPage() {
             <div className="mt-1 text-[10px] text-slate-500 font-mono uppercase tracking-widest">Faol</div>
           </div>
           <div className="rounded-3xl border border-slate-900 bg-slate-950/60 backdrop-blur-xl p-5">
-            <div className="text-2xl font-black text-emerald-400">{stats.delivered}</div>
+            <div className="text-2xl font-black text-amber-400">{stats.delivered}</div>
             <div className="mt-1 text-[10px] text-slate-500 font-mono uppercase tracking-widest">Yetkazilgan</div>
           </div>
           <div className="rounded-3xl border border-slate-900 bg-slate-950/60 backdrop-blur-xl p-5">
@@ -86,7 +86,7 @@ export default function OrdersPage() {
               onClick={() => setFilter(s)}
               className={`rounded-xl border px-3.5 py-2 text-[11px] font-bold transition-all duration-200 ${
                 filter === s
-                  ? 'bg-white text-slate-950 border-white'
+                  ? 'bg-amber-400 text-slate-950 border-amber-400 shadow-glow-sm'
                   : 'bg-slate-900/40 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-white'
               }`}
             >
@@ -142,7 +142,7 @@ export default function OrdersPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3 shrink-0">
-                      <span className="text-base font-black text-emerald-400">{formatPrice(order.total)}</span>
+                      <span className="text-base font-black text-amber-300">{formatPrice(order.total)}</span>
                       <ChevronDown className={`h-4 w-4 text-slate-500 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
                     </div>
                   </button>
@@ -151,13 +151,12 @@ export default function OrdersPage() {
                   {isOpen && (
                     <div className="border-t border-slate-900 p-5 space-y-5">
                       {/* Mahsulotlar */}
-                      <div className="space-y-2">
-                        <p className="text-[9px] font-mono text-slate-600 uppercase tracking-widest">/// Mahsulotlar</p>
+                      <div className="space-y-2">                          <p className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">Mahsulotlar</p>
                         {order.items?.map((item, idx) => (
                           <div key={idx} className="flex items-center gap-3 rounded-2xl border border-slate-900 bg-slate-900/40 p-3">
                             <img src={item.image} alt={item.name} className="h-12 w-12 rounded-xl object-cover border border-slate-800" />
                             <div className="flex-1 min-w-0">
-                              <Link to={`/product/${item.id}`} className="text-xs font-bold text-white hover:text-emerald-400 transition-colors line-clamp-1">
+                              <Link to={`/product/${item.id}`} className="text-xs font-bold text-white hover:text-amber-300 transition-colors line-clamp-1">
                                 {item.name}
                               </Link>
                               <div className="text-[10px] text-slate-500 mt-0.5">
@@ -174,7 +173,7 @@ export default function OrdersPage() {
                       {/* To'lov va manzil */}
                       <div className="grid sm:grid-cols-2 gap-4">
                         <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4">
-                          <p className="text-[9px] font-mono text-slate-600 uppercase tracking-widest mb-2">/// To'lov</p>
+                          <p className="text-[9px] font-bold text-slate-600 uppercase tracking-widest mb-2">To'lov</p>
                           <p className="text-xs text-slate-300 capitalize">
                             {order.paymentMethod === 'card' ? 'Plastik karta' :
                              order.paymentMethod === 'cash' ? 'Naqd pul' : String(order.paymentMethod || 'Naqd pul')}
@@ -182,14 +181,14 @@ export default function OrdersPage() {
                           <div className="mt-3 space-y-1.5 text-[11px]">
                             <div className="flex justify-between text-slate-500"><span>Mahsulotlar:</span><span className="text-slate-300">{formatPrice(order.subtotal)}</span></div>
                             {order.couponDiscount > 0 && (
-                              <div className="flex justify-between text-slate-500"><span>Chegirma:</span><span className="text-rose-400">-{formatPrice(order.couponDiscount)}</span></div>
+                              <div className="flex justify-between text-slate-500"><span>Chegirma:</span><span className="text-amber-300">-{formatPrice(order.couponDiscount)}</span></div>
                             )}
                             <div className="flex justify-between text-slate-500"><span>Yetkazib berish:</span><span className="text-slate-300">{order.deliveryFee ? formatPrice(order.deliveryFee) : 'Bepul'}</span></div>
-                            <div className="flex justify-between pt-1.5 border-t border-slate-800"><span className="font-bold text-white">Jami:</span><span className="font-black text-emerald-400">{formatPrice(order.total)}</span></div>
+                            <div className="flex justify-between pt-1.5 border-t border-slate-800"><span className="font-bold text-white">Jami:</span><span className="font-black text-amber-300">{formatPrice(order.total)}</span></div>
                           </div>
                         </div>
                         <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4">
-                          <p className="text-[9px] font-mono text-slate-600 uppercase tracking-widest mb-2">/// Yetkazib berish</p>
+                          <p className="text-[9px] font-bold text-slate-600 uppercase tracking-widest mb-2">Yetkazib berish</p>
                           {order.address ? (
                             <>
                               <p className="text-xs text-slate-300 font-bold">{order.address.name || 'Qabul qiluvchi'}</p>

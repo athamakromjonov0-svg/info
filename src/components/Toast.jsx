@@ -43,32 +43,32 @@ export default function Toast() {
 
   const toastStyles = {
     success: {
-      icon: <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />,
-      borderColor: 'border-emerald-500/20 shadow-emerald-950/20',
-      progressBg: 'bg-emerald-400',
+      icon: <CheckCircle2 className="h-4 w-4 text-amber-300 shrink-0" />,
+      borderColor: 'border-amber-500/20 shadow-glow-sm',
+      progressBg: 'bg-amber-400',
       glow: 'shadow-[0_0_30px_rgba(255,193,7,0.12)]',
-      title: "SYSTEM_SUCCESS"
+      title: "Muvaffaqiyat"
     },
     error: {
       icon: <AlertTriangle className="h-4 w-4 text-rose-400 shrink-0" />,
-      borderColor: 'border-rose-500/20 shadow-rose-950/20',
+      borderColor: 'border-rose-500/20',
       progressBg: 'bg-rose-500',
-      glow: 'shadow-[0_0_30px_rgba(244,63,94,0.08)]',
-      title: "CRITICAL_ERROR"
+      glow: 'shadow-[0_0_30px_rgba(214,69,80,0.10)]',
+      title: "Xatolik"
     },
     warning: {
       icon: <AlertCircle className="h-4 w-4 text-amber-400 shrink-0" />,
-      borderColor: 'border-amber-500/20 shadow-amber-950/20',
-      progressBg: 'bg-amber-500',
-      glow: 'shadow-[0_0_30px_rgba(245,158,11,0.08)]',
-      title: "GATEWAY_WARNING"
+      borderColor: 'border-amber-500/20 shadow-glow-sm',
+      progressBg: 'bg-amber-400',
+      glow: 'shadow-[0_0_30px_rgba(255,193,7,0.10)]',
+      title: "Ogohlantirish"
     },
     info: {
-      icon: <Info className="h-4 w-4 text-blue-400 shrink-0" />,
-      borderColor: 'border-blue-500/20 shadow-blue-950/20',
-      progressBg: 'bg-blue-400',
+      icon: <Info className="h-4 w-4 text-amber-300 shrink-0" />,
+      borderColor: 'border-amber-500/20 shadow-glow-sm',
+      progressBg: 'bg-amber-400',
       glow: 'shadow-[0_0_30px_rgba(255,193,7,0.12)]',
-      title: "CYBER_INFO"
+      title: "Ma'lumot"
     }
   };
 
@@ -76,7 +76,7 @@ export default function Toast() {
 
   return (
     <div 
-      className={`fixed bottom-6 right-6 left-6 md:left-auto z-[100] flex flex-col overflow-hidden rounded-xl border bg-slate-950/95 backdrop-blur-xl text-sm font-medium text-white shadow-2xl max-w-sm w-full md:w-80 select-none transition-all duration-300 ease-in-out ${
+      className={`fixed bottom-[5.5rem] md:bottom-6 right-4 left-4 md:right-6 md:left-auto z-[100] flex flex-col overflow-hidden rounded-xl border bg-slate-950/95 backdrop-blur-xl text-sm font-medium text-white shadow-2xl max-w-sm w-full md:w-80 select-none transition-all duration-300 ease-in-out ${
         isVisible 
           ? 'opacity-100 translate-y-0 scale-100' 
           : 'opacity-0 translate-y-2 scale-95'
@@ -88,7 +88,7 @@ export default function Toast() {
         </div>
         
         <div className="flex-1 pr-4">
-          <h4 className="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-0.5 font-mono">
+          <h4 className="text-[9px] font-black uppercase tracking-widest text-amber-400/80 mb-0.5">
             {currentStyle.title}
           </h4>
           <p className="text-xs text-slate-300 leading-relaxed font-light">

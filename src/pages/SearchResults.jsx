@@ -128,9 +128,11 @@ export default function SearchResults() {
 
   const totalPages = Math.ceil(results.length / itemsPerPage);
 
-  // Narx formatlash
+  // Narx formatlash — null/undefined/NaN holatlarida artefakt chiqmaydi
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('uz-UZ').format(Math.round(price)) + " so'm";
+    const n = Number(price);
+    if (!Number.isFinite(n) || n <= 0) return '';
+    return new Intl.NumberFormat('uz-UZ').format(Math.round(n)) + " so'm";
   };
 
   // Filtrlashni tozalash
@@ -149,22 +151,25 @@ export default function SearchResults() {
     showOnlyInStock;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-32 font-sans text-white relative min-h-screen">
+    <div className="min-h-screen bg-slate-950 font-sans text-white relative overflow-hidden">
       {/* Orqa fon */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1c1914_1px,transparent_1px),linear-gradient(to_bottom,#1c1914_1px,transparent_1px)] bg-[size:6rem_6rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_60%,transparent_100%)] pointer-events-none opacity-20 -z-10" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_0%,rgba(255,193,7,0.06),transparent_45%)] pointer-events-none" />
 
-      <div className="pt-10 mb-8">
-        <Link to="/" className="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-emerald-400 transition-colors mb-6">
-          <ArrowLeft className="h-4 w-4" /> Bosh sahifaga qaytish
-        </Link>
-        <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-widest flex items-center gap-3">
-          <Search className="h-7 w-7 text-emerald-400" />
-          Qidiruv natijalari: <span className="text-emerald-400">"{query}"</span>
-        </h1>
-        <p className="mt-2 text-sm text-slate-500 font-light">
-          {loading ? "Qidiruv tizimi ishga tushmoqda..." : `${results.length} ta mahsulot topildi`}
-        </p>
-      </div>
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-20">
+        <div className="pt-10 mb-8">
+          <Link to="/" className="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-amber-300 transition-colors mb-6">
+            <ArrowLeft className="h-4 w-4" /> Bosh sahifaga qaytish
+          </Link>
+          <h1 className="font-serif text-2xl sm:text-4xl font-bold flex items-center gap-3 flex-wrap">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-400/10 border border-amber-400/30">
+              <Search className="h-6 w-6 text-amber-400" />
+            </div>
+            Qidiruv natijalari: <span className="text-amber-400">"{query}"</span>
+          </h1>
+          <p className="mt-2 text-sm text-slate-400 font-light">
+            {loading ? "Qidiruv ishga tushmoqda..." : `${results.length} ta mahsulot topildi`}
+          </p>
+        </div>
 
       <div className="flex gap-6 mb-8">
         {/* Filtrlash Payvandi */}
@@ -175,7 +180,7 @@ export default function SearchResults() {
               {hasActiveFilters && (
                 <button
                   onClick={handleClearFilters}
-                  className="text-[9px] font-bold text-emerald-400 hover:text-emerald-300 transition-colors"
+                  className="text-[9px] font-bold text-amber-300 hover:text-amber-200 transition-colors"
                 >
                   Tozalash
                 </button>
@@ -296,7 +301,7 @@ export default function SearchResults() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="lg:hidden flex items-center gap-2 px-4 py-2.5 bg-slate-950 border border-slate-900 rounded-xl text-xs font-bold text-emerald-400 hover:bg-slate-900 transition-colors"
+              className="lg:hidden flex items-center gap-2 px-4 py-2.5 bg-slate-950 border border-slate-900 rounded-xl text-xs font-bold text-amber-300 hover:bg-slate-900 transition-colors"
             >
               <ChevronDown className={`h-3.5 w-3.5 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
               Filtrlash
@@ -305,7 +310,7 @@ export default function SearchResults() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="bg-slate-950 border border-slate-900 rounded-xl px-4 py-2.5 text-xs font-bold font-mono text-emerald-400 focus:outline-none cursor-pointer"
+              className="bg-slate-950 border border-slate-900 rounded-xl px-4 py-2.5 text-xs font-bold text-amber-300 focus:outline-none cursor-pointer"
             >
               <option value="DEFAULT">Standart Saralash</option>
               <option value="PRICE_ASC">Narx: O'sish</option>
@@ -394,7 +399,7 @@ export default function SearchResults() {
               <div className="p-4 bg-slate-950 rounded-2xl border border-slate-900 text-slate-700 mb-4">
                 <Package className="h-8 w-8 text-slate-600" />
               </div>
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono">Hech narsa topilmadi</h3>
+              <h3 className="font-serif text-lg font-bold text-white">Hech narsa topilmadi</h3>
               <p className="mt-2 text-xs text-slate-500 max-w-sm leading-relaxed">
                 "{query}" bo'yicha hech qanday mahsulot topilmadi. Boshqa kalit so'z bilan urinib ko'ring.
               </p>
@@ -424,7 +429,7 @@ export default function SearchResults() {
                         onClick={() => setCurrentPage(i + 1)}
                         className={`w-8 h-8 rounded-lg text-xs font-bold transition-colors ${
                           currentPage === i + 1
-                            ? 'bg-emerald-500 text-white'
+                            ? 'bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 font-black'
                             : 'bg-slate-950 border border-slate-900 text-slate-400 hover:text-white'
                         }`}
                       >
@@ -446,6 +451,7 @@ export default function SearchResults() {
               )}
             </>
           )}
+          </div>
         </div>
       </div>
     </div>

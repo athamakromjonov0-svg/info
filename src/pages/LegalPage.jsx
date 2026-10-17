@@ -12,7 +12,7 @@ const LEGAL_TYPES = {
     title: 'Maxfiylik',
     highlight: 'siyosati',
     icon: ShieldCheck,
-    badge: '/// Maxfiylik siyosati',
+    badge: 'Maxfiylik siyosati',
     updated: '2026-yil 1-avgust',
     desc: 'Sizning shaxsiy ma\'lumotlaringiz qanday yig\'ilishi, saqlanishi va himoyalanishi haqida.',
     sections: [
@@ -29,7 +29,7 @@ const LEGAL_TYPES = {
     title: 'Foydalanish',
     highlight: 'shartlari',
     icon: FileText,
-    badge: '/// Foydalanish shartlari',
+    badge: 'Foydalanish shartlari',
     updated: '2026-yil 1-avgust',
     desc: 'Saytdan foydalanish tartib-qoidalari va foydalanuvchi majburiyatlari.',
     sections: [
@@ -45,7 +45,7 @@ const LEGAL_TYPES = {
     title: 'Ommaviy',
     highlight: 'oferta',
     icon: Globe,
-    badge: '/// Ommaviy oferta',
+    badge: 'Ommaviy oferta',
     updated: '2026-yil 1-avgust',
     desc: 'Xarid qilishdan oldin tanishishingiz kerak bo\'lgan rasmiy savdo shartnomasi.',
     sections: [
@@ -67,7 +67,7 @@ export default function LegalPage() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-slate-950 font-sans select-none relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_10%,rgba(16,185,129,0.04),transparent_40%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_10%,rgba(255,193,7,0.04),transparent_40%)] pointer-events-none" />
 
       <div className="relative z-10 mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         <PageHero
@@ -90,7 +90,7 @@ export default function LegalPage() {
                 to={`/${key}`}
                 className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-[11px] font-bold transition-all duration-200 ${
                   isActive
-                    ? 'bg-emerald-400 text-slate-950 border-emerald-400'
+                    ? 'bg-amber-400 text-slate-950 border-amber-400 shadow-glow-sm'
                     : 'bg-slate-900/40 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-white'
                 }`}
               >
@@ -103,7 +103,7 @@ export default function LegalPage() {
         {/* YANGILANGAN SANASI */}
         <div className="flex items-center justify-between rounded-2xl border border-slate-900 bg-slate-950/60 px-5 py-3 text-[10px] font-mono text-slate-500 uppercase tracking-widest">
           <span>So'nggi yangilanish: {config.updated}</span>
-          <ShieldCheck className="h-4 w-4 text-emerald-400" />
+          <ShieldCheck className="h-4 w-4 text-amber-400" />
         </div>
 
         {/* BO'LIMLAR */}
@@ -119,7 +119,7 @@ export default function LegalPage() {
         {/* ALOQA */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-3xl border border-slate-900 bg-slate-950/60 p-6">
           <p className="text-xs text-slate-400">Savollaringiz bo'lsa, huquqiy bo'limga murojaat qiling.</p>
-          <Link to="/aloqa" className="inline-flex items-center gap-2 rounded-xl bg-emerald-400 px-5 py-2.5 text-xs font-black text-slate-950 uppercase tracking-widest hover:bg-emerald-300 transition-all">
+          <Link to="/aloqa" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 px-5 py-2.5 text-xs font-black text-slate-950 uppercase tracking-widest shadow-glow-sm hover:from-amber-300 hover:to-yellow-400 transition-all">
             Aloqa bo'limi
           </Link>
         </div>

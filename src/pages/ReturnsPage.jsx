@@ -8,11 +8,11 @@ import PageHero from '../components/PageHero';
 export default function ReturnsPage() {
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-slate-950 font-sans select-none relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(244,63,94,0.04),transparent_40%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(255,193,7,0.04),transparent_40%)] pointer-events-none" />
 
       <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         <PageHero
-          badge="/// Qaytarish"
+          badge="Kafolat va qaytarish"
           title="Qaytarish va"
           highlight="almashtirish"
           description="Mahsulot sizga mos kelmadimi? 14 kun ichida bepul qaytaring yoki almashtiring."
@@ -21,8 +21,8 @@ export default function ReturnsPage() {
 
         {/* ASOSIY QOIDALAR */}
         <div className="grid sm:grid-cols-3 gap-4">
-          <div className="rounded-3xl border border-emerald-500/20 bg-emerald-500/5 p-6 text-center">
-            <Clock className="h-8 w-8 text-emerald-400 mx-auto mb-3" />
+          <div className="rounded-3xl border border-amber-400/20 bg-amber-400/5 p-6 text-center">
+            <Clock className="h-8 w-8 text-amber-400 mx-auto mb-3" />
             <p className="text-2xl font-black text-white">14 kun</p>
             <p className="mt-1 text-[11px] text-slate-400">qaytarish muddati</p>
           </div>
@@ -32,7 +32,7 @@ export default function ReturnsPage() {
             <p className="mt-1 text-[11px] text-slate-400">pulni qaytarish</p>
           </div>
           <div className="rounded-3xl border border-slate-900 bg-slate-950/60 p-6 text-center">
-            <Package className="h-8 w-8 text-blue-400 mx-auto mb-3" />
+            <Package className="h-8 w-8 text-amber-400 mx-auto mb-3" />
             <p className="text-2xl font-black text-white">Bepul</p>
             <p className="mt-1 text-[11px] text-slate-400">olib qaytish xizmati</p>
           </div>
@@ -40,20 +40,20 @@ export default function ReturnsPage() {
 
         <div className="grid lg:grid-cols-2 gap-6">
           {/* MUMKIN */}
-          <div className="rounded-3xl border border-emerald-500/20 bg-emerald-500/5 backdrop-blur-xl p-6 sm:p-8">
+          <div className="rounded-3xl border border-amber-400/20 bg-amber-400/5 backdrop-blur-xl p-6 sm:p-8">
             <h3 className="text-xs font-black text-white uppercase tracking-widest mb-5 flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400" /> Qaytarish mumkin
+              <CheckCircle2 className="h-4 w-4 text-amber-400" /> Qaytarish mumkin
             </h3>
             <ul className="space-y-3.5">
               {[
                 "Mahsulot nuqsonli yoki nosoz bo'lsa",
                 "Mahsulot tavsifga mos kelmasa",
                 "O'lchami, rangi yoki modeli mos kelmasa",
-                "Kafolat muddati ichida texnik nosozlik",
+                "Kafolat muddati ichida ishlab chiqarish nuqsoni (defekt)",
                 "Buyurtma olingan kundan boshlab 14 kun ichida",
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-3 text-xs text-slate-300 leading-relaxed">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" /> {item}
+                  <CheckCircle2 className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" /> {item}
                 </li>
               ))}
             </ul>
@@ -66,7 +66,7 @@ export default function ReturnsPage() {
             </h3>
             <ul className="space-y-3.5">
               {[
-                "Gigiyena vositalari (naushnik, garnitura) ochilgach",
+                "Metrajga kesilgan yoki o'rnatilgan mahsulotlar (parda lentasi, karniz profillari)",
                 "Foydalanish belgilari bo'lgan mahsulotlar",
                 "Mexanik shikastlangan mahsulotlar",
                 "14 kundan ortiq muddat o'tgan buyurtmalar",

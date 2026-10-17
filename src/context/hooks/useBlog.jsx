@@ -1,5 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import axios from 'axios';
 
+const BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 const BLOG_KEY = 'vortex_blog_posts';
 
 const DEFAULT_POSTS = [
@@ -96,6 +98,31 @@ const useBlog = () => {
     try { localStorage.setItem(BLOG_KEY, JSON.stringify(blogPosts)); } catch { /* ignore */ }
   }, [blogPosts]);
 
+  // Backend bilan sinxronizatsiya
+  const serverAvailable = useRef(false);
+
+  const fetchBackendBlog = useCallback(async () => {
+    try {
+      const res = await axios.get(`${BASE}/api/blog`, { timeout: 3000 });
+      if (Array.isArray(res.data) && res.data.length > 0) {
+        setBlogPosts(res.data);
+        serverAvailable.current = true;
+      }
+    } catch {
+      // offline fallback
+    }
+  }, []);
+
+  // REAL VAQT: blog postlarini davriy yangilab turamiz
+  // PERFORMANCE: sahifa ko'rinmas bo'lsa polling to'xtatiladi
+  useEffect(() => {
+    const t = setTimeout(fetchBackendBlog, 0);
+    const interval = setInterval(() => {
+      if (navigator.onLine && serverAvailable.current && document.visibilityState === 'visible') fetchBackendBlog();
+    }, 15000);
+    return () => { clearTimeout(t); clearInterval(interval); };
+  }, [fetchBackendBlog]);
+
   // REAL VAQT: boshqa oynalardagi blog o'zgarishlarini darhol qabul qilish
   useEffect(() => {
     const syncFromStorage = (e) => {
@@ -119,16 +146,19 @@ const useBlog = () => {
       content: Array.isArray(postData.content) ? postData.content : String(postData.content || '').split('\n').filter(Boolean),
     };
     setBlogPosts(prev => [newPost, ...prev]);
+    axios.post(`${BASE}/api/blog`, newPost).catch(() => {});
     return newPost;
   }, []);
 
   const updateBlogPost = useCallback((id, postData) => {
     setBlogPosts(prev => prev.map(p => String(p.id) === String(id) ? { ...p, ...postData } : p));
+    axios.put(`${BASE}/api/blog/${id}`, postData).catch(() => {});
     return true;
   }, []);
 
   const deleteBlogPost = useCallback((id) => {
     setBlogPosts(prev => prev.filter(p => String(p.id) !== String(id)));
+    axios.delete(`${BASE}/api/blog/${id}`).catch(() => {});
     return true;
   }, []);
 
@@ -138,6 +168,7 @@ const useBlog = () => {
 
   const toggleBlogLike = useCallback((id) => {
     setBlogPosts(prev => prev.map(p => String(p.id) === String(id) ? { ...p, likes: (Number(p.likes) || 0) + 1 } : p));
+    axios.post(`${BASE}/api/blog/${id}/like`).catch(() => {});
   }, []);
 
   return {

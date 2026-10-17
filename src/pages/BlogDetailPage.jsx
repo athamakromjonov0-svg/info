@@ -85,8 +85,8 @@ export default function BlogDetailPage() {
               </div>
               <div className="flex items-center gap-4">
                 <span className="flex items-center gap-1.5"><Eye className="h-3.5 w-3.5" /> {post.views}</span>
-                <button onClick={() => toggleBlogLike(post.id)} className="flex items-center gap-1.5 hover:text-rose-400 transition-colors">
-                  <Heart className={`h-3.5 w-3.5 ${post.likes > 0 ? 'text-rose-400 fill-rose-400' : ''}`} /> {post.likes}
+                <button onClick={() => toggleBlogLike(post.id)} className="flex items-center gap-1.5 hover:text-amber-300 transition-colors">
+                  <Heart className={`h-3.5 w-3.5 ${post.likes > 0 ? 'text-amber-400 fill-amber-400' : ''}`} /> {post.likes}
                 </button>
               </div>
             </div>

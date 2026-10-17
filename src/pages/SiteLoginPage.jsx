@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import {
   Loader2, ShieldCheck, Eye, EyeOff, Mail, User, Lock, ArrowRight,
@@ -51,28 +51,28 @@ export default function SiteLoginPage() {
 
   const productCount = (products || []).length;
 
-  const inputCls = 'w-full rounded-xl border border-slate-900 bg-slate-950/80 py-3 pl-11 pr-4 text-xs text-white placeholder-slate-700 focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/30 focus:outline-none transition-all font-medium';
+  const inputCls = 'w-full rounded-xl border border-slate-900 bg-slate-950/80 py-3 pl-11 pr-4 text-xs text-white placeholder-slate-700 focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/20 focus:outline-none transition-all font-medium';
 
   return (
     <div className="relative min-h-[calc(100vh-4rem)] flex items-center justify-center overflow-hidden bg-slate-950 px-4 py-12 sm:px-6 lg:px-8 font-sans select-none">
 
       {/* ORQA FON EFFEKTLARI */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#1c1914_1px,transparent_1px),linear-gradient(to_bottom,#1c1914_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none opacity-30" />
-      <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-500/10 rounded-full blur-[130px] pointer-events-none animate-pulse" />
-      <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-emerald-500/10 rounded-full blur-[130px] pointer-events-none animate-pulse" />
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-72 h-72 bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute -top-24 -left-24 w-96 h-96 bg-amber-500/10 rounded-full blur-[130px] pointer-events-none animate-pulse" />
+      <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-amber-500/10 rounded-full blur-[130px] pointer-events-none animate-pulse" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-72 h-72 bg-amber-500/5 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="relative w-full max-w-6xl z-10">
         <div className="grid lg:grid-cols-5 overflow-hidden rounded-3xl border border-slate-900 bg-slate-950/60 backdrop-blur-xl shadow-2xl shadow-black/50">
 
           {/* CHAP SEKSIYA — BREND / NISH (katta) */}
-          <div className="relative hidden lg:flex flex-col justify-between p-10 lg:col-span-2 border-r border-slate-900 bg-gradient-to-br from-blue-950/60 via-slate-950 to-slate-950 overflow-hidden">
+          <div className="relative hidden lg:flex flex-col justify-between p-10 lg:col-span-2 border-r border-slate-900 bg-gradient-to-br from-slate-900/70 via-slate-950 to-slate-950 overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,193,7,0.15),transparent_50%)] pointer-events-none" />
-            <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none" />
+            <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-amber-500/5 rounded-full blur-[100px] pointer-events-none" />
 
             <div className="relative">
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400 to-blue-500 text-slate-950 shadow-lg shadow-blue-500/20">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-300 via-amber-400 to-yellow-500 text-slate-950 shadow-glow-sm">
                   <ShoppingBag className="h-6 w-6" />
                 </div>
                 <div>
@@ -88,7 +88,7 @@ export default function SiteLoginPage() {
               <div className="mt-14 space-y-6">
                 <h2 className="text-3xl font-black text-white leading-tight">
                   Premium do'konimizga<br />
-                  <span className="bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-amber-300 to-amber-500 bg-clip-text text-transparent">
                     xush kelibsiz!
                   </span>
                 </h2>
@@ -100,19 +100,19 @@ export default function SiteLoginPage() {
 
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 text-xs text-slate-300">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400">
                       <CheckCircle2 className="h-4 w-4" />
                     </div>
                     <span>Shaxsiy kabinet va buyurtmalar tarixi</span>
                   </div>
                   <div className="flex items-center gap-3 text-xs text-slate-300">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400">
                       <Zap className="h-4 w-4" />
                     </div>
                     <span>Tezkor xarid va bonus ballar</span>
                   </div>
                   <div className="flex items-center gap-3 text-xs text-slate-300">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400">
                       <Star className="h-4 w-4" />
                     </div>
                     <span>Maxsus chegirmalar siz uchun</span>
@@ -124,11 +124,11 @@ export default function SiteLoginPage() {
             {/* Statistika */}
             <div className="relative grid grid-cols-3 gap-3 mt-10">
               <div className="rounded-xl border border-slate-900 bg-slate-950/60 p-3 text-center">
-                <p className="text-lg font-black text-emerald-400 font-mono">{productCount || 300}+</p>
+                <p className="text-lg font-black text-amber-300 font-mono">{productCount || 300}+</p>
                 <p className="text-[8px] text-slate-500 uppercase tracking-wider font-mono mt-0.5">Mahsulot</p>
               </div>
               <div className="rounded-xl border border-slate-900 bg-slate-950/60 p-3 text-center">
-                <p className="text-lg font-black text-blue-400 font-mono">24</p>
+                <p className="text-lg font-black text-amber-300 font-mono">24</p>
                 <p className="text-[8px] text-slate-500 uppercase tracking-wider font-mono mt-0.5">Kategoriya</p>
               </div>
               <div className="rounded-xl border border-slate-900 bg-slate-950/60 p-3 text-center">
@@ -138,7 +138,7 @@ export default function SiteLoginPage() {
             </div>
 
             <div className="relative flex items-center gap-2 text-[9px] text-slate-600 font-mono uppercase tracking-widest">
-              <Fingerprint className="h-3 w-3 text-emerald-500/60" />
+              <Fingerprint className="h-3 w-3 text-amber-400/60" />
               Firebase Auth
               <span className="text-slate-800">•</span>
               Google Secure
@@ -149,10 +149,10 @@ export default function SiteLoginPage() {
 
           {/* O'NG SEKSIYA — FORMA */}
           <div className="p-8 sm:p-10 lg:col-span-3 relative overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-400/50 to-transparent" />
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-400/50 to-transparent" />
 
             <div className="lg:hidden flex items-center gap-3 mb-8">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-blue-500 text-slate-950">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-300 via-amber-400 to-yellow-500 text-slate-950">
                 <ShoppingBag className="h-5 w-5" />
               </div>
               <div>
@@ -166,7 +166,7 @@ export default function SiteLoginPage() {
             </div>
 
             <div className="text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 rounded-full bg-blue-500/10 border border-blue-500/20 px-3 py-1 text-[10px] font-mono font-bold text-blue-400 uppercase tracking-widest">
+              <div className="inline-flex items-center gap-2 rounded-full bg-amber-400/10 border border-amber-400/20 px-3 py-1 text-[10px] font-mono font-bold text-amber-300 uppercase tracking-widest">
                 <Sparkles className="h-3 w-3" /> Premium hisob
               </div>
 
@@ -192,7 +192,7 @@ export default function SiteLoginPage() {
                   onClick={() => setMode(t.id)}
                   className={`py-2.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all ${
                     mode === t.id
-                      ? 'bg-emerald-400 text-slate-950 shadow-lg shadow-emerald-400/20'
+                      ? 'bg-amber-400 text-slate-950 shadow-glow-sm'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
@@ -244,7 +244,7 @@ export default function SiteLoginPage() {
                 <div>
                   <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Ismingiz</label>
                   <div className="relative group">
-                    <User className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600 group-focus-within:text-emerald-400 transition-colors" />
+                    <User className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600 group-focus-within:text-amber-400 transition-colors" />
                     <input
                       type="text"
                       required
@@ -260,7 +260,7 @@ export default function SiteLoginPage() {
               <div>
                 <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Email manzil</label>
                 <div className="relative group">
-                  <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600 group-focus-within:text-emerald-400 transition-colors" />
+                  <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600 group-focus-within:text-amber-400 transition-colors" />
                   <input
                     type="email"
                     required
@@ -275,7 +275,7 @@ export default function SiteLoginPage() {
               <div>
                 <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Parol</label>
                 <div className="relative group">
-                  <Lock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600 group-focus-within:text-emerald-400 transition-colors" />
+                  <Lock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600 group-focus-within:text-amber-400 transition-colors" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
@@ -298,7 +298,7 @@ export default function SiteLoginPage() {
 
               <button
                 type="submit"
-                className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-400 to-blue-500 py-3.5 text-xs font-black text-slate-950 uppercase tracking-widest transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/30 active:scale-[0.99] shadow-xl shadow-emerald-500/10"
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 py-3.5 text-xs font-black text-slate-950 uppercase tracking-widest shadow-glow transition-all duration-300 hover:shadow-glow-lg active:scale-[0.99]"
               >
                 {mode === 'login' ? 'Kirish' : 'Hisob yaratish'}
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -308,7 +308,7 @@ export default function SiteLoginPage() {
             {/* XAVFSIZLIK */}
             <div className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[9px] text-slate-600 font-mono uppercase tracking-widest">
               <span className="inline-flex items-center gap-1.5">
-                <ShieldCheck className="h-3 w-3 text-emerald-500/60" /> Lokal xavfsiz auth
+                <ShieldCheck className="h-3 w-3 text-amber-400/60" /> Lokal xavfsiz auth
               </span>
               <span className="text-slate-800">•</span>
               <span>Google Auth</span>
